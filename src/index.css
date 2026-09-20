@@ -1,0 +1,173 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Legacy variables for backwards compatibility */
+    --background: 210 20% 98%;
+    --foreground: 222.2 47.4% 11.2%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 47.4% 11.2%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 47.4% 11.2%;
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 47.4% 11.2%;
+    --radius: 0.5rem;
+
+    /* =========================================
+       CYBER EVIDENCE DESIGN SYSTEM TOKENS 
+       ========================================= */
+
+    /* Surfaces & Backgrounds */
+    --color-background: 210 20% 98%;
+    --color-surface: 0 0% 100%;
+    --color-surface-elevated: 0 0% 100%;
+    --color-surface-subtle: 210 40% 96.1%;
+    
+    /* Borders */
+    --color-border: 214.3 31.8% 91.4%;
+    --color-border-strong: 214.3 31.8% 80%;
+
+    /* Typography */
+    --color-text-primary: 222.2 47.4% 11.2%;
+    --color-text-secondary: 215.4 16.3% 46.9%;
+    --color-text-muted: 215.4 16.3% 60%;
+
+    /* Brand */
+    --color-brand: 221.2 83.2% 53.3%;
+    --color-brand-hover: 221.2 83.2% 43.3%;
+    --color-brand-subtle: 221.2 83.2% 95%;
+
+    /* Semantic Status */
+    --color-success: 142.1 76.2% 36.3%;
+    --color-success-subtle: 142.1 76.2% 95%;
+    
+    --color-warning: 38 92% 50%;
+    --color-warning-subtle: 38 92% 95%;
+    
+    --color-danger: 346.8 77.2% 49.8%;
+    --color-danger-subtle: 346.8 77.2% 95%;
+    
+    --color-info: 217.2 91.2% 59.8%;
+    --color-info-subtle: 217.2 91.2% 95%;
+
+    /* Domain-Specific: Cyber Forensics */
+    --color-verification: 142.1 76.2% 36.3%;
+    --color-integrity: 221.2 83.2% 53.3%;
+    --color-blockchain: 271.5 81.3% 55.9%;
+    --color-off-chain: 215.4 16.3% 46.9%;
+    --color-tampered: 346.8 77.2% 49.8%;
+    --color-pending: 38 92% 50%;
+  }
+
+  .dark {
+    /* Legacy dark variables */
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+
+    /* CYBER EVIDENCE DESIGN SYSTEM TOKENS - DARK */
+    --color-background: 222.2 84% 4.9%;
+    --color-surface: 222.2 84% 6.9%;
+    --color-surface-elevated: 222.2 84% 10%;
+    --color-surface-subtle: 217.2 32.6% 17.5%;
+    
+    --color-border: 217.2 32.6% 17.5%;
+    --color-border-strong: 217.2 32.6% 25%;
+
+    --color-text-primary: 210 40% 98%;
+    --color-text-secondary: 215 20.2% 65.1%;
+    --color-text-muted: 215 20.2% 50%;
+
+    --color-brand: 217.2 91.2% 59.8%;
+    --color-brand-hover: 221.2 83.2% 73.3%;
+    --color-brand-subtle: 217.2 32.6% 25%;
+
+    --color-success: 142.1 70.6% 45.3%;
+    --color-success-subtle: 142.1 70.6% 15%;
+    
+    --color-warning: 38 92% 50%;
+    --color-warning-subtle: 38 92% 15%;
+    
+    --color-danger: 346.8 77.2% 49.8%;
+    --color-danger-subtle: 346.8 77.2% 15%;
+    
+    --color-info: 217.2 91.2% 59.8%;
+    --color-info-subtle: 217.2 91.2% 15%;
+
+    --color-verification: 142.1 70.6% 45.3%;
+    --color-integrity: 217.2 91.2% 59.8%;
+    --color-blockchain: 271.5 81.3% 65.9%;
+    --color-off-chain: 215 20.2% 50%;
+    --color-tampered: 346.8 77.2% 49.8%;
+    --color-pending: 38 92% 50%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+  
+  /* Typography Scale */
+  h1 { @apply text-4xl font-semibold tracking-tight; }
+  h2 { @apply text-3xl font-semibold tracking-tight; }
+  h3 { @apply text-2xl font-semibold tracking-tight; }
+  h4 { @apply text-xl font-semibold tracking-tight; }
+  h5 { @apply text-lg font-semibold tracking-tight; }
+  h6 { @apply text-base font-semibold tracking-tight; }
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  @apply bg-background;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-muted rounded-full;
+}
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-muted-foreground;
+}
+
+/* Subtle grid overlay for SOC theme */
+.bg-grid-pattern {
+  background-size: 32px 32px;
+  background-image: 
+    linear-gradient(to right, rgba(128, 128, 128, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(128, 128, 128, 0.05) 1px, transparent 1px);
+}

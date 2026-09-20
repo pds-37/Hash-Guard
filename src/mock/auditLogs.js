@@ -1,0 +1,110 @@
+export const mockAuditLogs = [
+  {
+    id: "LOG-10948",
+    timestamp: "2026-08-16 13:20:00 UTC",
+    event: "LINEAGE_VERIFICATION",
+    actor: "auditor@independent-audit.org",
+    organization: "Independent Auditor",
+    evidenceId: "EV-001",
+    eventId: "EVT-9102",
+    verification: "VERIFIED",
+    reference: "Block #483012 (0x99a1f2...)",
+    details: "Independent graph traversal & signature chain verification executed. 5/5 nodes validated."
+  },
+  {
+    id: "LOG-10945",
+    timestamp: "2026-08-16 12:02:00 UTC",
+    event: "DERIVE",
+    actor: "principal-researcher@org-b.lab",
+    organization: "Organization B (Cyber Lab)",
+    evidenceId: "EV-006",
+    eventId: "EVT-8945",
+    verification: "VERIFIED",
+    reference: "Block #482975 (0x5a6d7c...)",
+    details: "Derived report RPT-2026-0816-01 anchored to parent evidence EV-001."
+  },
+  {
+    id: "LOG-10940",
+    timestamp: "2026-08-16 11:46:00 UTC",
+    event: "DERIVE",
+    actor: "malware-analyst-02@org-b.lab",
+    organization: "Organization B (Cyber Lab)",
+    evidenceId: "EV-005",
+    eventId: "EVT-8942",
+    verification: "VERIFIED",
+    reference: "Block #482960 (0x4b7c81...)",
+    details: "Derived IOC rule set anchored to parent evidence EV-001."
+  },
+  {
+    id: "LOG-10935",
+    timestamp: "2026-08-16 11:10:00 UTC",
+    event: "ANALYZE",
+    actor: "malware-analyst-02@org-b.lab",
+    organization: "Organization B (Cyber Lab)",
+    evidenceId: "EV-001",
+    eventId: "EVT-8938",
+    verification: "VERIFIED",
+    reference: "Block #482938 (0x5a6d7c...)",
+    details: "Air-gapped analysis enclave sandbox run initiated. Memory and call graph extracted."
+  },
+  {
+    id: "LOG-10930",
+    timestamp: "2026-08-16 10:42:17 UTC",
+    event: "RECEIVE",
+    actor: "analyst@org-b.lab",
+    organization: "Organization B (Cyber Lab)",
+    evidenceId: "EV-001",
+    eventId: "EVT-8930",
+    verification: "VERIFIED",
+    reference: "Block #482910 (0x4b7c81...)",
+    details: "Cross-organization transfer TR-001 completed. Off-chain payload SHA-256 integrity confirmed."
+  },
+  {
+    id: "LOG-10925",
+    timestamp: "2026-08-16 09:40:11 UTC",
+    event: "ANALYZE",
+    actor: "qa-auditor@org-b.lab",
+    organization: "Organization B (Cyber Lab)",
+    evidenceId: "EV-009",
+    eventId: "EVT-8999",
+    verification: "COMPROMISED",
+    reference: "Block #482850 (0x991823...)",
+    details: "TAMPER ALERT: Evidence EV-009 current bit hash failed match against sealed on-chain root."
+  },
+  {
+    id: "LOG-10920",
+    timestamp: "2026-08-16 09:15:30 UTC",
+    event: "TRANSFER",
+    actor: "ops-transport@org-a.gov",
+    organization: "Organization A (CERT-Alpha)",
+    evidenceId: "EV-001",
+    eventId: "EVT-8925",
+    verification: "VERIFIED",
+    reference: "Block #482810 (0x3e18a9...)",
+    details: "Encrypted mTLS transfer payload dispatched to Organization B public endpoint."
+  },
+  {
+    id: "LOG-10915",
+    timestamp: "2026-08-16 08:32:00 UTC",
+    event: "SEAL",
+    actor: "sec-officer@org-a.gov",
+    organization: "Organization A (CERT-Alpha)",
+    evidenceId: "EV-001",
+    eventId: "EVT-8922",
+    verification: "VERIFIED",
+    reference: "Block #482780 (0x8924b1...)",
+    details: "HSM ECDSA signature generated over SHA-256 hash manifest. Immutable record anchored on-chain."
+  },
+  {
+    id: "LOG-10910",
+    timestamp: "2026-08-16 08:30:14 UTC",
+    event: "COLLECT",
+    actor: "analyst-lead@org-a.gov",
+    organization: "Organization A (CERT-Alpha)",
+    evidenceId: "EV-001",
+    eventId: "EVT-8921",
+    verification: "VERIFIED",
+    reference: "Block #482760 (0x7c81f3...)",
+    details: "Initial digital evidence acquisition from compromised host SRV-DC01."
+  }
+];

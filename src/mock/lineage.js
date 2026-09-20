@@ -1,0 +1,181 @@
+export const mockLineageGraph = {
+  evidenceId: "EV-001",
+  nodes: [
+    {
+      id: "node-1",
+      type: "lineageNode",
+      position: { x: 350, y: 50 },
+      data: {
+        id: "EV-001",
+        label: "Original Evidence: Ransomware Binary",
+        artifactType: "Original Evidence (Root)",
+        hash: "8f3a91bc72f4cd2a4e9b671a5c28e930f1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6",
+        creator: "Organization A (CERT-Alpha)",
+        timestamp: "2026-08-16 08:30:14 UTC",
+        verificationState: "VERIFIED",
+        isRoot: true,
+        details: {
+          file: "lockbit3_encryptor.bin",
+          size: "4.8 MB",
+          algorithm: "SHA-256",
+          signature: "ECDSA VALID (Org A)"
+        }
+      }
+    },
+    {
+      id: "node-2",
+      type: "lineageNode",
+      position: { x: 350, y: 300 },
+      data: {
+        id: "ANL-001",
+        label: "Ghidra Decompilation & Dynamic Sandbox",
+        artifactType: "Intermediate Analysis",
+        hash: "c20182948b201938472910293840192830192840192830192830192830192830",
+        creator: "Organization B (Cyber Lab)",
+        timestamp: "2026-08-16 11:10:00 UTC",
+        verificationState: "VERIFIED",
+        isRoot: false,
+        details: {
+          file: "ghidra_decompilation_tree.json",
+          size: "82.5 MB",
+          algorithm: "SHA-256",
+          signature: "ECDSA VALID (Org B)"
+        }
+      }
+    },
+    {
+      id: "node-3",
+      type: "lineageNode",
+      position: { x: -50, y: 550 },
+      data: {
+        id: "RPT-001",
+        label: "Reverse Engineering Technical Report",
+        artifactType: "Derived Artifact (Report)",
+        hash: "b5e4a3c2d1e0f9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d3e2f1a0b9c8d7e6f5a4",
+        creator: "Organization B (Cyber Lab)",
+        timestamp: "2026-08-16 12:00:00 UTC",
+        verificationState: "VERIFIED",
+        isRoot: false,
+        details: {
+          file: "forensics_report_rev_01.pdf",
+          size: "14.2 MB",
+          algorithm: "SHA-256",
+          signature: "ECDSA VALID (Org B)"
+        }
+      }
+    },
+    {
+      id: "node-4",
+      type: "lineageNode",
+      position: { x: 750, y: 550 },
+      data: {
+        id: "IOC-001",
+        label: "Extracted YARA & Sigma Telemetry",
+        artifactType: "Derived Artifact (IOC Set)",
+        hash: "18f92a4019283019283019283019284019283019283019283019283019283019",
+        creator: "Organization B (Cyber Lab)",
+        timestamp: "2026-08-16 11:45:00 UTC",
+        verificationState: "VERIFIED",
+        isRoot: false,
+        details: {
+          file: "lockbit3_rules.yar",
+          size: "124 KB",
+          algorithm: "SHA-256",
+          signature: "ECDSA VALID (Org B)"
+        }
+      }
+    },
+    {
+      id: "node-5",
+      type: "lineageNode",
+      position: { x: 350, y: 800 },
+      data: {
+        id: "FIN-001",
+        label: "Final Cross-Agency Threat Attribution Brief",
+        artifactType: "Consolidated Final Report",
+        hash: "f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5",
+        creator: "Organization B + Alliance",
+        timestamp: "2026-08-16 13:15:00 UTC",
+        verificationState: "VERIFIED",
+        isRoot: false,
+        details: {
+          file: "final_attribution_advisory.pdf",
+          size: "28.6 MB",
+          algorithm: "SHA-256",
+          signature: "ECDSA MULTI-SIG VALID"
+        }
+      }
+    }
+  ],
+  edges: [
+    {
+      id: "e1-2",
+      source: "node-1",
+      target: "node-2",
+      label: "ANALYSIS OF",
+      animated: true,
+      style: { stroke: '#06b6d4', strokeWidth: 2 }
+    },
+    {
+      id: "e2-3",
+      source: "node-2",
+      target: "node-3",
+      label: "DERIVED FROM",
+      animated: true,
+      style: { stroke: '#10b981', strokeWidth: 2 }
+    },
+    {
+      id: "e2-4",
+      source: "node-2",
+      target: "node-4",
+      label: "DERIVED FROM",
+      animated: true,
+      style: { stroke: '#10b981', strokeWidth: 2 }
+    },
+    {
+      id: "e3-5",
+      source: "node-3",
+      target: "node-5",
+      label: "CONSOLIDATED",
+      animated: false,
+      style: { stroke: '#6366f1', strokeWidth: 2 }
+    },
+    {
+      id: "e4-5",
+      source: "node-4",
+      target: "node-5",
+      label: "CORRELATED",
+      animated: false,
+      style: { stroke: '#6366f1', strokeWidth: 2 }
+    }
+  ]
+};
+
+export const mockLineageVerification = {
+  evidenceId: "EV-001",
+  overallStatus: "LINEAGE VALID",
+  checks: [
+    {
+      name: "SOURCE VERIFIED",
+      status: "PASS",
+      details: "Original evidence manifest block #482910 contains immutable cryptographic root anchor."
+    },
+    {
+      name: "PARENT HASH VERIFIED",
+      status: "PASS",
+      details: "Parent artifact SHA-256 matches all child derivation headers without hash drift."
+    },
+    {
+      name: "DERIVATION EVENT VERIFIED",
+      status: "PASS",
+      details: "Derivation custody transactions verified across distributed validator nodes."
+    },
+    {
+      name: "SIGNATURE VERIFIED",
+      status: "PASS",
+      details: "All 4 intermediate and child signatures authenticated against authorized CA public keys."
+    }
+  ],
+  verifiedAt: "2026-08-16 13:20:00 UTC",
+  auditorId: "AUDITOR-INDEPENDENT-GLOBAL"
+};

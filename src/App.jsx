@@ -1,0 +1,63 @@
+import React, { useState } from 'react';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { AppShell } from './components/layout/AppShell';
+import { DashboardPage } from './pages/Dashboard/DashboardPage';
+import { EvidencePage } from './pages/Evidence/EvidencePage';
+import { EvidenceDetailsPage } from './pages/EvidenceDetails/EvidenceDetailsPage';
+import { TransfersPage } from './pages/Transfers/TransfersPage';
+import { CustodyPage } from './pages/Custody/CustodyPage';
+import { LineagePage } from './pages/Lineage/LineagePage';
+import { VerificationPage } from './pages/Verification/VerificationPage';
+import { AuditPage } from './pages/Audit/AuditPage';
+import { SettingsPage } from './pages/Settings/SettingsPage';
+import { RetentionPage } from './pages/Retention/RetentionPage';
+import { LoginPage } from './pages/LoginPage';
+import { BootSequence } from './components/layout/BootSequence';
+import { useApp } from './context/AppContext';
+
+const ProtectedRoute = ({ element, pathId }) => {
+  const { currentRole } = useApp();
+  
+  // Basic Auth Check
+  const token = localStorage.getItem('cee_auth_token');
+  if (!token) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (!currentRole.allowedPages.includes(pathId)) {
+    return <Navigate to={`/${currentRole.allowedPages[0]}`} replace />;
+  }
+  return element;
+};
+
+export function App() {
+  const [hasBooted, setHasBooted] = useState(false);
+  const { currentRole } = useApp();
+
+  return (
+    <>
+      {!hasBooted && <BootSequence onComplete={() => setHasBooted(true)} />}
+      <div className={!hasBooted ? 'opacity-0' : 'opacity-100 transition-opacity duration-1000'}>
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route element={<AppShell />}>
+            <Route path="/" element={<Navigate to={`/${currentRole.allowedPages[0]}`} replace />} />
+            <Route path="/dashboard" element={<ProtectedRoute element={<DashboardPage />} pathId="dashboard" />} />
+            <Route path="/evidence" element={<ProtectedRoute element={<EvidencePage />} pathId="evidence" />} />
+            <Route path="/evidence/:id" element={<ProtectedRoute element={<EvidenceDetailsPage />} pathId="evidence-details" />} />
+            <Route path="/transfers" element={<ProtectedRoute element={<TransfersPage />} pathId="transfers" />} />
+            <Route path="/custody" element={<ProtectedRoute element={<CustodyPage />} pathId="custody" />} />
+            <Route path="/lineage" element={<ProtectedRoute element={<LineagePage />} pathId="lineage" />} />
+            <Route path="/verification" element={<ProtectedRoute element={<VerificationPage />} pathId="verification" />} />
+            <Route path="/audit" element={<ProtectedRoute element={<AuditPage />} pathId="audit" />} />
+            <Route path="/retention" element={<ProtectedRoute element={<RetentionPage />} pathId="retention" />} />
+            <Route path="/settings" element={<ProtectedRoute element={<SettingsPage />} pathId="settings" />} />
+            <Route path="*" element={<Navigate to={`/${currentRole.allowedPages[0]}`} replace />} />
+          </Route>
+        </Routes>
+      </div>
+    </>
+  );
+}
+
+export default App;
