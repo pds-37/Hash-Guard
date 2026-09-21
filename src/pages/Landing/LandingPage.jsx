@@ -23,7 +23,9 @@ import {
   ChevronRight,
   Wallet,
   Upload,
-  RefreshCw
+  RefreshCw,
+  Menu,
+  X
 } from 'lucide-react';
 import { useApp, ROLES } from '../../context/AppContext';
 
@@ -32,6 +34,24 @@ export const LandingPage = () => {
   const { switchRole, setSandbox } = useApp();
   const [activeTab, setActiveTab] = useState('segregation');
   const [interactiveTampered, setInteractiveTampered] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const scrollToTab = (tabKey) => {
+    setActiveTab(tabKey);
+    const element = document.getElementById('architecture');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+    setMobileMenuOpen(false);
+  };
+
+  const scrollToSection = (sectionId) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+    setMobileMenuOpen(false);
+  };
 
   // Interactive Live Runbook Pipeline state for landing page
   const [landingWalletConnected, setLandingWalletConnected] = useState(false);
@@ -105,56 +125,152 @@ export const LandingPage = () => {
       </div>
 
       {/* STICKY GLASSMORPHIC NAVBAR */}
-      <header className="sticky top-0 z-50 backdrop-blur-md bg-[#070b14]/85 border-b border-slate-800/80 transition-all">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <header className="sticky top-0 z-50 backdrop-blur-md bg-[#070b14]/90 border-b border-slate-800/80 transition-all">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
           {/* Brand Logo */}
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-500/20 to-blue-600/20 border border-cyan-500/40 flex items-center justify-center shadow-[0_0_15px_rgba(6,182,212,0.25)]">
+          <div 
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            className="flex items-center gap-3 shrink-0 cursor-pointer select-none group"
+          >
+            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-500/20 to-blue-600/20 border border-cyan-500/40 flex items-center justify-center shadow-[0_0_15px_rgba(6,182,212,0.25)] group-hover:border-cyan-400/80 group-hover:shadow-[0_0_20px_rgba(6,182,212,0.4)] transition-all shrink-0">
               <ShieldCheck className="w-6 h-6 text-cyan-400" />
             </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="font-mono font-bold tracking-wider text-base text-white">HASHGUARD</span>
-                <span className="text-[10px] font-mono uppercase px-1.5 py-0.5 rounded bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 font-semibold">
-                  SIH 2026
-                </span>
-              </div>
-              <p className="text-[10px] font-mono text-slate-400 tracking-wider">CYBER EVIDENCE EXCHANGE</p>
+            <div className="shrink-0">
+              <span className="font-mono font-bold tracking-wider text-base text-white whitespace-nowrap block">
+                HASHGUARD
+              </span>
+              <p className="text-[10px] font-mono text-slate-400 tracking-wider whitespace-nowrap">
+                CYBER EVIDENCE EXCHANGE
+              </p>
             </div>
           </div>
 
           {/* Nav Links (Desktop) */}
-          <nav className="hidden md:flex items-center gap-6 text-xs font-mono uppercase tracking-wider text-slate-400">
-            <a href="#onboarding-pipeline" className="hover:text-cyan-400 text-cyan-400/90 font-semibold transition-colors">Activation Runbook</a>
-            <a href="#architecture" className="hover:text-cyan-400 transition-colors">Architecture</a>
-            <a href="#lineage" className="hover:text-cyan-400 transition-colors">Lineage DAG</a>
-            <a href="#tamper" className="hover:text-cyan-400 transition-colors">Tamper Engine</a>
-            <a href="#roles" className="hover:text-cyan-400 transition-colors">Agency Roles</a>
-            <a href="#judges-tour" className="hover:text-cyan-400 transition-colors text-cyan-400 font-semibold flex items-center gap-1">
+          <nav className="hidden lg:flex items-center gap-4 xl:gap-7 text-xs font-mono uppercase tracking-wider text-slate-400 shrink-0">
+            <button 
+              onClick={() => scrollToSection('architecture')}
+              className="hover:text-cyan-400 transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+            >
+              Architecture
+            </button>
+            <button 
+              onClick={() => scrollToTab('lineage')}
+              className="hover:text-cyan-400 transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+            >
+              Lineage DAG
+            </button>
+            <button 
+              onClick={() => scrollToTab('tamper')}
+              className="hover:text-cyan-400 transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+            >
+              Tamper Engine
+            </button>
+            <button 
+              onClick={() => scrollToSection('roles')}
+              className="hover:text-cyan-400 transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+            >
+              Agency Roles
+            </button>
+            <button 
+              onClick={() => scrollToSection('judges-tour')}
+              className="hover:text-cyan-400 transition-colors text-cyan-400 font-semibold flex items-center gap-1.5 whitespace-nowrap shrink-0 cursor-pointer"
+            >
               <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
-              Evaluator SOP
-            </a>
+              <span>Evaluator SOP</span>
+            </button>
           </nav>
 
-          {/* Action CTAs */}
-          <div className="flex items-center gap-2.5 sm:gap-3">
+          {/* Action CTAs + Mobile Menu Trigger */}
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             <button
               onClick={() => navigate('/login')}
-              className="px-3.5 py-1.5 rounded-lg border border-slate-700/80 bg-slate-900/60 hover:bg-slate-800 text-slate-300 hover:text-white text-xs font-mono transition-all cursor-pointer flex items-center gap-1.5"
+              className="hidden sm:flex px-3 py-1.5 rounded-lg border border-slate-700/80 bg-slate-900/60 hover:bg-slate-800 text-slate-300 hover:text-white text-xs font-mono transition-all cursor-pointer items-center gap-1.5 shrink-0 whitespace-nowrap"
             >
               <LogIn className="w-3.5 h-3.5 text-slate-400" />
-              <span>Sign In / Register</span>
+              <span>Sign In<span className="hidden xl:inline"> / Register</span></span>
             </button>
 
             <button
               onClick={() => launchConsole('ORG_B', '/dashboard', true)}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-mono font-bold text-xs shadow-[0_0_20px_rgba(6,182,212,0.4)] transition-all cursor-pointer"
+              className="flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-mono font-bold text-xs shadow-[0_0_20px_rgba(6,182,212,0.4)] transition-all cursor-pointer shrink-0 whitespace-nowrap"
             >
               <Zap className="w-3.5 h-3.5 text-slate-950 fill-slate-950" />
-              <span>EVALUATOR SANDBOX</span>
+              <span><span className="hidden sm:inline">EVALUATOR </span>SANDBOX</span>
+            </button>
+
+            {/* Mobile / Tablet Menu Button */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="lg:hidden p-2 rounded-lg border border-slate-800 bg-slate-900/70 hover:bg-slate-800 text-slate-400 hover:text-white transition-colors cursor-pointer shrink-0"
+              aria-label="Toggle navigation menu"
+            >
+              {mobileMenuOpen ? <X className="w-5 h-5 text-cyan-400" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
         </div>
+
+        {/* Mobile / Tablet Dropdown Menu */}
+        {mobileMenuOpen && (
+          <div className="lg:hidden border-t border-slate-800/90 bg-[#070b14]/98 backdrop-blur-xl px-4 py-4 space-y-3 shadow-2xl transition-all">
+            <div className="flex flex-col space-y-1 text-xs font-mono uppercase tracking-wider">
+              <button
+                onClick={() => scrollToSection('architecture')}
+                className="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-slate-800/60 text-slate-300 hover:text-white transition-colors cursor-pointer text-left"
+              >
+                <span>Architecture Overview</span>
+                <ChevronRight className="w-3.5 h-3.5 text-slate-500" />
+              </button>
+
+              <button
+                onClick={() => scrollToTab('lineage')}
+                className="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-slate-800/60 text-slate-300 hover:text-white transition-colors cursor-pointer text-left"
+              >
+                <span>Lineage DAG Visualizer</span>
+                <ChevronRight className="w-3.5 h-3.5 text-slate-500" />
+              </button>
+
+              <button
+                onClick={() => scrollToTab('tamper')}
+                className="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-slate-800/60 text-slate-300 hover:text-white transition-colors cursor-pointer text-left"
+              >
+                <span>Tamper Engine Simulator</span>
+                <ChevronRight className="w-3.5 h-3.5 text-slate-500" />
+              </button>
+
+              <button
+                onClick={() => scrollToSection('roles')}
+                className="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-slate-800/60 text-slate-300 hover:text-white transition-colors cursor-pointer text-left"
+              >
+                <span>Agency Stakeholder Roles</span>
+                <ChevronRight className="w-3.5 h-3.5 text-slate-500" />
+              </button>
+
+              <button
+                onClick={() => scrollToSection('judges-tour')}
+                className="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-slate-800/60 text-cyan-400 font-semibold transition-colors cursor-pointer text-left"
+              >
+                <div className="flex items-center gap-2">
+                  <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+                  <span>Evaluator SOP Walkthrough</span>
+                </div>
+                <ChevronRight className="w-3.5 h-3.5 text-cyan-400" />
+              </button>
+            </div>
+
+            <div className="pt-2 border-t border-slate-800/80 flex flex-col gap-2 font-mono">
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  navigate('/login');
+                }}
+                className="w-full flex items-center justify-center gap-2 py-2 rounded-lg border border-slate-700 bg-slate-900/80 text-slate-300 hover:text-white text-xs cursor-pointer"
+              >
+                <LogIn className="w-3.5 h-3.5 text-slate-400" />
+                <span>Sign In / Agency Register</span>
+              </button>
+            </div>
+          </div>
+        )}
       </header>
 
       {/* HERO SECTION */}
