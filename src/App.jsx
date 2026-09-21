@@ -12,6 +12,7 @@ import { AuditPage } from './pages/Audit/AuditPage';
 import { SettingsPage } from './pages/Settings/SettingsPage';
 import { RetentionPage } from './pages/Retention/RetentionPage';
 import { LoginPage } from './pages/LoginPage';
+import { LandingPage } from './pages/Landing/LandingPage';
 import { BootSequence } from './components/layout/BootSequence';
 import { useApp } from './context/AppContext';
 
@@ -33,15 +34,19 @@ const ProtectedRoute = ({ element, pathId }) => {
 export function App() {
   const [hasBooted, setHasBooted] = useState(false);
   const { currentRole } = useApp();
+  const location = useLocation();
+
+  const isLandingPage = location.pathname === '/' || location.pathname === '/landing';
 
   return (
     <>
-      {!hasBooted && <BootSequence onComplete={() => setHasBooted(true)} />}
-      <div className={!hasBooted ? 'opacity-0' : 'opacity-100 transition-opacity duration-1000'}>
+      {!hasBooted && !isLandingPage && <BootSequence onComplete={() => setHasBooted(true)} />}
+      <div className={!hasBooted && !isLandingPage ? 'opacity-0' : 'opacity-100 transition-opacity duration-700'}>
         <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/landing" element={<LandingPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route element={<AppShell />}>
-            <Route path="/" element={<Navigate to={`/${currentRole.allowedPages[0]}`} replace />} />
             <Route path="/dashboard" element={<ProtectedRoute element={<DashboardPage />} pathId="dashboard" />} />
             <Route path="/evidence" element={<ProtectedRoute element={<EvidencePage />} pathId="evidence" />} />
             <Route path="/evidence/:id" element={<ProtectedRoute element={<EvidenceDetailsPage />} pathId="evidence-details" />} />
@@ -52,7 +57,7 @@ export function App() {
             <Route path="/audit" element={<ProtectedRoute element={<AuditPage />} pathId="audit" />} />
             <Route path="/retention" element={<ProtectedRoute element={<RetentionPage />} pathId="retention" />} />
             <Route path="/settings" element={<ProtectedRoute element={<SettingsPage />} pathId="settings" />} />
-            <Route path="*" element={<Navigate to={`/${currentRole.allowedPages[0]}`} replace />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Route>
         </Routes>
       </div>

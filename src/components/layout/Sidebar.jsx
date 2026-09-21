@@ -16,7 +16,8 @@ import {
   Menu,
   Wallet,
   LogOut,
-  Clock
+  Clock,
+  Globe
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 
@@ -29,6 +30,7 @@ export const Sidebar = ({ isMobileOpen, setMobileOpen }) => {
       label: 'Overview',
       items: [
         { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
+        { name: 'Landing Overview', path: '/', icon: Globe },
       ]
     },
     {
@@ -83,13 +85,15 @@ export const Sidebar = ({ isMobileOpen, setMobileOpen }) => {
         {/* Header / Logo Area */}
         <div className="flex items-center justify-between h-16 px-4 border-b border-ce-border shrink-0">
           {!isCollapsed && (
-            <div className="flex items-center gap-2 font-semibold text-ce-text-primary truncate">
+            <NavLink to="/" className="flex items-center gap-2 font-semibold text-ce-text-primary truncate hover:opacity-80 transition-opacity">
               <ShieldCheck className="w-5 h-5 text-ce-brand" />
               <span className="tracking-tight">CYBER EVIDENCE</span>
-            </div>
+            </NavLink>
           )}
           {isCollapsed && (
-            <ShieldCheck className="w-6 h-6 text-ce-brand mx-auto" />
+            <NavLink to="/" className="mx-auto hover:opacity-80 transition-opacity">
+              <ShieldCheck className="w-6 h-6 text-ce-brand" />
+            </NavLink>
           )}
           <button 
             onClick={() => setIsCollapsed(!isCollapsed)}

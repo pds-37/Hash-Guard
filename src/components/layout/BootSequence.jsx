@@ -18,7 +18,7 @@ export const BootSequence = ({ onComplete }) => {
     
     // Smooth progress bar simulation
     const startTime = Date.now();
-    const duration = 5000; // Total loading time: 5 seconds
+    const duration = 1800; // Snappy loading time for evaluations
     
     const animateProgress = () => {
       const elapsed = Date.now() - startTime;
