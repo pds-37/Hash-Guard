@@ -238,6 +238,7 @@ export const Sidebar = ({ isMobileOpen, setMobileOpen }) => {
             onClick={() => {
               localStorage.removeItem('cee_auth_token');
               localStorage.removeItem('cee_user');
+              localStorage.removeItem('cee_is_sandbox');
               window.location.href = '#/login';
             }}
             className={`w-full flex items-center justify-center gap-2 bg-ce-surface-subtle hover:bg-ce-danger/10 text-ce-text-secondary hover:text-ce-danger border border-ce-border py-1.5 rounded transition-colors text-xs font-mono ${isCollapsed ? 'px-0' : ''}`}

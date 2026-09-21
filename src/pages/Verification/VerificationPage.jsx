@@ -6,7 +6,7 @@ import { ShieldCheck } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 
 export const VerificationPage = () => {
-  const { isTamperSimulated } = useApp();
+  const { isTamperSimulated, isSandboxMode } = useApp();
 
   return (
     <div className="space-y-6">
@@ -26,7 +26,7 @@ export const VerificationPage = () => {
       <OffChainBadge />
 
       {/* Main Independent Verification Panel */}
-      <IndependentVerificationPanel defaultId={isTamperSimulated ? 'EV-001' : 'EV-001'} />
+      <IndependentVerificationPanel defaultId={isSandboxMode ? 'EV-001' : ''} />
     </div>
   );
 };

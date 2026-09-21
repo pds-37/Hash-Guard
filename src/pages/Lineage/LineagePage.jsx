@@ -3,10 +3,11 @@ import { PageHeader } from '../../components/layout/PageHeader';
 import { LineageFlowGraph } from '../../components/lineage/LineageFlowGraph';
 import { LoadingState } from '../../components/common/StateViews';
 import { lineageService } from '../../services/lineageService';
+import { evidenceService } from '../../services/evidenceService';
 import { useApp } from '../../context/AppContext';
 
 export const LineagePage = () => {
-  const { isTamperSimulated, refreshTrigger } = useApp();
+  const { isTamperSimulated, isSandboxMode, refreshTrigger } = useApp();
   const [graphData, setGraphData] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -14,7 +15,9 @@ export const LineagePage = () => {
     async function loadGraph() {
       setLoading(true);
       try {
-        const data = await lineageService.getLineageGraph('EV-001');
+        const allEv = await evidenceService.getAllEvidence();
+        const rootId = isSandboxMode ? 'EV-001' : (allEv && allEv[0]?.id ? allEv[0].id : null);
+        const data = await lineageService.getLineageGraph(rootId);
         setGraphData(data);
       } catch (err) {
         console.error(err);
@@ -23,7 +26,7 @@ export const LineagePage = () => {
       }
     }
     loadGraph();
-  }, [refreshTrigger, isTamperSimulated]);
+  }, [refreshTrigger, isTamperSimulated, isSandboxMode]);
 
   return (
     <div className="space-y-6">

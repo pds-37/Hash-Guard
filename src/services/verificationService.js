@@ -28,7 +28,10 @@ export const verificationService = {
     }
 
     if (!evidence) {
-      throw new Error(`Exhibit "${cleanId}" not found in the cryptographic audit ledger. Register the exhibit before verifying.`);
+      const notFoundErr = new Error(`Exhibit "${cleanId}" not found in the cryptographic audit ledger.`);
+      notFoundErr.code = 'NOT_FOUND';
+      notFoundErr.identifier = cleanId;
+      throw notFoundErr;
     }
 
     const isTampered = evidence.status === 'COMPROMISED' || evidence.hash !== evidence.expectedHash;
