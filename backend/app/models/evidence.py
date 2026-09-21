@@ -6,6 +6,7 @@ class Evidence(Base):
     __tablename__ = "evidence"
 
     id = Column(String, primary_key=True)
+    case_id = Column(String, nullable=True, index=True)
     title = Column(String, nullable=False)
     type = Column(String, nullable=False)
     source_org = Column(String, nullable=False)

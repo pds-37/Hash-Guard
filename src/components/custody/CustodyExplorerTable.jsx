@@ -14,10 +14,10 @@ export const CustodyExplorerTable = ({ events = [] }) => {
               <th className="py-3 px-4 font-semibold uppercase">Event ID</th>
               <th className="py-3 px-4 font-semibold uppercase">Evidence ID</th>
               <th className="py-3 px-4 font-semibold uppercase">Event Type</th>
+              <th className="py-3 px-4 font-semibold uppercase">Hash Chain Link (Prev → Current)</th>
               <th className="py-3 px-4 font-semibold uppercase">Custodial Actor</th>
               <th className="py-3 px-4 font-semibold uppercase">Organization</th>
               <th className="py-3 px-4 font-semibold uppercase">Timestamp (UTC)</th>
-              <th className="py-3 px-4 font-semibold uppercase">Parent ID</th>
               <th className="py-3 px-4 font-semibold uppercase">Signature</th>
               <th className="py-3 px-4 font-semibold text-right uppercase">Verification</th>
             </tr>
@@ -52,6 +52,19 @@ export const CustodyExplorerTable = ({ events = [] }) => {
                     >
                       {ev.event}
                     </span>
+                  </td>
+                  <td className="py-3.5 px-4 text-ce-text-muted text-[10px] whitespace-nowrap">
+                    <div className="flex items-center gap-1">
+                      <span className="bg-ce-surface-subtle px-1.5 py-0.5 rounded border border-ce-border font-bold text-ce-text-muted">
+                        {ev.previousHash || 'GENESIS (0x0...)'}
+                      </span>
+                      <span className="text-ce-brand font-bold">→</span>
+                      <span className={`px-1.5 py-0.5 rounded font-bold border ${
+                        isCompromised ? 'bg-ce-danger/10 text-ce-danger border-ce-danger/40' : 'bg-ce-brand/10 text-ce-brand border-ce-brand/30'
+                      }`}>
+                        {truncateHash(ev.hash, 4, 4)}
+                      </span>
+                    </div>
                   </td>
                   <td className="py-3.5 px-4 text-ce-text-secondary whitespace-nowrap">
                     {ev.actor}

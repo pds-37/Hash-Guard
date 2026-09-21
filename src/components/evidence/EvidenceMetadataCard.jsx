@@ -4,6 +4,7 @@ import { Database, User, Calendar, HardDrive, FileText, Building2, Shield } from
 export const EvidenceMetadataCard = ({ evidence }) => {
   const metadataItems = [
     { label: 'Evidence ID', value: evidence.id, icon: Shield, mono: true, highlight: true },
+    { label: 'Case ID', value: evidence.caseId || 'CASE-2026-9012', icon: FileText, mono: true, highlight: true },
     { label: 'Evidence Type', value: evidence.type, icon: FileText },
     { label: 'Source Organization', value: evidence.sourceOrg, icon: Building2 },
     { label: 'Collector', value: evidence.collector, icon: User, mono: true },

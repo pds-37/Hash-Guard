@@ -22,6 +22,7 @@ export const EvidenceTable = ({ evidenceList = [] }) => {
           <thead>
             <tr className="border-b border-ce-border bg-ce-surface-subtle text-ce-text-muted text-[10px] uppercase tracking-wider font-mono">
               <th className="py-3 px-4 font-semibold">Evidence ID</th>
+              <th className="py-3 px-4 font-semibold">Case ID</th>
               <th className="py-3 px-4 font-semibold">Evidence Type</th>
               <th className="py-3 px-4 font-semibold">Source Org</th>
               <th className="py-3 px-4 font-semibold">Current Custodian</th>
@@ -50,6 +51,9 @@ export const EvidenceTable = ({ evidenceList = [] }) => {
                       </span>
                     )}
                   </Link>
+                </td>
+                <td className="py-3 px-4 font-mono text-xs text-ce-brand font-semibold whitespace-nowrap">
+                  {item.caseId || 'CASE-2026-9012'}
                 </td>
                 <td className="py-3 px-4 whitespace-nowrap">
                   <div className="text-ce-text-primary font-medium text-sm">{item.type}</div>

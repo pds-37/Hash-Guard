@@ -54,6 +54,7 @@ app.post('/api/v1/evidence', async (req, res) => {
   
   const newEvidence = {
     id: `EV-${uuidv4().substring(0,8).toUpperCase()}`,
+    caseId: payload.caseId || 'CASE-2026-9012',
     title: payload.title || 'Untitled Evidence',
     type: payload.type || 'Generic Artifact',
     sourceOrg: payload.sourceOrg || 'Organization A',

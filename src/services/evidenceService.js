@@ -73,7 +73,8 @@ export const evidenceService = {
     } catch (err) { if (!IS_MOCK_FALLBACK) throw err; }
 
     const newEvidence = {
-      id: `EV-0${evidenceState.length + 10}`,
+      id: evidencePayload.id || `EV-0${evidenceState.length + 10}`,
+      caseId: evidencePayload.caseId || 'CASE-2026-9012',
       title: evidencePayload.title || 'Untitled Digital Evidence',
       type: evidencePayload.type || 'Disk Image',
       sourceOrg: evidencePayload.sourceOrg || 'Organization A (CERT-Alpha)',

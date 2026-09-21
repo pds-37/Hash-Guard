@@ -14,21 +14,22 @@ import {
 import { getEventColor } from '../../utils/formatters';
 
 export const CustodyTimeline = ({ events = [], currentStatus = 'VERIFIED' }) => {
+  const [viewMode, setViewMode] = React.useState('full'); // 'full' | 'script'
   const isOverallCompromised = currentStatus === 'COMPROMISED';
 
-  const fullLifecycle = [
-    { type: 'COLLECT', label: 'COLLECTED', stage: 'Acquisition' },
-    { type: 'SEAL', label: 'SEALED', stage: 'Manifest HSM Seal' },
-    { type: 'TRANSFER', label: 'TRANSFERRED', stage: 'Cross-Org Dispatch' },
-    { type: 'RECEIVE', label: 'RECEIVED', stage: 'Integrity Check on Ingestion' },
-    { type: 'ANALYZE', label: 'ANALYZED', stage: 'Forensic Enclave Decompile' },
-    { type: 'DERIVE', label: 'DERIVED', stage: 'Lineage Artifact Branch' },
-    { type: 'ARCHIVE', label: 'ARCHIVED', stage: 'Long-term Ledger Retention' },
+  const scriptTimeline = [
+    { time: "09:41", event: "Evidence Collected", detail: "Initial payload seized & written to secure enclave" },
+    { time: "09:43", event: "SHA-256 Fingerprint Generated", detail: "Client-side WebCrypto digest calculated & sealed" },
+    { time: "09:47", event: "Evidence Transferred", detail: "mTLS cross-organization payload dispatch initiated" },
+    { time: "10:02", event: "Evidence Received", detail: "Ingested by Cyber Lab & verified against HSM signature" },
+    { time: "10:15", event: "Analysis Started", detail: "Ghidra decompilation & sandbox session opened" },
+    { time: "10:42", event: "IOC Set Generated", detail: "Derived YARA rules & network beacons committed to DAG" },
+    { time: "11:05", event: "Integrity Verified", detail: "Zero-trust auditor attestation verified on-chain" }
   ];
 
   return (
     <div className="rounded-lg bg-ce-surface border border-ce-border p-6 shadow-sm">
-      <div className="flex items-center justify-between pb-4 border-b border-ce-border mb-6">
+      <div className="flex flex-wrap items-center justify-between pb-4 border-b border-ce-border mb-6 gap-3">
         <div>
           <h3 className="text-sm font-mono font-bold tracking-wider uppercase text-ce-text-primary flex items-center gap-2">
             <Clock className="w-4 h-4 text-ce-brand" />
@@ -38,10 +39,52 @@ export const CustodyTimeline = ({ events = [], currentStatus = 'VERIFIED' }) => 
             Cryptographically signed ledger events validating chain of custody
           </p>
         </div>
-        <span className="text-[11px] font-mono font-bold px-2.5 py-1 rounded-md bg-ce-brand/10 text-ce-brand border border-ce-brand/30">
-          {events.length} EVENTS RECORDED
-        </span>
+
+        <div className="flex items-center gap-2">
+          <div className="bg-ce-bg border border-ce-border p-1 rounded-md flex items-center gap-1 text-[11px] font-mono">
+            <button
+              onClick={() => setViewMode('full')}
+              className={`px-2.5 py-1 rounded transition-colors ${viewMode === 'full' ? 'bg-ce-brand text-white font-bold' : 'text-ce-text-muted hover:text-ce-text-primary'}`}
+            >
+              Full Ledger View
+            </button>
+            <button
+              onClick={() => setViewMode('script')}
+              className={`px-2.5 py-1 rounded transition-colors ${viewMode === 'script' ? 'bg-ce-brand text-white font-bold' : 'text-ce-text-muted hover:text-ce-text-primary'}`}
+            >
+              Script Sequence View (09:41–11:05)
+            </button>
+          </div>
+
+          <span className="text-[11px] font-mono font-bold px-2.5 py-1.5 rounded-md bg-ce-brand/10 text-ce-brand border border-ce-brand/30">
+            {events.length} EVENTS RECORDED
+          </span>
+        </div>
       </div>
+
+      {viewMode === 'script' ? (
+        <div className="p-4 rounded-md bg-ce-surface-subtle border border-ce-border">
+          <div className="text-xs font-mono font-bold text-ce-brand uppercase tracking-wider mb-4 flex items-center gap-2">
+            <Hash className="w-4 h-4" />
+            SIH DEMO INVESTIGATION TIMELINE (SCRIPT SECTION 14)
+          </div>
+          <div className="space-y-3 font-mono text-xs">
+            {scriptTimeline.map((item, i) => (
+              <div key={i} className="flex items-start gap-4 p-3 rounded bg-ce-bg border border-ce-border hover:border-ce-brand/40 transition-colors">
+                <span className="text-ce-brand font-bold shrink-0">{item.time}</span>
+                <span className="text-ce-text-muted">—</span>
+                <div className="flex-1">
+                  <span className="text-ce-text-primary font-bold">{item.event}</span>
+                  <p className="text-[11px] text-ce-text-muted mt-0.5 font-sans">{item.detail}</p>
+                </div>
+                <span className="text-[10px] px-2 py-0.5 rounded bg-ce-success/10 text-ce-success border border-ce-success/30 font-bold shrink-0">
+                  ✓ VERIFIED
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : (
 
       <div className="relative pl-6 space-y-6 before:absolute before:left-3 before:top-3 before:bottom-3 before:w-px before:bg-ce-border">
         {events.map((ev, idx) => {
@@ -146,6 +189,7 @@ export const CustodyTimeline = ({ events = [], currentStatus = 'VERIFIED' }) => 
           );
         })}
       </div>
+      )}
     </div>
   );
 };

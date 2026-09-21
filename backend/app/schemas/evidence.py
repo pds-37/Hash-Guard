@@ -4,6 +4,7 @@ from datetime import datetime
 
 class EvidenceCreate(BaseModel):
     id: Optional[str] = None
+    caseId: Optional[str] = "CASE-2026-9012"
     title: str
     type: str
     sourceOrg: str
@@ -26,6 +27,7 @@ class SignatureSchema(BaseModel):
 
 class EvidenceResponse(BaseModel):
     id: str
+    caseId: Optional[str] = "CASE-2026-9012"
     title: str
     type: str
     sourceOrg: str

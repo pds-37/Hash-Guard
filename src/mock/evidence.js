@@ -1,6 +1,7 @@
 export const mockEvidenceList = [
   {
     id: "EV-001",
+    caseId: "CASE-2026-9012",
     title: "LockBit 3.0 Ransomware Encryptor Payload",
     type: "Malware Binary",
     sourceOrg: "Organization A (CERT-Alpha)",
@@ -35,6 +36,7 @@ export const mockEvidenceList = [
   },
   {
     id: "EV-002",
+    caseId: "CASE-2026-9012",
     title: "CobaltStrike C2 Traffic Capture (pcapng)",
     type: "Network Capture",
     sourceOrg: "Organization A (CERT-Alpha)",
@@ -69,6 +71,7 @@ export const mockEvidenceList = [
   },
   {
     id: "EV-003",
+    caseId: "CASE-2026-4410",
     title: "Domain Controller Host Memory Acquisition",
     type: "Memory Dump",
     sourceOrg: "Organization C (FinSec Ops)",
@@ -103,6 +106,7 @@ export const mockEvidenceList = [
   },
   {
     id: "EV-004",
+    caseId: "CASE-2026-9012",
     title: "Endpoint WS-104 BitLocker Encrypted Disk Image",
     type: "Disk Image",
     sourceOrg: "Organization A (CERT-Alpha)",
@@ -137,6 +141,7 @@ export const mockEvidenceList = [
   },
   {
     id: "EV-005",
+    caseId: "CASE-2026-9012",
     title: "YARA Rules & Extracted IOC Telemetry Set",
     type: "IOC Set",
     sourceOrg: "Organization B (Cyber Lab)",
@@ -171,6 +176,7 @@ export const mockEvidenceList = [
   },
   {
     id: "EV-006",
+    caseId: "CASE-2026-9012",
     title: "Reverse Engineering Technical Forensics Report",
     type: "Malware Analysis Report",
     sourceOrg: "Organization B (Cyber Lab)",
@@ -205,6 +211,7 @@ export const mockEvidenceList = [
   },
   {
     id: "EV-009",
+    caseId: "CASE-2026-4410",
     title: "Suspicious Ransomware Artifact (Tamper Test Specimen)",
     type: "Malware Binary",
     sourceOrg: "Organization C (FinSec Ops)",
@@ -239,6 +246,7 @@ export const mockEvidenceList = [
   },
   {
     id: "EV-010",
+    caseId: "CASE-2026-1102",
     title: "Firewall Syslog Stream from Core Switch 01",
     type: "Syslog Archive",
     sourceOrg: "Organization A (CERT-Alpha)",
