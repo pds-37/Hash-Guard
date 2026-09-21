@@ -77,7 +77,7 @@ export const IndependentVerificationPanel = ({ defaultId = '' }) => {
       setError(null);
     } catch (err) {
       setResult(null);
-      if (err.code === 'NOT_FOUND' || err.message?.toLowerCase().includes('not found')) {
+      if (err.code === 'NOT_FOUND' || err.response?.status === 404 || err.message?.toLowerCase().includes('not found')) {
         setNotFoundId(clean);
         setError(null);
       } else {

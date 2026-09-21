@@ -3,22 +3,32 @@ import { evidenceService } from './evidenceService';
 
 export const verificationService = {
   async verifyArtifact(identifier) {
-    try {
-      if (!IS_MOCK_FALLBACK) {
-        const response = await apiClient.post('/verification/verify', { identifier });
-        return response.data;
-      }
-    } catch (err) {
-      // Fallback
-    }
-
-    // Simulate verification processing latency
-    await new Promise((resolve) => setTimeout(resolve, 600));
-
     const cleanId = (identifier || '').trim().toUpperCase();
     if (!cleanId) {
       throw new Error("Please enter an Evidence ID to verify.");
     }
+
+    try {
+      if (!IS_MOCK_FALLBACK) {
+        const response = await apiClient.post('/verification/verify', { identifier: cleanId });
+        return response.data;
+      }
+    } catch (err) {
+      // If the backend returned 404 (not in ledger), propagate NOT_FOUND immediately
+      if (err.response?.status === 404) {
+        const notFoundErr = new Error(
+          err.response?.data?.detail || `Exhibit "${cleanId}" not found in the cryptographic audit ledger.`
+        );
+        notFoundErr.code = 'NOT_FOUND';
+        notFoundErr.identifier = cleanId;
+        notFoundErr.response = err.response;
+        throw notFoundErr;
+      }
+      console.warn('[VerificationService] API call failed, evaluating local ledger state:', err);
+    }
+
+    // Simulate verification processing latency for local audit
+    await new Promise((resolve) => setTimeout(resolve, 500));
 
     let evidence;
     try {
