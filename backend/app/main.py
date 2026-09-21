@@ -25,6 +25,12 @@ app = FastAPI(
 @app.on_event("startup")
 def startup_event():
     try:
+        from app.database.init_db import init_db
+        init_db()
+    except Exception as e:
+        print(f"Database seed initialization failed: {e}")
+
+    try:
         from app.blockchain.evm_client import evm_client
         evm_client.connect_and_deploy()
         

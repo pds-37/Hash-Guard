@@ -9,8 +9,11 @@ minio_client = Minio(
 )
 
 def ensure_bucket():
-    found = minio_client.bucket_exists(settings.MINIO_BUCKET)
-    if not found:
-        minio_client.make_bucket(settings.MINIO_BUCKET)
+    try:
+        found = minio_client.bucket_exists(settings.MINIO_BUCKET)
+        if not found:
+            minio_client.make_bucket(settings.MINIO_BUCKET)
+    except Exception as e:
+        print(f"[MinIO] Object storage connection skipped or failed: {e}")
 
 ensure_bucket()
