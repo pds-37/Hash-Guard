@@ -16,8 +16,7 @@ import {
   Menu,
   Wallet,
   LogOut,
-  Clock,
-  FileTerminal
+  Clock
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 
@@ -57,7 +56,6 @@ export const Sidebar = ({ isMobileOpen, setMobileOpen }) => {
     {
       label: 'Administration',
       items: [
-        { name: 'Audit Logs', icon: FileTerminal, path: '/audit' },
         { name: 'Retention', icon: Clock, path: '/retention' },
         { name: 'Settings', icon: Settings, path: '/settings' }
       ]
