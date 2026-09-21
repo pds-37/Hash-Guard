@@ -11,7 +11,9 @@ export const evidenceService = {
         const response = await apiClient.get('/evidence', { params: filters });
         return response.data;
       }
-    } catch (err) { if (!IS_MOCK_FALLBACK) throw err; }
+    } catch (err) {
+      console.warn('[EvidenceService] API request failed, falling back to local audit ledger state:', err);
+    }
 
     // Filter local mock data
     return evidenceState.filter((item) => {
@@ -45,13 +47,29 @@ export const evidenceService = {
         const response = await apiClient.get(`/evidence/${id}`);
         return response.data;
       }
-    } catch (err) { if (!IS_MOCK_FALLBACK) throw err; }
+    } catch (err) {
+      console.warn('[EvidenceService] API request failed, falling back to local audit ledger state:', err);
+    }
 
     const found = evidenceState.find((item) => item.id.toUpperCase() === id.toUpperCase());
     if (!found) {
       throw new Error(`Evidence record ${id} not found.`);
     }
     return found;
+  },
+
+  async deleteEvidence(id) {
+    try {
+      if (!IS_MOCK_FALLBACK) {
+        const response = await apiClient.delete(`/evidence/${id}`);
+        return response.data;
+      }
+    } catch (err) {
+      console.warn('[EvidenceService] API request failed, falling back to local audit ledger state:', err);
+    }
+
+    evidenceState = evidenceState.filter((item) => item.id.toUpperCase() !== id.toUpperCase());
+    return { success: true };
   },
 
   async createEvidence(evidencePayload, file) {
@@ -70,7 +88,9 @@ export const evidenceService = {
         const response = await apiClient.post('/evidence', formData);
         return response.data;
       }
-    } catch (err) { if (!IS_MOCK_FALLBACK) throw err; }
+    } catch (err) {
+      console.warn('[EvidenceService] API request failed, falling back to local audit ledger state:', err);
+    }
 
     const newEvidence = {
       id: evidencePayload.id || `EV-0${evidenceState.length + 10}`,

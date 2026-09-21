@@ -1,5 +1,27 @@
 {
   "evidence": [],
-  "audit_logs": [],
-  "transfers": []
+  "audit_logs": [
+    {
+      "id": "AUD-001",
+      "timestamp": "2026-09-21T16:40:00.000Z",
+      "event": "SYSTEM_INITIALIZED",
+      "actor": "admin@cyberlab.local",
+      "organization": "Organization B (Cyber Defense Lab)",
+      "evidence_id": "SYSTEM",
+      "event_id": "EVT-INIT",
+      "verification": "SUCCESS",
+      "reference": "Ledger-Consensus",
+      "details": "Evidence exchange node initialized. Ready for legitimate evidence ingestion."
+    }
+  ],
+  "transfers": [],
+  "retention_policies": [
+    {
+      "id": "POL-001",
+      "name": "Standard Evidence Retention (5 Yrs)",
+      "retention_period_days": 1825,
+      "trigger_event": "evidence_sealed",
+      "action_on_expiry": "ARCHIVE_COLD"
+    }
+  ]
 }

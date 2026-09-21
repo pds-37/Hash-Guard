@@ -2,10 +2,13 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Badge } from '../common/Badge';
 import { truncateHash, getEventColor } from '../../utils/formatters';
-import { ExternalLink, Copy, Check } from 'lucide-react';
+import { ExternalLink, Copy, Check, Trash2 } from 'lucide-react';
+import { evidenceService } from '../../services/evidenceService';
+import { useApp } from '../../context/AppContext';
 
 export const EvidenceTable = ({ evidenceList = [] }) => {
   const [copiedHash, setCopiedHash] = useState(null);
+  const { triggerRefresh } = useApp();
 
   const handleCopy = (hash, e) => {
     e.stopPropagation();
@@ -13,6 +16,19 @@ export const EvidenceTable = ({ evidenceList = [] }) => {
     navigator.clipboard.writeText(hash);
     setCopiedHash(hash);
     setTimeout(() => setCopiedHash(null), 2000);
+  };
+
+  const handleDelete = async (id, e) => {
+    e.stopPropagation();
+    e.preventDefault();
+    if (window.confirm(`Permanently remove evidence exhibit ${id}?`)) {
+      try {
+        await evidenceService.deleteEvidence(id);
+        triggerRefresh();
+      } catch (err) {
+        alert(`Failed to delete evidence: ${err.message}`);
+      }
+    }
   };
 
   return (
@@ -34,7 +50,13 @@ export const EvidenceTable = ({ evidenceList = [] }) => {
             </tr>
           </thead>
           <tbody className="divide-y divide-ce-border">
-            {evidenceList.map((item) => (
+            {evidenceList.length === 0 ? (
+              <tr>
+                <td colSpan="10" className="py-12 text-center text-ce-text-muted text-sm font-mono">
+                  No evidence exhibits found. Click "+ Collect & Seal Evidence" to register legitimate evidence.
+                </td>
+              </tr>
+            ) : evidenceList.map((item) => (
               <tr
                 key={item.id}
                 className="hover:bg-ce-surface-subtle transition-colors group"
@@ -109,13 +131,22 @@ export const EvidenceTable = ({ evidenceList = [] }) => {
                   {item.createdAt.split(' ')[0]}
                 </td>
                 <td className="py-3 px-4 text-right whitespace-nowrap">
-                  <Link
-                    to={`/evidence/${item.id}`}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-ce-bg border border-ce-border text-xs text-ce-text-secondary hover:text-ce-text-primary hover:border-ce-brand/50 transition-all"
-                  >
-                    <span>Inspect</span>
-                    <ExternalLink className="w-3.5 h-3.5" />
-                  </Link>
+                  <div className="inline-flex items-center gap-2">
+                    <Link
+                      to={`/evidence/${item.id}`}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-ce-bg border border-ce-border text-xs text-ce-text-secondary hover:text-ce-text-primary hover:border-ce-brand/50 transition-all"
+                    >
+                      <span>Inspect</span>
+                      <ExternalLink className="w-3.5 h-3.5" />
+                    </Link>
+                    <button
+                      onClick={(e) => handleDelete(item.id, e)}
+                      className="p-1.5 rounded-md bg-ce-bg border border-ce-border text-xs text-ce-text-muted hover:text-ce-danger hover:border-ce-danger/40 transition-all"
+                      title="Delete exhibit"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}

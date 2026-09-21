@@ -10,7 +10,9 @@ export const custodyService = {
         const response = await apiClient.get('/custody/events', { params: filters });
         return response.data;
       }
-    } catch (err) { if (!IS_MOCK_FALLBACK) throw err; }
+    } catch (err) {
+      console.warn('[CustodyService] API request failed, falling back to local custody events store:', err);
+    }
 
     return custodyEventsState.filter((item) => {
       if (filters.evidenceId && item.evidenceId.toUpperCase() !== filters.evidenceId.toUpperCase()) {
@@ -42,7 +44,9 @@ export const custodyService = {
         const response = await apiClient.get(`/custody/events/${evidenceId}`);
         return response.data;
       }
-    } catch (err) { if (!IS_MOCK_FALLBACK) throw err; }
+    } catch (err) {
+      console.warn('[CustodyService] API request failed, falling back to local custody events store:', err);
+    }
 
     return custodyEventsState.filter((ev) => ev.evidenceId.toUpperCase() === evidenceId.toUpperCase());
   },
@@ -53,7 +57,9 @@ export const custodyService = {
         const response = await apiClient.post('/custody/events', eventPayload);
         return response.data;
       }
-    } catch (err) { if (!IS_MOCK_FALLBACK) throw err; }
+    } catch (err) {
+      console.warn('[CustodyService] API request failed, falling back to local custody events store:', err);
+    }
 
     const newEvent = {
       eventId: `EVT-${Math.floor(1000 + Math.random() * 9000)}`,

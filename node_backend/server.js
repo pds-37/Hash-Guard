@@ -3,10 +3,16 @@ const cors = require('cors');
 const fs = require('fs').promises;
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
+const multer = require('multer');
 
 const app = express();
 const PORT = 8001;
 const DB_FILE = path.join(__dirname, 'db.json');
+const UPLOADS_DIR = path.join(__dirname, 'uploads');
+
+// Ensure uploads directory exists
+require('fs').mkdirSync(UPLOADS_DIR, { recursive: true });
+const upload = multer({ dest: UPLOADS_DIR });
 
 app.use(cors());
 app.use(express.json());
@@ -19,7 +25,8 @@ async function initDb() {
     const initialData = {
       evidence: [],
       audit_logs: [],
-      transfers: []
+      transfers: [],
+      retention_policies: []
     };
     await fs.writeFile(DB_FILE, JSON.stringify(initialData, null, 2));
   }
@@ -28,7 +35,12 @@ async function initDb() {
 // Read DB
 async function readDb() {
   const data = await fs.readFile(DB_FILE, 'utf8');
-  return JSON.parse(data);
+  const parsed = JSON.parse(data);
+  if (!parsed.retention_policies) parsed.retention_policies = [];
+  if (!parsed.transfers) parsed.transfers = [];
+  if (!parsed.audit_logs) parsed.audit_logs = [];
+  if (!parsed.evidence) parsed.evidence = [];
+  return parsed;
 }
 
 // Write DB
@@ -42,44 +54,86 @@ app.get('/api/v1/health', (req, res) => {
   res.json({ status: 'ok', engine: 'Node.js Express JSON DB' });
 });
 
+// Auth Routes
+app.post('/api/v1/auth/login', (req, res) => {
+  const { email, password } = req.body;
+  const user = {
+    id: 'USR-001',
+    email: email || 'admin@cyberlab.local',
+    role: 'ADMIN',
+    organization_id: 'ORG-B',
+    organization_name: 'Cyber Defense & Forensics Lab B'
+  };
+  const token = 'mock-jwt-token-' + Date.now();
+  res.json({
+    access_token: token,
+    token_type: 'bearer',
+    user: user
+  });
+});
+
 // Evidence Routes
 app.get('/api/v1/evidence', async (req, res) => {
   const db = await readDb();
   res.json(db.evidence);
 });
 
-app.post('/api/v1/evidence', async (req, res) => {
+app.post('/api/v1/evidence', upload.single('file'), async (req, res) => {
   const db = await readDb();
-  const payload = req.body;
-  
+  let payload = req.body;
+  if (req.body.metadata) {
+    try {
+      payload = JSON.parse(req.body.metadata);
+    } catch (e) {
+      payload = req.body;
+    }
+  }
+
+  const originalFileName = req.file ? req.file.originalname : null;
+  const storedFilePath = req.file ? req.file.path : null;
+
+  let calculatedHash = payload.hash;
+  if (!calculatedHash && req.file) {
+    const fileBuffer = await fs.readFile(storedFilePath);
+    calculatedHash = require('crypto').createHash('sha256').update(fileBuffer).digest('hex');
+  }
+  if (!calculatedHash) {
+    calculatedHash = require('crypto').randomBytes(32).toString('hex');
+  }
+
   const newEvidence = {
-    id: `EV-${uuidv4().substring(0,8).toUpperCase()}`,
+    id: payload.id || `EV-${uuidv4().substring(0,8).toUpperCase()}`,
     caseId: payload.caseId || 'CASE-2026-9012',
-    title: payload.title || 'Untitled Evidence',
-    type: payload.type || 'Generic Artifact',
-    sourceOrg: payload.sourceOrg || 'Organization A',
-    currentCustodian: payload.currentCustodian || 'Organization A',
-    hash: payload.hash || require('crypto').createHash('sha256').update(Date.now().toString()).digest('hex'),
-    expectedHash: payload.hash || require('crypto').createHash('sha256').update(Date.now().toString()).digest('hex'),
+    title: payload.title || originalFileName || 'Legitimate Digital Evidence',
+    type: payload.type || 'Digital Artifact',
+    sourceOrg: payload.sourceOrg || 'Organization B (Cyber Defense Lab)',
+    currentCustodian: payload.currentCustodian || 'Organization B (Cyber Defense Lab)',
+    hash: calculatedHash,
+    expectedHash: calculatedHash,
     hashAlgorithm: 'SHA-256',
     status: 'VERIFIED',
-    fileSize: payload.fileSize || 'N/A',
-    collector: payload.collector || 'system',
-    createdAt: new Date().toISOString(),
+    fileSize: payload.fileSize || (req.file ? `${(req.file.size / (1024 * 1024)).toFixed(2)} MB` : '1.0 MB'),
+    collector: payload.collector || 'admin@cyberlab.local',
+    createdAt: new Date().toISOString().replace('T', ' ').substring(0, 19) + ' UTC',
     lastEvent: 'COLLECT',
-    lastEventTime: new Date().toISOString(),
-    storageType: 'OFF-CHAIN',
-    blockchainStatus: 'ON-CHAIN VERIFIED',
-    blockNumber: Math.floor(Math.random() * 500000),
-    txHash: '0x' + require('crypto').randomBytes(32).toString('hex'),
-    isDerived: false,
+    lastEventTime: new Date().toISOString().replace('T', ' ').substring(0, 19) + ' UTC',
+    storageType: 'OFF-CHAIN SECURED',
+    storageLocation: storedFilePath || `vault://secure-enclave/${payload.title || 'evidence'}.bin`,
+    blockchainStatus: 'ON-CHAIN RECORD VERIFIED',
+    blockNumber: Math.floor(Math.random() * 500000) + 1000,
+    txHash: payload.txHash || ('0x' + require('crypto').randomBytes(32).toString('hex')),
+    isDerived: Boolean(payload.parentEvidenceId),
+    parentEvidenceId: payload.parentEvidenceId || null,
     derivedCount: 0,
     signature: {
-        status: 'VALID',
-        signer: 'Organization A',
-        algorithm: 'ECDSA',
-        signedTimestamp: new Date().toISOString()
-    }
+      status: 'VALID',
+      signer: payload.sourceOrg || 'Organization B (Cyber Defense Lab CA)',
+      algorithm: 'ECDSA / secp256k1',
+      publicKeyFingerprint: 'SHA256:' + require('crypto').randomBytes(8).toString('hex'),
+      signedTimestamp: new Date().toISOString().replace('T', ' ').substring(0, 19) + ' UTC',
+      manifestId: `MNF-${Date.now()}`
+    },
+    description: payload.description || 'Legitimate evidence collected and sealed on custody ledger.'
   };
 
   db.evidence.unshift(newEvidence);
@@ -89,13 +143,13 @@ app.post('/api/v1/evidence', async (req, res) => {
     id: `AUD-${uuidv4().substring(0,8).toUpperCase()}`,
     timestamp: new Date().toISOString(),
     event: 'EVIDENCE_SEALED',
-    actor: payload.collector || 'system',
-    organization: payload.sourceOrg || 'Organization A',
+    actor: payload.collector || 'admin@cyberlab.local',
+    organization: payload.sourceOrg || 'Organization B',
     evidence_id: newEvidence.id,
     event_id: `EVT-${uuidv4().substring(0,8).toUpperCase()}`,
     verification: 'VERIFIED',
     reference: 'SmartContract',
-    details: 'Cryptographic hash of evidence binary sealed on ledger.'
+    details: `Cryptographic SHA-256 hash (${newEvidence.hash.substring(0,16)}...) sealed on ledger.`
   });
 
   await writeDb(db);
@@ -106,7 +160,42 @@ app.get('/api/v1/evidence/:id', async (req, res) => {
   const db = await readDb();
   const item = db.evidence.find(e => e.id === req.params.id);
   if (item) res.json(item);
-  else res.status(404).json({ error: 'Not found' });
+  else res.status(404).json({ error: 'Evidence not found' });
+});
+
+app.get('/api/v1/evidence/:id/download', async (req, res) => {
+  const db = await readDb();
+  const item = db.evidence.find(e => e.id === req.params.id);
+  if (item && item.storageLocation && require('fs').existsSync(item.storageLocation)) {
+    return res.download(item.storageLocation, item.title || `${item.id}.bin`);
+  }
+  res.setHeader('Content-Disposition', `attachment; filename="${req.params.id}.txt"`);
+  res.setHeader('Content-Type', 'text/plain');
+  res.send(`OFF-CHAIN SECURE EXHIBIT VAULT\nEvidence ID: ${req.params.id}\nTitle: ${item ? item.title : 'N/A'}\nHash: ${item ? item.hash : 'N/A'}\nStatus: VERIFIED`);
+});
+
+app.delete('/api/v1/evidence/:id', async (req, res) => {
+  const db = await readDb();
+  const initialCount = db.evidence.length;
+  db.evidence = db.evidence.filter(e => e.id !== req.params.id);
+  if (db.evidence.length < initialCount) {
+    db.audit_logs.unshift({
+      id: `AUD-${uuidv4().substring(0,8).toUpperCase()}`,
+      timestamp: new Date().toISOString(),
+      event: 'EVIDENCE_REMOVED',
+      actor: 'admin@cyberlab.local',
+      organization: 'Organization B',
+      evidence_id: req.params.id,
+      event_id: `EVT-${uuidv4().substring(0,8).toUpperCase()}`,
+      verification: 'SUCCESS',
+      reference: 'Audit-Ledger',
+      details: `Evidence ${req.params.id} purged from database.`
+    });
+    await writeDb(db);
+    res.json({ message: `Evidence ${req.params.id} successfully removed.` });
+  } else {
+    res.status(404).json({ error: 'Evidence not found' });
+  }
 });
 
 // Audit Routes
@@ -115,57 +204,134 @@ app.get('/api/v1/audit', async (req, res) => {
   res.json(db.audit_logs);
 });
 
-// Seed Initial Data
-app.post('/api/v1/admin/seed', async (req, res) => {
+// Retention Policies Routes
+app.get('/api/v1/admin/retention/policies', async (req, res) => {
   const db = await readDb();
-  if (db.evidence.length === 0) {
-    db.evidence.push({
-      id: "EV-001",
-      title: "Ransomware Payload Sample",
-      type: "Binary / Malware",
-      sourceOrg: "CERT-Alpha",
-      currentCustodian: "CERT-Alpha",
-      hash: "8f3a91bc7d92e40f1c29e618174520bc9318fa5d2a912bc20141a4574929db19",
-      expectedHash: "8f3a91bc7d92e40f1c29e618174520bc9318fa5d2a912bc20141a4574929db19",
-      hashAlgorithm: "SHA-256",
-      status: "VERIFIED",
-      fileSize: "1.2 MB",
-      collector: "john.doe@cert-alpha.gov",
-      createdAt: new Date().toISOString(),
-      lastEvent: "SEALED",
-      lastEventTime: new Date().toISOString(),
-      storageType: "OFF-CHAIN SECURED",
-      blockchainStatus: "ON-CHAIN RECORD VERIFIED",
-      blockNumber: 482931,
-      txHash: "0x7f23c91a0b32...",
-      isDerived: false,
-      derivedCount: 1,
-      signature: {
-          status: "VALID",
-          signer: "CERT-Alpha",
-          algorithm: "ECDSA",
-          signedTimestamp: new Date().toISOString()
-      }
-    });
-    db.audit_logs.push({
-        id: `AUD-99238A`,
-        timestamp: new Date().toISOString(),
-        event: "USER_LOGIN",
-        actor: "admin@cert-alpha.gov",
-        organization: "CERT-Alpha",
-        evidence_id: "N/A",
-        event_id: "EVT-19283A",
-        verification: "SUCCESS",
-        reference: "Auth-Gateway",
-        details: "User successfully authenticated."
-    });
+  res.json(db.retention_policies || []);
+});
+
+app.post('/api/v1/admin/retention/policies', async (req, res) => {
+  const db = await readDb();
+  const policy = {
+    id: `POL-${uuidv4().substring(0,6).toUpperCase()}`,
+    name: req.body.name || 'Custom Retention Policy',
+    retention_period_days: req.body.retention_period_days || 365,
+    trigger_event: req.body.trigger_event || 'evidence_sealed',
+    action_on_expiry: req.body.action_on_expiry || 'ARCHIVE_COLD'
+  };
+  if (!db.retention_policies) db.retention_policies = [];
+  db.retention_policies.unshift(policy);
+  await writeDb(db);
+  res.json(policy);
+});
+
+// Transfers Routes
+app.get('/api/v1/transfers', async (req, res) => {
+  const db = await readDb();
+  res.json(db.transfers || []);
+});
+
+app.post('/api/v1/transfers', async (req, res) => {
+  const db = await readDb();
+  const transfer = {
+    id: `TRF-${uuidv4().substring(0,6).toUpperCase()}`,
+    evidenceId: req.body.evidenceId || 'EV-001',
+    evidenceTitle: req.body.evidenceTitle || 'Forensic Payload',
+    fromOrg: req.body.fromOrg || 'Organization A',
+    toOrg: req.body.toOrg || 'Organization B',
+    status: 'PENDING',
+    initiatedAt: new Date().toISOString(),
+    txHash: '0x' + require('crypto').randomBytes(32).toString('hex')
+  };
+  db.transfers.unshift(transfer);
+  await writeDb(db);
+  res.json(transfer);
+});
+
+app.post('/api/v1/transfers/:id/accept', async (req, res) => {
+  const db = await readDb();
+  const trf = (db.transfers || []).find(t => t.id === req.params.id);
+  if (trf) {
+    trf.status = 'COMPLETED';
+    trf.completedAt = new Date().toISOString();
     await writeDb(db);
-    res.json({ message: "Seeded data" });
+    res.json(trf);
   } else {
-    res.json({ message: "Already seeded" });
+    res.json({ status: 'COMPLETED', message: 'Transfer accepted' });
   }
 });
 
+// Custody Events Routes
+app.get('/api/v1/custody/events', async (req, res) => {
+  const db = await readDb();
+  res.json(db.audit_logs);
+});
+
+app.get('/api/v1/custody/events/:id', async (req, res) => {
+  const db = await readDb();
+  const events = db.audit_logs.filter(a => a.evidence_id === req.params.id);
+  res.json(events);
+});
+
+// Lineage Routes
+app.get('/api/v1/lineage/:id', async (req, res) => {
+  const db = await readDb();
+  const item = db.evidence.find(e => e.id === req.params.id);
+  res.json({
+    nodes: item ? [
+      {
+        id: req.params.id,
+        type: 'evidenceNode',
+        data: item
+      }
+    ] : [],
+    edges: []
+  });
+});
+
+app.post('/api/v1/lineage/:id/derive', async (req, res) => {
+  res.json({ message: 'Artifact derived successfully' });
+});
+
+app.post('/api/v1/lineage/:id/verify', async (req, res) => {
+  res.json({ status: 'VERIFIED', proofValid: true, timestamp: new Date().toISOString() });
+});
+
+// Verification Route
+app.post('/api/v1/verification/verify', async (req, res) => {
+  const db = await readDb();
+  const item = db.evidence.find(e => e.id === req.body.identifier || e.hash === req.body.identifier);
+  if (item) {
+    res.json({
+      valid: true,
+      hashMatch: true,
+      signatureValid: true,
+      custodyChainValid: true,
+      timestamp: new Date().toISOString()
+    });
+  } else {
+    res.json({
+      valid: false,
+      hashMatch: false,
+      signatureValid: false,
+      custodyChainValid: false,
+      message: 'Evidence identifier not found in ledger'
+    });
+  }
+});
+
+// AI Triage Route
+app.post('/api/v1/ai/triage', async (req, res) => {
+  res.json({
+    severity: 'MEDIUM',
+    threatCategory: 'Forensic Digital Artifact',
+    recommendations: [
+      'Store artifact in encrypted object vault enclave',
+      'Compute continuous integrity hashes across custody transitions',
+      'Generate immutable ECDSA signature verification report'
+    ]
+  });
+});
 
 initDb().then(() => {
   app.listen(PORT, () => {

@@ -18,6 +18,7 @@ import {
   GitFork,
   ShieldCheck,
   Zap,
+  Trash2,
 } from 'lucide-react';
 
 export const EvidenceDetailsPage = () => {
@@ -67,6 +68,17 @@ export const EvidenceDetailsPage = () => {
     );
   }
 
+  const handleDelete = async () => {
+    if (window.confirm(`Are you sure you want to permanently delete Evidence ${id}?`)) {
+      try {
+        await evidenceService.deleteEvidence(id);
+        navigate('/evidence');
+      } catch (err) {
+        alert(`Failed to delete evidence: ${err.message}`);
+      }
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Navigation Breadcrumbs & Top Actions */}
@@ -108,6 +120,16 @@ export const EvidenceDetailsPage = () => {
             <ShieldCheck className="w-3.5 h-3.5 text-ce-brand" />
             <span>Independent Verification</span>
           </Link>
+
+          {/* Delete Exhibit Button */}
+          <button
+            onClick={handleDelete}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-ce-danger/10 hover:bg-ce-danger/20 text-ce-danger border border-ce-danger/30 text-xs font-mono font-bold transition-colors shadow-sm"
+            title="Permanently remove evidence"
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+            <span>Delete Exhibit</span>
+          </button>
         </div>
       </div>
 

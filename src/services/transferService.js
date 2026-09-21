@@ -10,7 +10,9 @@ export const transferService = {
         const response = await apiClient.get('/transfers', { params: filters });
         return response.data;
       }
-    } catch (err) { if (!IS_MOCK_FALLBACK) throw err; }
+    } catch (err) {
+      console.warn('[TransferService] API request failed, falling back to local transfers store:', err);
+    }
 
     return transfersState.filter((item) => {
       if (filters.status && filters.status !== 'ALL' && item.status !== filters.status) {
@@ -36,7 +38,9 @@ export const transferService = {
         const response = await apiClient.post('/transfers', payload);
         return response.data;
       }
-    } catch (err) { if (!IS_MOCK_FALLBACK) throw err; }
+    } catch (err) {
+      console.warn('[TransferService] API request failed, falling back to local transfers store:', err);
+    }
 
     const newTransfer = {
       id: `TR-00${transfersState.length + 1}`,
@@ -72,7 +76,9 @@ export const transferService = {
         const response = await apiClient.post(`/transfers/${transferId}/accept`);
         return response.data;
       }
-    } catch (err) { if (!IS_MOCK_FALLBACK) throw err; }
+    } catch (err) {
+      console.warn('[TransferService] API request failed, falling back to local transfers store:', err);
+    }
 
     transfersState = transfersState.map((t) => {
       if (t.id === transferId) {

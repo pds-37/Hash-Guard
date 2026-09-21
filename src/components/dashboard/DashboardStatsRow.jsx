@@ -3,12 +3,27 @@ import { ShieldCheck, ArrowRightLeft, FileWarning, ArrowRight, Activity } from '
 import { Link } from 'react-router-dom';
 import { useApp } from '../../context/AppContext';
 
-export const DashboardStatsRow = ({ evidenceList, transfers }) => {
+export const DashboardStatsRow = ({ evidenceList = [], transfers = [] }) => {
   const { isTamperSimulated } = useApp();
 
   const verifiedCount = evidenceList.filter((e) => e.status === 'VERIFIED').length - (isTamperSimulated ? 1 : 0);
   const compromisedCount = evidenceList.filter((e) => e.status === 'COMPROMISED').length + (isTamperSimulated ? 1 : 0);
   const pendingTransfers = transfers.filter((t) => t.status === 'PENDING').length;
+
+  const activeNodesCount = React.useMemo(() => {
+    const orgs = new Set();
+    (evidenceList || []).forEach((e) => {
+      if (e.sourceOrg) orgs.add(e.sourceOrg);
+      if (e.currentCustodian) orgs.add(e.currentCustodian);
+    });
+    (transfers || []).forEach((t) => {
+      if (t.sourceOrg) orgs.add(t.sourceOrg);
+      if (t.destOrg) orgs.add(t.destOrg);
+      if (t.fromOrg) orgs.add(t.fromOrg);
+      if (t.toOrg) orgs.add(t.toOrg);
+    });
+    return Math.max(orgs.size, 3);
+  }, [evidenceList, transfers]);
 
   const stats = [
     {
@@ -37,7 +52,7 @@ export const DashboardStatsRow = ({ evidenceList, transfers }) => {
     },
     {
       title: 'Active Nodes',
-      value: 12,
+      value: activeNodesCount,
       icon: Activity,
       iconColor: 'text-ce-info',
       iconBg: 'bg-ce-info/10 border-ce-info/20',
