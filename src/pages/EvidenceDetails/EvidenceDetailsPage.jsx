@@ -161,7 +161,7 @@ export const EvidenceDetailsPage = () => {
               <Badge status={evidence.status} className="text-sm px-3.5 py-1 mt-1" />
             </div>
 
-            {/* SIH Quick Tamper Toggle for any evidence */}
+            {/* Adversary Red-Team Tamper Drill Toggle */}
             <button
               onClick={() => toggleTamperSimulation(!isTamperSimulated, evidence.id)}
               className={`px-3 py-1.5 mt-1 sm:mt-0 rounded-md border text-xs font-mono font-bold flex items-center gap-1.5 transition-all ${
@@ -169,10 +169,10 @@ export const EvidenceDetailsPage = () => {
                   ? 'bg-ce-danger/10 text-ce-danger border-ce-danger/30 hover:bg-ce-danger/20'
                   : 'bg-ce-warning/5 text-ce-warning border-ce-warning/20 hover:bg-ce-warning/10'
               }`}
-              title="Simulate tamper for SIH presentation"
+              title="Red-team adversary bit tamper injection drill"
             >
               <Zap className="w-3.5 h-3.5" />
-              <span>{isTamperSimulated ? 'Reset Clean State' : 'Simulate Tampering'}</span>
+              <span>{isTamperSimulated ? 'Restore Clean Hash Root' : 'Inject Bit-Tamper Drill'}</span>
             </button>
           </div>
         </div>

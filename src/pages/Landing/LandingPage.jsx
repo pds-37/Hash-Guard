@@ -101,7 +101,7 @@ export const LandingPage = () => {
             <a href="#roles" className="hover:text-cyan-400 transition-colors">Agency Roles</a>
             <a href="#judges-tour" className="hover:text-cyan-400 transition-colors text-cyan-400/90 font-semibold flex items-center gap-1">
               <Zap className="w-3.5 h-3.5 text-cyan-400" />
-              Judges Tour
+              Evaluator SOP
             </a>
           </nav>
 
@@ -112,13 +112,13 @@ export const LandingPage = () => {
               className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg border border-cyan-500/30 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 text-xs font-mono transition-all cursor-pointer"
             >
               <Zap className="w-3.5 h-3.5 text-cyan-400" />
-              <span>1-Click Demo</span>
+              <span>Sandbox Access</span>
             </button>
             <button
               onClick={() => launchConsole('ORG_B', '/dashboard')}
               className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-mono font-bold text-xs shadow-[0_0_20px_rgba(6,182,212,0.4)] transition-all cursor-pointer"
             >
-              <span>LAUNCH CONSOLE</span>
+              <span>EXPLORE LIVE PROTOTYPE</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </div>
@@ -155,7 +155,7 @@ export const LandingPage = () => {
             className="w-full sm:w-auto px-7 py-3.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-mono font-bold text-sm shadow-[0_0_25px_rgba(6,182,212,0.35)] transition-all flex items-center justify-center gap-2.5 cursor-pointer"
           >
             <Activity className="w-4 h-4 text-slate-950" />
-            <span>ENTER FORENSIC SOC CONSOLE</span>
+            <span>EXPLORE LIVE PROTOTYPE (SANDBOX)</span>
             <ArrowRight className="w-4 h-4" />
           </button>
 
@@ -651,22 +651,22 @@ export const LandingPage = () => {
         </div>
       </section>
 
-      {/* SIH JUDGES' GUIDED TOUR (HIGH PRIORITY) */}
+      {/* EVALUATOR RUNBOOK */}
       <section id="judges-tour" className="relative z-10 py-16 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="p-8 rounded-2xl bg-gradient-to-br from-slate-900 via-slate-900/90 to-[#0c1324] border border-cyan-500/40 shadow-2xl space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-800">
             <div>
               <div className="flex items-center gap-2 text-cyan-400 font-mono text-xs uppercase font-bold">
                 <Sparkles className="w-4 h-4 text-cyan-400" />
-                <span>SIH 2026 Evaluation Protocol</span>
+                <span>Forensic Architecture SOP</span>
               </div>
-              <h3 className="text-xl sm:text-2xl font-bold text-white mt-1">Judges' Quick Evaluation Guide</h3>
+              <h3 className="text-xl sm:text-2xl font-bold text-white mt-1">Evaluator Runbook: Architecture Verification Protocol</h3>
             </div>
             <button
               onClick={() => launchConsole('ORG_B', '/dashboard')}
               className="px-5 py-2.5 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-mono font-bold text-xs transition-all shadow-[0_0_15px_rgba(6,182,212,0.3)] cursor-pointer self-start sm:self-auto"
             >
-              START GUIDED TOUR
+              START EVALUATION RUNBOOK
             </button>
           </div>
 
@@ -681,9 +681,9 @@ export const LandingPage = () => {
 
             <div className="p-4 rounded-xl bg-slate-950/70 border border-slate-800 space-y-2">
               <span className="text-amber-400 font-bold">STEP 2</span>
-              <h5 className="font-bold text-white text-sm">Tamper Detection</h5>
+              <h5 className="font-bold text-white text-sm">Adversary Tamper Drill</h5>
               <p className="text-slate-400 text-[11px] leading-relaxed">
-                Click the <span className="text-amber-300 font-bold">"SIH DEMO SIMULATION"</span> toggle in the top header to watch the entire UI immediately report a cryptographic compromise.
+                Trigger the <span className="text-amber-300 font-bold">"Inject Bit-Tamper Drill"</span> to witness instant zero-trust cryptographic breach containment across all nodes.
               </p>
             </div>
 
@@ -704,7 +704,7 @@ export const LandingPage = () => {
           Ready to Inspect the Evidence Ledger?
         </h3>
         <p className="mt-4 text-sm text-slate-400 font-mono">
-          Zero installation required. Instant evaluator access configured.
+          Interactive evaluator sandbox configured. Zero installation required.
         </p>
         <div className="mt-8 flex justify-center">
           <button
@@ -712,7 +712,7 @@ export const LandingPage = () => {
             className="px-8 py-4 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-mono font-bold text-sm shadow-[0_0_30px_rgba(6,182,212,0.4)] transition-all flex items-center gap-2 cursor-pointer"
           >
             <ShieldCheck className="w-5 h-5" />
-            <span>LAUNCH FORENSIC SOC CONSOLE</span>
+            <span>EXPLORE LIVE PROTOTYPE (INSTANT SANDBOX)</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         </div>

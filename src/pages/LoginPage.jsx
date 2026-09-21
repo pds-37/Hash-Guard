@@ -123,7 +123,7 @@ export const LoginPage = () => {
             onClick={() => handleLogin(null, true)}
             className="w-full mt-2 bg-ce-surface-subtle hover:bg-ce-surface border border-ce-brand/40 text-ce-brand font-mono font-semibold text-xs py-2 rounded flex items-center justify-center gap-2 transition-colors cursor-pointer"
           >
-            <span>⚡ ONE-CLICK EVALUATOR / JUDGE DEMO ACCESS</span>
+            <span>⚡ INSTANT EVALUATOR SANDBOX ACCESS</span>
           </button>
         </form>
         
