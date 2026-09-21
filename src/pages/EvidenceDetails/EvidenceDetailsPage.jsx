@@ -24,7 +24,7 @@ import {
 export const EvidenceDetailsPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { isTamperSimulated, toggleTamperSimulation, refreshTrigger } = useApp();
+  const { isTamperSimulated, toggleTamperSimulation, refreshTrigger, isSandboxMode } = useApp();
 
   const [evidence, setEvidence] = useState(null);
   const [custodyEvents, setCustodyEvents] = useState([]);
@@ -161,19 +161,21 @@ export const EvidenceDetailsPage = () => {
               <Badge status={evidence.status} className="text-sm px-3.5 py-1 mt-1" />
             </div>
 
-            {/* Adversary Red-Team Tamper Drill Toggle */}
-            <button
-              onClick={() => toggleTamperSimulation(!isTamperSimulated, evidence.id)}
-              className={`px-3 py-1.5 mt-1 sm:mt-0 rounded-md border text-xs font-mono font-bold flex items-center gap-1.5 transition-all ${
-                isTamperSimulated
-                  ? 'bg-ce-danger/10 text-ce-danger border-ce-danger/30 hover:bg-ce-danger/20'
-                  : 'bg-ce-warning/5 text-ce-warning border-ce-warning/20 hover:bg-ce-warning/10'
-              }`}
-              title="Red-team adversary bit tamper injection drill"
-            >
-              <Zap className="w-3.5 h-3.5" />
-              <span>{isTamperSimulated ? 'Restore Clean Hash Root' : 'Inject Bit-Tamper Drill'}</span>
-            </button>
+            {/* Adversary Red-Team Tamper Drill Toggle (Sandbox Evaluation Mode Only) */}
+            {isSandboxMode && (
+              <button
+                onClick={() => toggleTamperSimulation(!isTamperSimulated, evidence.id)}
+                className={`px-3 py-1.5 mt-1 sm:mt-0 rounded-md border text-xs font-mono font-bold flex items-center gap-1.5 transition-all ${
+                  isTamperSimulated
+                    ? 'bg-ce-danger/10 text-ce-danger border-ce-danger/30 hover:bg-ce-danger/20'
+                    : 'bg-ce-warning/5 text-ce-warning border-ce-warning/20 hover:bg-ce-warning/10'
+                }`}
+                title="Red-team adversary bit tamper injection drill"
+              >
+                <Zap className="w-3.5 h-3.5" />
+                <span>{isTamperSimulated ? 'Restore Clean Hash Root' : 'Inject Bit-Tamper Drill'}</span>
+              </button>
+            )}
           </div>
         </div>
       </div>

@@ -13,7 +13,8 @@ export const Topbar = ({ setMobileOpen }) => {
     currentRole,
     searchQuery,
     setSearchQuery,
-    notifications
+    notifications,
+    isSandboxMode
   } = useApp();
 
   const [showNotifications, setShowNotifications] = useState(false);
@@ -53,6 +54,13 @@ export const Topbar = ({ setMobileOpen }) => {
       </div>
 
       <div className="flex items-center gap-2 sm:gap-3">
+        {isSandboxMode && (
+          <div className="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded bg-amber-500/10 border border-amber-500/30 text-amber-300 font-mono text-[11px] font-semibold">
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+            <span>SANDBOX EVALUATION ENCLAVE</span>
+          </div>
+        )}
+
         <button
           onClick={toggleTheme}
           className="p-2 rounded-md hover:bg-ce-surface-subtle text-ce-text-secondary hover:text-ce-text-primary transition-colors"

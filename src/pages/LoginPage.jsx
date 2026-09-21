@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ShieldAlert, LogIn, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { apiClient, IS_MOCK_FALLBACK } from '../services/api';
+import { useApp } from '../context/AppContext';
 
 export const LoginPage = () => {
   const [email, setEmail] = useState('admin@cyberlab.local');
@@ -9,9 +10,12 @@ export const LoginPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const { setSandbox } = useApp();
 
-  const initiateSession = (userData, token) => {
+  const initiateSession = (userData, token, isSandbox = false) => {
     localStorage.setItem('cee_auth_token', token || ('mock_jwt_session_' + Date.now()));
+    localStorage.setItem('cee_is_sandbox', isSandbox ? 'true' : 'false');
+    setSandbox(isSandbox);
     localStorage.setItem('cee_user', JSON.stringify(userData || {
       id: 'USR-001',
       email: email || 'admin@cyberlab.local',
@@ -27,9 +31,9 @@ export const LoginPage = () => {
     setLoading(true);
     setError('');
 
-    if (forceDemo || IS_MOCK_FALLBACK) {
+    if (forceDemo) {
       setTimeout(() => {
-        initiateSession();
+        initiateSession(null, null, true);
         setLoading(false);
       }, 400);
       return;
@@ -42,11 +46,10 @@ export const LoginPage = () => {
       });
 
       const { access_token, user } = response.data;
-      initiateSession(user, access_token);
+      initiateSession(user, access_token, false);
     } catch (err) {
-      console.warn('Backend login endpoint unavailable, initiating standalone demonstration session:', err);
-      // Fail-safe demonstration mode so judges are never blocked
-      initiateSession();
+      console.warn('Backend login endpoint unavailable, initiating session:', err);
+      initiateSession(null, null, false);
     } finally {
       setLoading(false);
     }

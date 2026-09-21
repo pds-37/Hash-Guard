@@ -35,6 +35,7 @@ export const AppProvider = ({ children }) => {
   const [walletAddress, setWalletAddress] = useState(null);
   const [did, setDid] = useState(null);
   const [isTamperSimulated, setIsTamperSimulated] = useState(false);
+  const [isSandboxMode, setIsSandboxMode] = useState(() => localStorage.getItem('cee_is_sandbox') === 'true');
   const [searchQuery, setSearchQuery] = useState('');
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [notifications, setNotifications] = useState([
@@ -120,6 +121,11 @@ export const AppProvider = ({ children }) => {
     }
   };
 
+  const setSandbox = (enabled) => {
+    setIsSandboxMode(enabled);
+    localStorage.setItem('cee_is_sandbox', enabled ? 'true' : 'false');
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -131,6 +137,8 @@ export const AppProvider = ({ children }) => {
         connectWallet,
         isTamperSimulated,
         toggleTamperSimulation,
+        isSandboxMode,
+        setSandbox,
         searchQuery,
         setSearchQuery,
         notifications,

@@ -31,15 +31,17 @@ import { useApp, ROLES } from '../../context/AppContext';
 
 export const LandingPage = () => {
   const navigate = useNavigate();
-  const { switchRole } = useApp();
+  const { switchRole, setSandbox } = useApp();
   const [activeTab, setActiveTab] = useState('segregation');
   const [interactiveTampered, setInteractiveTampered] = useState(false);
   const [copiedHash, setCopiedHash] = useState(false);
 
-  // Instant login helper for judges and evaluators
-  const launchConsole = (targetRole = 'ORG_B', targetPath = '/dashboard') => {
+  // Instant login helper for evaluators
+  const launchConsole = (targetRole = 'ORG_B', targetPath = '/dashboard', isSandbox = true) => {
     const roleConfig = ROLES[targetRole] || ROLES.ORG_B;
     switchRole(targetRole);
+    setSandbox(isSandbox);
+    localStorage.setItem('cee_is_sandbox', isSandbox ? 'true' : 'false');
 
     const mockUser = {
       id: 'USR-001',
@@ -49,7 +51,7 @@ export const LandingPage = () => {
       role: targetRole === 'AUDITOR' ? 'AUDITOR' : 'ADMIN'
     };
 
-    localStorage.setItem('cee_auth_token', 'mock_jwt_judge_session_' + Date.now());
+    localStorage.setItem('cee_auth_token', 'mock_jwt_session_' + Date.now());
     localStorage.setItem('cee_user', JSON.stringify(mockUser));
     navigate(targetPath);
   };

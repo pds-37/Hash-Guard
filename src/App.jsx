@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { AppShell } from './components/layout/AppShell';
 import { DashboardPage } from './pages/Dashboard/DashboardPage';
 import { EvidencePage } from './pages/Evidence/EvidencePage';
@@ -31,12 +31,36 @@ const ProtectedRoute = ({ element, pathId }) => {
   return element;
 };
 
+// Automatic sandbox activation route for PPT reviewers
+const SandboxRoute = () => {
+  const { switchRole, setSandbox } = useApp();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    switchRole('ORG_B');
+    setSandbox(true);
+    const mockUser = {
+      id: 'USR-001',
+      email: 'analyst-lead@cyberlab.local',
+      name: 'Lead Forensics Investigator',
+      organization_id: 'ORG_B',
+      role: 'ADMIN'
+    };
+    localStorage.setItem('cee_auth_token', 'mock_jwt_session_' + Date.now());
+    localStorage.setItem('cee_is_sandbox', 'true');
+    localStorage.setItem('cee_user', JSON.stringify(mockUser));
+    navigate('/dashboard', { replace: true });
+  }, []);
+
+  return null;
+};
+
 export function App() {
   const [hasBooted, setHasBooted] = useState(false);
   const { currentRole } = useApp();
   const location = useLocation();
 
-  const isLandingPage = location.pathname === '/' || location.pathname === '/landing';
+  const isLandingPage = location.pathname === '/' || location.pathname === '/landing' || location.pathname === '/sandbox';
 
   return (
     <>
@@ -45,6 +69,7 @@ export function App() {
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/landing" element={<LandingPage />} />
+          <Route path="/sandbox" element={<SandboxRoute />} />
           <Route path="/login" element={<LoginPage />} />
           <Route element={<AppShell />}>
             <Route path="/dashboard" element={<ProtectedRoute element={<DashboardPage />} pathId="dashboard" />} />
