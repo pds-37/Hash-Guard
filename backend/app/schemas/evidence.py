@@ -6,14 +6,14 @@ class EvidenceCreate(BaseModel):
     id: Optional[str] = None
     caseId: Optional[str] = "CASE-2026-9012"
     title: str
-    type: str
-    sourceOrg: str
-    currentCustodian: str
+    type: Optional[str] = "Malware Binary"
+    sourceOrg: Optional[str] = "Organization A (CERT-Alpha)"
+    currentCustodian: Optional[str] = "Organization A (CERT-Alpha)"
     hash: str
-    fileSize: str
-    collector: str
+    fileSize: Optional[str] = "1.0 MB"
+    collector: Optional[str] = "analyst-lead@org-a.gov"
     parentEvidenceId: Optional[str] = None
-    description: str
+    description: Optional[str] = "Newly collected forensic artifact registered to custody ledger."
     forensicNotes: Optional[str] = None
     txHash: Optional[str] = None
 

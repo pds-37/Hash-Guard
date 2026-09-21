@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Query, UploadFile, File, Form
+from fastapi import APIRouter, Depends, HTTPException, Query, UploadFile, File, Form, Request
 from sqlalchemy.orm import Session
 from typing import List, Optional
 import json
@@ -48,14 +48,35 @@ def download_evidence(evidence_id: str, db: Session = Depends(get_db)):
 
 @router.post("", response_model=EvidenceResponse)
 async def create_evidence(
-    metadata: str = Form(...),
-    file: UploadFile = File(...),
+    request: Request,
     db: Session = Depends(get_db)
 ):
-    try:
-        ev_data = EvidenceCreate.model_validate_json(metadata)
-    except Exception as e:
-        raise HTTPException(status_code=422, detail=f"Invalid metadata JSON: {e}")
+    content_type = request.headers.get("content-type", "")
+    
+    if "multipart/form-data" in content_type:
+        form = await request.form()
+        metadata_val = form.get("metadata")
+        file_val = form.get("file")
         
-    file_bytes = await file.read()
+        if not metadata_val:
+            raise HTTPException(status_code=422, detail="Missing 'metadata' form field")
+            
+        try:
+            ev_data = EvidenceCreate.model_validate_json(metadata_val)
+        except Exception as e:
+            raise HTTPException(status_code=422, detail=f"Invalid metadata JSON: {e}")
+            
+        if file_val and hasattr(file_val, "read"):
+            file_bytes = await file_val.read()
+        else:
+            file_bytes = b"EMPTY_EVIDENCE_SAMPLE"
+    else:
+        # Direct JSON payload
+        try:
+            body_json = await request.json()
+            ev_data = EvidenceCreate.model_validate(body_json)
+            file_bytes = b"EMPTY_EVIDENCE_SAMPLE"
+        except Exception as e:
+            raise HTTPException(status_code=422, detail=f"Invalid evidence JSON: {e}")
+            
     return EvidenceService.create(db, ev_data, file_bytes)
