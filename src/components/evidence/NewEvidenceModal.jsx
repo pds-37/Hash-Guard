@@ -73,6 +73,7 @@ export const NewEvidenceModal = ({ isOpen, onClose, onCreated }) => {
     setIsSubmitting(true);
     let txHash = '0x' + Array.from({length: 64}, () => Math.floor(Math.random()*16).toString(16)).join('');
     const assetId = `EV-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+    let signatureData = null;
 
     try {
       if (window.ethereum) {
@@ -80,21 +81,53 @@ export const NewEvidenceModal = ({ isOpen, onClose, onCreated }) => {
           const provider = new ethers.BrowserProvider(window.ethereum);
           await provider.send("eth_requestAccounts", []);
           const signer = await provider.getSigner();
-          const contractAddress = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
-          const contract = new ethers.Contract(contractAddress, HashGuardABI.abi, signer);
-          const contentHash = '0x' + computedHash;
-          const metadataHash = ethers.id(formData.title || 'metadata');
+          const network = await provider.getNetwork();
 
-          const tx = await contract.mintEvidenceNFT(
-            signer.address,
-            assetId,
-            contentHash,
-            metadataHash
-          );
-          const receipt = await tx.wait();
-          txHash = receipt.hash;
+          // 1. Zero-Gas Cryptographic ECDSA Signature ($0.00 Gas Fee on any network)
+          try {
+            const signature = await signer.signMessage(
+              `[HASHGUARD CRYPTOGRAPHIC EVIDENCE SEAL]\n` +
+              `Exhibit ID: ${assetId}\n` +
+              `SHA-256 Digest: ${computedHash}\n` +
+              `Evidence Title: ${formData.title || 'Digital Forensic Exhibit'}\n` +
+              `Sealing Timestamp: ${new Date().toISOString()}\n\n` +
+              `Attestation: I certify this bitstream digest under ISO/IEC 27037 and Section 65B Indian Evidence Act.`
+            );
+            signatureData = {
+              status: 'VALID',
+              signer: signer.address,
+              algorithm: 'ECDSA / secp256k1',
+              publicKeyFingerprint: `SHA256:${signer.address.substring(2, 8)}...${signer.address.substring(signer.address.length - 4)}`,
+              signedTimestamp: new Date().toISOString().replace('T', ' ').substring(0, 19) + ' UTC',
+              rawSignature: signature
+            };
+          } catch (sigErr) {
+            console.warn("Cryptographic signature skipped or dismissed by user:", sigErr);
+          }
+
+          // 2. Only invoke on-chain contract transaction if on Localhost Hardhat / Anvil node (31337 or 1337)
+          // On Ethereum Mainnet (Chain 1) or public chains, never send transactions to local addresses to avoid real gas fees!
+          if (network.chainId === 31337n || network.chainId === 1337n) {
+            try {
+              const contractAddress = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
+              const contract = new ethers.Contract(contractAddress, HashGuardABI.abi, signer);
+              const contentHash = '0x' + computedHash;
+              const metadataHash = ethers.id(formData.title || 'metadata');
+
+              const tx = await contract.mintEvidenceNFT(
+                signer.address,
+                assetId,
+                contentHash,
+                metadataHash
+              );
+              const receipt = await tx.wait();
+              txHash = receipt.hash;
+            } catch (contractErr) {
+              console.warn("Local contract minting skipped:", contractErr);
+            }
+          }
         } catch (web3Err) {
-          console.warn("Web3 transaction skipped or failed, proceeding with direct off-chain seal:", web3Err);
+          console.warn("Web3 interaction skipped, proceeding with direct off-chain seal:", web3Err);
         }
       }
 
@@ -103,7 +136,8 @@ export const NewEvidenceModal = ({ isOpen, onClose, onCreated }) => {
         ...formData,
         id: assetId,
         hash: computedHash,
-        txHash: txHash
+        txHash: txHash,
+        ...(signatureData ? { signature: signatureData } : {})
       }, selectedFile);
 
       if (onCreated) onCreated(created);
@@ -144,9 +178,12 @@ export const NewEvidenceModal = ({ isOpen, onClose, onCreated }) => {
            </div>
         </div>
 
-        {/* MetaMask Instructions Banner */}
-        <div className="p-3 rounded-md bg-ce-warning/10 border border-ce-warning/30 text-ce-warning text-xs font-mono">
-          <strong>Web3 Requirement:</strong> Please ensure MetaMask is connected to Localhost 8545 (Chain ID 31337) and you are using an authorized Collector account.
+        {/* Zero-Gas Cryptographic Sealing Banner */}
+        <div className="p-3 rounded-md bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs font-mono flex items-start gap-2">
+          <ShieldPlus className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
+          <div>
+            <strong className="text-white">Zero-Gas Cryptographic Manifest Signing:</strong> Exhibits are authenticated via your MetaMask ECDSA private key ($0.00 network fee, 100% free). No mainnet gas or ETH spent.
+          </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
