@@ -4,6 +4,16 @@ import { useApp } from '../../context/AppContext';
 
 export const HeroSection = ({ criticalAlertsCount = 0 }) => {
   const { currentRole, isTamperSimulated } = useApp();
+  const user = React.useMemo(() => {
+    try {
+      return JSON.parse(localStorage.getItem('cee_user') || '{}');
+    } catch {
+      return {};
+    }
+  }, []);
+
+  const displayOrgName = user.orgName || currentRole.orgName;
+  const displayName = user.name ? `${user.name} • ${currentRole.roleName.split('/')[0]}` : currentRole.roleName.split('/')[0];
 
   return (
     <div className="bg-ce-surface border border-ce-border rounded-lg p-4 md:p-6 mb-6">
@@ -16,11 +26,11 @@ export const HeroSection = ({ criticalAlertsCount = 0 }) => {
           </div>
           <div>
             <h2 className="text-xl font-semibold text-ce-text-primary tracking-tight">
-              {currentRole.orgName}
+              {displayOrgName}
             </h2>
             <div className="text-sm text-ce-text-secondary mt-1 flex items-center gap-2">
               <span className="font-mono text-ce-text-primary bg-ce-surface-subtle px-2 py-0.5 rounded text-xs">
-                {currentRole.roleName.split('/')[0]}
+                {displayName}
               </span>
               <span>•</span>
               <span>Operational Command Center</span>

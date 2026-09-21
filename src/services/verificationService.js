@@ -15,7 +15,11 @@ export const verificationService = {
     // Simulate verification processing latency
     await new Promise((resolve) => setTimeout(resolve, 600));
 
-    const cleanId = (identifier || 'EV-001').trim().toUpperCase();
+    const cleanId = (identifier || '').trim().toUpperCase();
+    if (!cleanId) {
+      throw new Error("Please enter an Evidence ID to verify.");
+    }
+
     let evidence;
     try {
       evidence = await evidenceService.getEvidenceById(cleanId);
@@ -23,7 +27,11 @@ export const verificationService = {
       evidence = null;
     }
 
-    const isTampered = evidence ? evidence.status === 'COMPROMISED' || cleanId === 'EV-009' : cleanId.includes('TAMPER');
+    if (!evidence) {
+      throw new Error(`Exhibit "${cleanId}" not found in the cryptographic audit ledger. Register the exhibit before verifying.`);
+    }
+
+    const isTampered = evidence.status === 'COMPROMISED' || evidence.hash !== evidence.expectedHash;
 
     if (isTampered) {
       return {

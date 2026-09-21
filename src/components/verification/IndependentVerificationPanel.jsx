@@ -3,21 +3,35 @@ import { ShieldCheck, Search, RefreshCw, FileText, CheckCircle2, XCircle, AlertT
 import { verificationService } from '../../services/verificationService';
 import { VerificationReportModal } from './VerificationReportModal';
 import { Badge } from '../common/Badge';
+import { useApp } from '../../context/AppContext';
 
 export const IndependentVerificationPanel = ({ defaultId = 'EV-001' }) => {
-  const [evidenceId, setEvidenceId] = useState(defaultId);
+  const { isSandboxMode } = useApp();
+  // In sandbox mode, default to pre-loaded EV-001; in genuine mode start blank
+  const [evidenceId, setEvidenceId] = useState(() => (isSandboxMode ? defaultId : ''));
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState(null);
+  const [error, setError] = useState(null);
   const [showReportModal, setShowReportModal] = useState(false);
 
   const handleVerify = async (e) => {
     if (e) e.preventDefault();
+    const clean = (evidenceId || '').trim();
+    if (!clean) {
+      setError("Please enter a valid Evidence ID or Artifact ID to verify.");
+      setResult(null);
+      return;
+    }
+
     setIsLoading(true);
+    setError(null);
+    setResult(null);
+
     try {
-      const res = await verificationService.verifyArtifact(evidenceId);
+      const res = await verificationService.verifyArtifact(clean);
       setResult(res);
     } catch (err) {
-      console.error(err);
+      setError(err.message || 'Verification failed. Exhibit could not be validated.');
     } finally {
       setIsLoading(false);
     }
@@ -33,7 +47,7 @@ export const IndependentVerificationPanel = ({ defaultId = 'EV-001' }) => {
             INDEPENDENT ZERO-TRUST VERIFICATION
           </h2>
           <p className="text-xs text-ce-text-secondary mt-1.5">
-            Verify integrity, custody and lineage without accessing the underlying off-chain evidence.
+            Verify cryptographic integrity, custody history and lineage proofs without accessing raw off-chain binary files.
           </p>
 
           <form onSubmit={handleVerify} className="mt-5 flex flex-col sm:flex-row items-center gap-3">
@@ -43,8 +57,11 @@ export const IndependentVerificationPanel = ({ defaultId = 'EV-001' }) => {
                 type="text"
                 required
                 value={evidenceId}
-                onChange={(e) => setEvidenceId(e.target.value)}
-                placeholder="Enter Evidence ID or Artifact ID (e.g. EV-001, EV-009, IOC-001)"
+                onChange={(e) => {
+                  setEvidenceId(e.target.value);
+                  if (error) setError(null);
+                }}
+                placeholder={isSandboxMode ? "Enter Evidence ID (e.g. EV-001, EV-009)" : "Enter Registered Evidence ID (e.g. EV-A7X92B)"}
                 className="w-full bg-ce-bg border border-ce-border rounded-md pl-9 pr-4 py-2.5 text-xs text-ce-text-primary placeholder:text-ce-text-muted font-mono focus:outline-none focus:border-ce-brand font-semibold uppercase"
               />
             </div>
@@ -52,7 +69,7 @@ export const IndependentVerificationPanel = ({ defaultId = 'EV-001' }) => {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-md bg-ce-brand hover:bg-ce-brand-hover text-white text-xs font-mono font-bold transition-colors shadow-sm disabled:opacity-50 shrink-0"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-md bg-ce-brand hover:bg-ce-brand-hover text-white text-xs font-mono font-bold transition-colors shadow-sm disabled:opacity-50 shrink-0 cursor-pointer"
             >
               {isLoading ? (
                 <RefreshCw className="w-4 h-4 animate-spin" />
@@ -63,31 +80,53 @@ export const IndependentVerificationPanel = ({ defaultId = 'EV-001' }) => {
             </button>
           </form>
 
-          {/* Quick presets for SIH Demo */}
-          <div className="mt-4 flex items-center gap-2 text-[11px] font-mono text-ce-text-muted">
-            <span>Quick Demo Presets:</span>
-            <button
-              type="button"
-              onClick={() => {
-                setEvidenceId('EV-001');
-              }}
-              className="text-ce-brand hover:underline font-bold"
-            >
-              EV-001 (Valid Malware)
-            </button>
-            <span>•</span>
-            <button
-              type="button"
-              onClick={() => {
-                setEvidenceId('EV-009');
-              }}
-              className="text-ce-danger hover:underline font-bold"
-            >
-              EV-009 (Simulated Tamper)
-            </button>
-          </div>
+          {/* Quick presets for SIH Demo - strictly visible only in Sandbox Mode */}
+          {isSandboxMode && (
+            <div className="mt-4 flex items-center gap-2 text-[11px] font-mono text-ce-text-muted">
+              <span>Quick Demo Presets:</span>
+              <button
+                type="button"
+                onClick={() => {
+                  setEvidenceId('EV-001');
+                  setError(null);
+                }}
+                className="text-ce-brand hover:underline font-bold"
+              >
+                EV-001 (Valid Malware)
+              </button>
+              <span>•</span>
+              <button
+                type="button"
+                onClick={() => {
+                  setEvidenceId('EV-009');
+                  setError(null);
+                }}
+                className="text-ce-danger hover:underline font-bold"
+              >
+                EV-009 (Simulated Tamper)
+              </button>
+            </div>
+          )}
         </div>
       </div>
+
+      {/* Error Alert Box (Zero fake passes when exhibit doesn't exist) */}
+      {error && (
+        <div className="rounded-lg p-5 border border-ce-danger/40 bg-ce-danger/10 text-ce-danger animate-in fade-in duration-200 shadow-sm flex items-start gap-3.5">
+          <AlertTriangle className="w-5 h-5 shrink-0 mt-0.5 text-ce-danger" />
+          <div className="space-y-1">
+            <h4 className="text-xs font-mono font-bold uppercase tracking-wider">
+              Cryptographic Verification Failed
+            </h4>
+            <p className="text-xs text-ce-text-primary font-sans leading-relaxed">
+              {error}
+            </p>
+            <p className="text-[11px] font-mono text-ce-text-muted pt-1">
+              Zero-Trust Principle: Verification requires an exact mathematical match against a sealed ECDSA manifest on the immutable custody ledger.
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Verification Result Card */}
       {result && (
@@ -122,7 +161,7 @@ export const IndependentVerificationPanel = ({ defaultId = 'EV-001' }) => {
 
               <button
                 onClick={() => setShowReportModal(true)}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-ce-surface-subtle border border-ce-border text-xs font-mono font-bold text-ce-brand hover:text-ce-brand-hover hover:border-ce-brand/50 transition-colors"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-ce-surface-subtle border border-ce-border text-xs font-mono font-bold text-ce-brand hover:text-ce-brand-hover hover:border-ce-brand/50 transition-colors cursor-pointer"
               >
                 <FileText className="w-3.5 h-3.5" />
                 <span>Generate Verification Report</span>

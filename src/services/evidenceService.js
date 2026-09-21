@@ -1,8 +1,35 @@
 import { apiClient, IS_MOCK_FALLBACK } from './api';
 import { mockEvidenceList } from '../mock/evidence';
 
-// In-memory state for runtime mutations during demo
-let evidenceState = [...mockEvidenceList];
+// Helpers to isolate Sandbox (Demo) from Genuine (Production)
+const isSandboxModeActive = () => {
+  try {
+    return localStorage.getItem('cee_is_sandbox') === 'true';
+  } catch {
+    return false;
+  }
+};
+
+// Sandbox in-memory store (pre-loaded with SIH specimens EV-001, EV-009, etc.)
+let sandboxEvidenceState = [...mockEvidenceList];
+
+// Persistent genuine store (starts empty [] for real registered operators)
+const getGenuineEvidence = () => {
+  try {
+    const raw = localStorage.getItem('cee_genuine_evidence');
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+};
+
+const saveGenuineEvidence = (list) => {
+  try {
+    localStorage.setItem('cee_genuine_evidence', JSON.stringify(list));
+  } catch (err) {
+    console.error('Failed to persist genuine evidence:', err);
+  }
+};
 
 export const evidenceService = {
   async getAllEvidence(filters = {}) {
@@ -12,11 +39,12 @@ export const evidenceService = {
         return response.data;
       }
     } catch (err) {
-      console.warn('[EvidenceService] API request failed, falling back to local audit ledger state:', err);
+      console.warn('[EvidenceService] API request failed, using local ledger state:', err);
     }
 
-    // Filter local mock data
-    return evidenceState.filter((item) => {
+    const sourceList = isSandboxModeActive() ? sandboxEvidenceState : getGenuineEvidence();
+
+    return sourceList.filter((item) => {
       if (filters.search) {
         const query = filters.search.toLowerCase();
         const matchesSearch = 
@@ -48,12 +76,13 @@ export const evidenceService = {
         return response.data;
       }
     } catch (err) {
-      console.warn('[EvidenceService] API request failed, falling back to local audit ledger state:', err);
+      console.warn('[EvidenceService] API request failed, using local ledger state:', err);
     }
 
-    const found = evidenceState.find((item) => item.id.toUpperCase() === id.toUpperCase());
+    const sourceList = isSandboxModeActive() ? sandboxEvidenceState : getGenuineEvidence();
+    const found = sourceList.find((item) => item.id.toUpperCase() === id.toUpperCase());
     if (!found) {
-      throw new Error(`Evidence record ${id} not found.`);
+      throw new Error(`Evidence record ${id} not found in the cryptographic audit ledger.`);
     }
     return found;
   },
@@ -65,10 +94,15 @@ export const evidenceService = {
         return response.data;
       }
     } catch (err) {
-      console.warn('[EvidenceService] API request failed, falling back to local audit ledger state:', err);
+      console.warn('[EvidenceService] API request failed, using local ledger state:', err);
     }
 
-    evidenceState = evidenceState.filter((item) => item.id.toUpperCase() !== id.toUpperCase());
+    if (isSandboxModeActive()) {
+      sandboxEvidenceState = sandboxEvidenceState.filter((item) => item.id.toUpperCase() !== id.toUpperCase());
+    } else {
+      const current = getGenuineEvidence().filter((item) => item.id.toUpperCase() !== id.toUpperCase());
+      saveGenuineEvidence(current);
+    }
     return { success: true };
   },
 
@@ -78,7 +112,6 @@ export const evidenceService = {
         const formData = new FormData();
         formData.append('metadata', JSON.stringify(evidencePayload));
         
-        // If no file is provided, send a dummy blob so the backend File(...) doesn't complain
         if (file) {
           formData.append('file', file);
         } else {
@@ -89,11 +122,13 @@ export const evidenceService = {
         return response.data;
       }
     } catch (err) {
-      console.warn('[EvidenceService] API request failed, falling back to local audit ledger state:', err);
+      console.warn('[EvidenceService] API request failed, using local ledger state:', err);
     }
 
+    const sourceList = isSandboxModeActive() ? sandboxEvidenceState : getGenuineEvidence();
+
     const newEvidence = {
-      id: evidencePayload.id || `EV-0${evidenceState.length + 10}`,
+      id: evidencePayload.id || `EV-${Math.random().toString(36).substring(2, 7).toUpperCase()}`,
       caseId: evidencePayload.caseId || 'CASE-2026-9012',
       title: evidencePayload.title || 'Untitled Digital Evidence',
       type: evidencePayload.type || 'Disk Image',
@@ -112,15 +147,15 @@ export const evidenceService = {
       storageLocation: `vault://secure-enclave/${evidencePayload.title || 'evidence'}.raw`,
       accessControl: 'RESTRICTED / AUTHORIZED ROLES ONLY',
       blockchainStatus: 'ON-CHAIN RECORD VERIFIED',
-      blockNumber: 483100 + evidenceState.length,
-      txHash: '0x' + Array.from({length: 64}, () => Math.floor(Math.random()*16).toString(16)).join(''),
+      blockNumber: 483100 + sourceList.length,
+      txHash: evidencePayload.txHash || ('0x' + Array.from({length: 64}, () => Math.floor(Math.random()*16).toString(16)).join('')),
       signature: {
         status: 'VALID',
-        signer: 'Organization A (CERT-Alpha CA)',
+        signer: evidencePayload.sourceOrg || 'Organization A (CERT-Alpha CA)',
         algorithm: 'ECDSA / secp256k1',
         publicKeyFingerprint: 'SHA256:4b9a7c...8f12',
         signedTimestamp: new Date().toISOString().replace('T', ' ').substring(0, 19) + ' UTC',
-        manifestId: `MNF-2026-0816-${evidenceState.length + 10}`
+        manifestId: `MNF-2026-0816-${sourceList.length + 10}`
       },
       parentEvidenceId: evidencePayload.parentEvidenceId || null,
       isDerived: Boolean(evidencePayload.parentEvidenceId),
@@ -128,13 +163,22 @@ export const evidenceService = {
       description: evidencePayload.description || 'Newly collected forensic artifact registered to custody ledger.'
     };
 
-    evidenceState.unshift(newEvidence);
+    if (isSandboxModeActive()) {
+      sandboxEvidenceState.unshift(newEvidence);
+    } else {
+      const current = getGenuineEvidence();
+      current.unshift(newEvidence);
+      saveGenuineEvidence(current);
+    }
+
     return newEvidence;
   },
 
-  // SIH DEMO SIMULATION HELPER
+  // SIH DEMO SIMULATION HELPER (strictly for sandbox mode)
   toggleTamperSimulation(targetId = 'EV-001', shouldTamper = true) {
-    evidenceState = evidenceState.map((ev) => {
+    if (!isSandboxModeActive()) return;
+
+    sandboxEvidenceState = sandboxEvidenceState.map((ev) => {
       if (ev.id === targetId) {
         if (shouldTamper) {
           return {
@@ -162,11 +206,10 @@ export const evidenceService = {
       }
       return ev;
     });
-    return evidenceState;
+    return sandboxEvidenceState;
   },
 
   resetMockData() {
-    evidenceState = [...mockEvidenceList];
+    sandboxEvidenceState = [...mockEvidenceList];
   }
 };
-

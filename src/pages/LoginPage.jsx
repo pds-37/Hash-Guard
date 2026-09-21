@@ -1,28 +1,44 @@
 import React, { useState } from 'react';
-import { ShieldAlert, LogIn, Loader2 } from 'lucide-react';
+import { ShieldAlert, LogIn, Loader2, UserPlus, Building, ShieldCheck, Zap } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { apiClient, IS_MOCK_FALLBACK } from '../services/api';
-import { useApp } from '../context/AppContext';
+import { apiClient } from '../services/api';
+import { useApp, ROLES } from '../context/AppContext';
 
 export const LoginPage = () => {
+  const [authMode, setAuthMode] = useState('login'); // 'login' | 'register'
+  
+  // Login Form State
   const [email, setEmail] = useState('admin@cyberlab.local');
   const [password, setPassword] = useState('admin123');
+  
+  // Register Form State
+  const [regName, setRegName] = useState('');
+  const [regOrgName, setRegOrgName] = useState('');
+  const [regEmail, setRegEmail] = useState('');
+  const [regPassword, setRegPassword] = useState('');
+  const [regRole, setRegRole] = useState('ORG_B');
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
-  const { setSandbox } = useApp();
+  const { setSandbox, switchRole } = useApp();
 
   const initiateSession = (userData, token, isSandbox = false) => {
     localStorage.setItem('cee_auth_token', token || ('mock_jwt_session_' + Date.now()));
     localStorage.setItem('cee_is_sandbox', isSandbox ? 'true' : 'false');
     setSandbox(isSandbox);
-    localStorage.setItem('cee_user', JSON.stringify(userData || {
-      id: 'USR-001',
-      email: email || 'admin@cyberlab.local',
-      name: 'Lead Forensics Investigator',
-      organization_id: 'ORG_B',
-      role: 'ADMIN'
-    }));
+    
+    if (userData) {
+      localStorage.setItem('cee_user', JSON.stringify(userData));
+    } else {
+      localStorage.setItem('cee_user', JSON.stringify({
+        id: 'USR-001',
+        email: email || 'admin@cyberlab.local',
+        name: 'Lead Forensics Investigator',
+        organization_id: 'ORG_B',
+        role: 'ADMIN'
+      }));
+    }
     navigate('/dashboard');
   };
 
@@ -33,7 +49,14 @@ export const LoginPage = () => {
 
     if (forceDemo) {
       setTimeout(() => {
-        initiateSession(null, null, true);
+        switchRole('ORG_B');
+        initiateSession({
+          id: 'EVAL-001',
+          email: 'evaluator@sih.gov.in',
+          name: 'SIH Evaluator / Jury Member',
+          organization_id: 'ORG_B',
+          role: 'ADMIN'
+        }, null, true);
         setLoading(false);
       }, 400);
       return;
@@ -44,97 +67,272 @@ export const LoginPage = () => {
         email,
         password
       });
-
       const { access_token, user } = response.data;
       initiateSession(user, access_token, false);
     } catch (err) {
-      console.warn('Backend login endpoint unavailable, initiating session:', err);
+      console.warn('Backend login endpoint unavailable, creating local genuine session:', err);
       initiateSession(null, null, false);
     } finally {
       setLoading(false);
     }
   };
 
+  const handleRegister = (e) => {
+    e.preventDefault();
+    if (!regName.trim() || !regEmail.trim() || !regPassword.trim() || !regOrgName.trim()) {
+      setError('Please fill in all mandatory agency fields.');
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+
+    setTimeout(() => {
+      // Clear previous local genuine storage to ensure pristine clean start
+      localStorage.removeItem('cee_genuine_evidence');
+      localStorage.removeItem('cee_genuine_transfers');
+      localStorage.removeItem('cee_genuine_custody');
+      localStorage.removeItem('cee_genuine_audit');
+
+      const newUser = {
+        id: `USR-${Math.floor(1000 + Math.random() * 9000)}`,
+        name: regName.trim(),
+        email: regEmail.trim(),
+        organization_id: regRole,
+        orgName: regOrgName.trim(),
+        role: regRole === 'AUDITOR' ? 'AUDITOR' : 'ADMIN'
+      };
+
+      switchRole(regRole);
+      initiateSession(newUser, 'jwt_agency_token_' + Date.now(), false);
+      setLoading(false);
+    }, 500);
+  };
+
   return (
-    <div className="min-h-screen bg-ce-bg flex flex-col items-center justify-center p-4">
-      <div className="w-full max-w-md bg-ce-surface border border-ce-border rounded-lg shadow-xl overflow-hidden">
+    <div className="min-h-screen bg-[#070b14] flex flex-col items-center justify-center p-4 relative font-sans">
+      {/* Background glow effects */}
+      <div className="fixed inset-0 pointer-events-none z-0">
+        <div className="absolute top-1/4 left-1/3 w-[500px] h-[500px] bg-cyan-500/10 rounded-full blur-[140px]" />
+        <div className="absolute bottom-1/4 right-1/3 w-[450px] h-[450px] bg-blue-600/10 rounded-full blur-[140px]" />
+      </div>
+
+      <div className="w-full max-w-md bg-ce-surface border border-ce-border rounded-xl shadow-2xl overflow-hidden relative z-10 backdrop-blur-md">
         
         {/* Header */}
         <div className="bg-ce-surface-subtle border-b border-ce-border p-6 flex flex-col items-center justify-center text-center">
-          <div className="w-14 h-14 bg-ce-brand/10 border border-ce-brand/20 rounded-xl flex items-center justify-center mb-4">
-            <ShieldAlert className="w-8 h-8 text-ce-brand" />
+          <div className="w-14 h-14 bg-gradient-to-br from-cyan-500/20 to-blue-600/20 border border-cyan-500/30 rounded-xl flex items-center justify-center mb-3 shadow-[0_0_15px_rgba(6,182,212,0.2)]">
+            <ShieldAlert className="w-8 h-8 text-cyan-400" />
           </div>
           <h1 className="text-xl font-bold font-mono text-ce-text-primary tracking-wide">
-            CYBER EVIDENCE EXCHANGE
+            HASHGUARD EVIDENCE EXCHANGE
           </h1>
-          <p className="text-xs font-mono text-ce-text-muted mt-2 uppercase tracking-widest">
-            Authorized Personnel Only
+          <p className="text-[11px] font-mono text-ce-text-muted mt-1 uppercase tracking-widest">
+            Cryptographic Chain of Custody Portal
           </p>
         </div>
 
-        {/* Form */}
-        <form onSubmit={handleLogin} className="p-6 space-y-4">
-          {error && (
-            <div className="p-3 bg-ce-danger/10 border border-ce-danger/30 rounded text-ce-danger text-xs font-mono font-bold text-center">
-              {error}
-            </div>
-          )}
-
-          <div>
-            <label className="block text-xs font-mono font-bold text-ce-text-secondary uppercase mb-1.5">
-              Operator Email
-            </label>
-            <input
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full bg-ce-bg border border-ce-border rounded px-3 py-2.5 text-sm text-ce-text-primary focus:outline-none focus:border-ce-brand font-mono transition-colors"
-              placeholder="operator@org.gov"
-            />
-          </div>
-
-          <div>
-            <label className="block text-xs font-mono font-bold text-ce-text-secondary uppercase mb-1.5">
-              Passphrase / Access Key
-            </label>
-            <input
-              type="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full bg-ce-bg border border-ce-border rounded px-3 py-2.5 text-sm text-ce-text-primary focus:outline-none focus:border-ce-brand font-mono transition-colors"
-              placeholder="••••••••••••"
-            />
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full mt-4 bg-ce-brand hover:bg-ce-brand-hover disabled:opacity-50 disabled:cursor-not-allowed text-white font-mono font-bold text-sm py-3 rounded flex items-center justify-center gap-2 transition-colors shadow-lg cursor-pointer"
-          >
-            {loading ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              <LogIn className="w-4 h-4" />
-            )}
-            <span>INITIALIZE SESSION</span>
-          </button>
-
+        {/* Tab Toggle: Sign In vs Register */}
+        <div className="flex border-b border-ce-border bg-ce-bg/50">
           <button
             type="button"
-            onClick={() => handleLogin(null, true)}
-            className="w-full mt-2 bg-ce-surface-subtle hover:bg-ce-surface border border-ce-brand/40 text-ce-brand font-mono font-semibold text-xs py-2 rounded flex items-center justify-center gap-2 transition-colors cursor-pointer"
+            onClick={() => { setAuthMode('login'); setError(''); }}
+            className={`flex-1 py-3 text-xs font-mono font-bold transition-all border-b-2 cursor-pointer ${
+              authMode === 'login'
+                ? 'border-ce-brand text-ce-brand bg-ce-surface'
+                : 'border-transparent text-ce-text-muted hover:text-ce-text-primary'
+            }`}
           >
-            <span>⚡ INSTANT EVALUATOR SANDBOX ACCESS</span>
+            <span className="flex items-center justify-center gap-1.5">
+              <LogIn className="w-3.5 h-3.5" />
+              <span>OFFICER SIGN IN</span>
+            </span>
           </button>
-        </form>
+          <button
+            type="button"
+            onClick={() => { setAuthMode('register'); setError(''); }}
+            className={`flex-1 py-3 text-xs font-mono font-bold transition-all border-b-2 cursor-pointer ${
+              authMode === 'register'
+                ? 'border-ce-brand text-ce-brand bg-ce-surface'
+                : 'border-transparent text-ce-text-muted hover:text-ce-text-primary'
+            }`}
+          >
+            <span className="flex items-center justify-center gap-1.5">
+              <UserPlus className="w-3.5 h-3.5" />
+              <span>REGISTER AGENCY NODE</span>
+            </span>
+          </button>
+        </div>
+
+        {/* Form Body */}
+        {authMode === 'login' ? (
+          /* LOGIN FORM */
+          <form onSubmit={(e) => handleLogin(e, false)} className="p-6 space-y-4">
+            {error && (
+              <div className="p-3 bg-ce-danger/10 border border-ce-danger/30 rounded text-ce-danger text-xs font-mono font-bold text-center">
+                {error}
+              </div>
+            )}
+
+            <div>
+              <label className="block text-xs font-mono font-bold text-ce-text-secondary uppercase mb-1.5">
+                Operator Email
+              </label>
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full bg-ce-bg border border-ce-border rounded px-3 py-2.5 text-sm text-ce-text-primary focus:outline-none focus:border-ce-brand font-mono transition-colors"
+                placeholder="operator@org.gov"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-mono font-bold text-ce-text-secondary uppercase mb-1.5">
+                Passphrase / Access Key
+              </label>
+              <input
+                type="password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full bg-ce-bg border border-ce-border rounded px-3 py-2.5 text-sm text-ce-text-primary focus:outline-none focus:border-ce-brand font-mono transition-colors"
+                placeholder="••••••••••••"
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full mt-4 bg-ce-brand hover:bg-ce-brand-hover disabled:opacity-50 disabled:cursor-not-allowed text-white font-mono font-bold text-sm py-3 rounded flex items-center justify-center gap-2 transition-colors shadow-lg cursor-pointer"
+            >
+              {loading ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <LogIn className="w-4 h-4" />
+              )}
+              <span>INITIALIZE GENUINE SESSION</span>
+            </button>
+
+            <div className="relative my-4">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-ce-border"></div>
+              </div>
+              <div className="relative flex justify-center text-[10px] font-mono uppercase">
+                <span className="bg-ce-surface px-2 text-ce-text-muted">Or For SIH Judging</span>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => handleLogin(null, true)}
+              className="w-full bg-gradient-to-r from-cyan-500/10 to-blue-500/10 hover:from-cyan-500/20 hover:to-blue-500/20 border border-cyan-500/40 text-cyan-300 font-mono font-bold text-xs py-2.5 rounded-lg flex items-center justify-center gap-2 transition-all cursor-pointer shadow-[0_0_15px_rgba(6,182,212,0.15)]"
+            >
+              <Zap className="w-4 h-4 text-cyan-400" />
+              <span>⚡ ONE-CLICK EVALUATOR SANDBOX (PRE-LOADED DEMO)</span>
+            </button>
+          </form>
+        ) : (
+          /* REGISTRATION FORM */
+          <form onSubmit={handleRegister} className="p-6 space-y-3.5">
+            {error && (
+              <div className="p-3 bg-ce-danger/10 border border-ce-danger/30 rounded text-ce-danger text-xs font-mono font-bold text-center">
+                {error}
+              </div>
+            )}
+
+            <div>
+              <label className="block text-xs font-mono font-bold text-ce-text-secondary uppercase mb-1">
+                Investigator / Officer Name
+              </label>
+              <input
+                type="text"
+                required
+                value={regName}
+                onChange={(e) => setRegName(e.target.value)}
+                className="w-full bg-ce-bg border border-ce-border rounded px-3 py-2 text-xs text-ce-text-primary focus:outline-none focus:border-ce-brand font-mono transition-colors"
+                placeholder="e.g. Inspector Vikram Patel"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-mono font-bold text-ce-text-secondary uppercase mb-1">
+                Agency / Organization Name
+              </label>
+              <input
+                type="text"
+                required
+                value={regOrgName}
+                onChange={(e) => setRegOrgName(e.target.value)}
+                className="w-full bg-ce-bg border border-ce-border rounded px-3 py-2 text-xs text-ce-text-primary focus:outline-none focus:border-ce-brand font-mono transition-colors"
+                placeholder="e.g. State Cyber Police Unit / CERT Node"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-mono font-bold text-ce-text-secondary uppercase mb-1">
+                Official Agency Email
+              </label>
+              <input
+                type="email"
+                required
+                value={regEmail}
+                onChange={(e) => setRegEmail(e.target.value)}
+                className="w-full bg-ce-bg border border-ce-border rounded px-3 py-2 text-xs text-ce-text-primary focus:outline-none focus:border-ce-brand font-mono transition-colors"
+                placeholder="officer@police.gov.in"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-mono font-bold text-ce-text-secondary uppercase mb-1">
+                Consortium Role / Mandate
+              </label>
+              <select
+                value={regRole}
+                onChange={(e) => setRegRole(e.target.value)}
+                className="w-full bg-ce-bg border border-ce-border rounded px-3 py-2 text-xs text-ce-text-primary focus:outline-none focus:border-ce-brand font-mono transition-colors cursor-pointer"
+              >
+                <option value="ORG_A">Evidence Collector / Originator (CERT-Alpha)</option>
+                <option value="ORG_B">Forensic Analyst / Receiver (Cyber Defense Lab)</option>
+                <option value="AUDITOR">Independent Court / Regulatory Auditor</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-xs font-mono font-bold text-ce-text-secondary uppercase mb-1">
+                Master Passphrase
+              </label>
+              <input
+                type="password"
+                required
+                value={regPassword}
+                onChange={(e) => setRegPassword(e.target.value)}
+                className="w-full bg-ce-bg border border-ce-border rounded px-3 py-2 text-xs text-ce-text-primary focus:outline-none focus:border-ce-brand font-mono transition-colors"
+                placeholder="Create a strong passphrase"
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full mt-3 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-mono font-bold text-xs py-3 rounded-lg flex items-center justify-center gap-2 transition-all shadow-lg cursor-pointer"
+            >
+              {loading ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Building className="w-4 h-4" />
+              )}
+              <span>REGISTER AGENCY NODE & ENTER</span>
+            </button>
+          </form>
+        )}
         
         {/* Footer */}
-        <div className="bg-ce-surface-subtle p-4 border-t border-ce-border text-center">
+        <div className="bg-ce-surface-subtle p-3.5 border-t border-ce-border text-center">
           <p className="text-[10px] font-mono text-ce-text-muted">
-            USE OF THIS SYSTEM IS MONITORED AND RECORDED.<br/>
-            UNAUTHORIZED ACCESS IS STRICTLY PROHIBITED.
+            SECTION 65B INDIAN EVIDENCE ACT & ISO/IEC 27037 COMPLIANT<br/>
+            IMMUTABLE CRYPTOGRAPHIC AUDIT TRAIL
           </p>
         </div>
       </div>

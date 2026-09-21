@@ -8,24 +8,19 @@ import {
   GitFork, 
   ArrowRight, 
   ArrowLeftRight, 
-  Cpu, 
-  Layers, 
-  Terminal, 
-  CheckCircle2, 
-  AlertTriangle, 
-  FileText, 
   Database, 
   Sparkles, 
-  ExternalLink, 
   Eye, 
-  Users, 
-  Check, 
-  Copy, 
   Zap,
   Activity,
   FileCheck2,
-  FileSpreadsheet,
-  Clock
+  Clock,
+  CheckCircle2,
+  AlertTriangle,
+  UserPlus,
+  LogIn,
+  Layers,
+  ChevronRight
 } from 'lucide-react';
 import { useApp, ROLES } from '../../context/AppContext';
 
@@ -34,9 +29,8 @@ export const LandingPage = () => {
   const { switchRole, setSandbox } = useApp();
   const [activeTab, setActiveTab] = useState('segregation');
   const [interactiveTampered, setInteractiveTampered] = useState(false);
-  const [copiedHash, setCopiedHash] = useState(false);
 
-  // Instant login helper for evaluators
+  // Instant login helper for evaluators (Sandbox Mode)
   const launchConsole = (targetRole = 'ORG_B', targetPath = '/dashboard', isSandbox = true) => {
     const roleConfig = ROLES[targetRole] || ROLES.ORG_B;
     switchRole(targetRole);
@@ -44,9 +38,9 @@ export const LandingPage = () => {
     localStorage.setItem('cee_is_sandbox', isSandbox ? 'true' : 'false');
 
     const mockUser = {
-      id: 'USR-001',
+      id: 'EVAL-001',
       email: targetRole === 'AUDITOR' ? 'auditor@cyber-audit.gov' : 'analyst-lead@cyberlab.local',
-      name: roleConfig.roleName,
+      name: isSandbox ? 'SIH Evaluator / Jury Member' : roleConfig.roleName,
       organization_id: targetRole === 'ORG_A' ? 'ORG_A' : targetRole === 'ORG_B' ? 'ORG_B' : 'AUDITOR',
       role: targetRole === 'AUDITOR' ? 'AUDITOR' : 'ADMIN'
     };
@@ -58,12 +52,6 @@ export const LandingPage = () => {
 
   const sampleOriginalHash = '4a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b';
   const sampleTamperedHash = '7a21f9c82e04192b47e301293840192830192840192830192830192830192830';
-
-  const copyToClipboard = (text) => {
-    navigator.clipboard.writeText(text);
-    setCopiedHash(true);
-    setTimeout(() => setCopiedHash(false), 2000);
-  };
 
   return (
     <div className="min-h-screen bg-[#070b14] text-slate-100 selection:bg-cyan-500/30 selection:text-cyan-200 relative overflow-hidden font-sans">
@@ -77,11 +65,11 @@ export const LandingPage = () => {
       </div>
 
       {/* STICKY GLASSMORPHIC NAVBAR */}
-      <header className="sticky top-0 z-50 backdrop-blur-md bg-[#070b14]/80 border-b border-slate-800/80">
+      <header className="sticky top-0 z-50 backdrop-blur-md bg-[#070b14]/85 border-b border-slate-800/80 transition-all">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           {/* Brand Logo */}
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-500/20 to-blue-600/20 border border-cyan-500/40 flex items-center justify-center shadow-[0_0_15px_rgba(6,182,212,0.2)]">
+            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-500/20 to-blue-600/20 border border-cyan-500/40 flex items-center justify-center shadow-[0_0_15px_rgba(6,182,212,0.25)]">
               <ShieldCheck className="w-6 h-6 text-cyan-400" />
             </div>
             <div>
@@ -101,39 +89,40 @@ export const LandingPage = () => {
             <a href="#lineage" className="hover:text-cyan-400 transition-colors">Lineage DAG</a>
             <a href="#tamper" className="hover:text-cyan-400 transition-colors">Tamper Engine</a>
             <a href="#roles" className="hover:text-cyan-400 transition-colors">Agency Roles</a>
-            <a href="#judges-tour" className="hover:text-cyan-400 transition-colors text-cyan-400/90 font-semibold flex items-center gap-1">
-              <Zap className="w-3.5 h-3.5 text-cyan-400" />
+            <a href="#judges-tour" className="hover:text-cyan-400 transition-colors text-cyan-400 font-semibold flex items-center gap-1">
+              <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
               Evaluator SOP
             </a>
           </nav>
 
           {/* Action CTAs */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5 sm:gap-3">
             <button
-              onClick={() => launchConsole('ORG_B', '/dashboard')}
-              className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg border border-cyan-500/30 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 text-xs font-mono transition-all cursor-pointer"
+              onClick={() => navigate('/login')}
+              className="px-3.5 py-1.5 rounded-lg border border-slate-700/80 bg-slate-900/60 hover:bg-slate-800 text-slate-300 hover:text-white text-xs font-mono transition-all cursor-pointer flex items-center gap-1.5"
             >
-              <Zap className="w-3.5 h-3.5 text-cyan-400" />
-              <span>Sandbox Access</span>
+              <LogIn className="w-3.5 h-3.5 text-slate-400" />
+              <span>Sign In / Register</span>
             </button>
+
             <button
-              onClick={() => launchConsole('ORG_B', '/dashboard')}
+              onClick={() => launchConsole('ORG_B', '/dashboard', true)}
               className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-mono font-bold text-xs shadow-[0_0_20px_rgba(6,182,212,0.4)] transition-all cursor-pointer"
             >
-              <span>EXPLORE LIVE PROTOTYPE</span>
-              <ArrowRight className="w-3.5 h-3.5" />
+              <Zap className="w-3.5 h-3.5 text-slate-950 fill-slate-950" />
+              <span>EVALUATOR SANDBOX</span>
             </button>
           </div>
         </div>
       </header>
 
       {/* HERO SECTION */}
-      <section className="relative z-10 pt-16 pb-20 md:pt-24 md:pb-28 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <section className="relative z-10 pt-14 pb-16 md:pt-20 md:pb-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         {/* Consensus Pulse Badge */}
-        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900/90 border border-slate-700/80 shadow-inner mb-6">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-900/90 border border-slate-700/80 shadow-inner mb-6">
           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
           <span className="text-[11px] font-mono uppercase tracking-wider text-slate-300">
-            Permissioned Audit Ledger Active <span className="text-slate-500">•</span> Block #483,192
+            Permissioned Audit Ledger Active <span className="text-slate-500">•</span> EVM Block #483,192 <span className="text-slate-500">•</span> Smart India Hackathon 2026
           </span>
         </div>
 
@@ -146,53 +135,57 @@ export const LandingPage = () => {
         </h1>
 
         {/* Subtitle */}
-        <p className="mt-6 text-sm sm:text-base lg:text-lg text-slate-400 max-w-3xl mx-auto font-normal leading-relaxed">
-          Secure, independently verifiable cross-organization cyber-evidence exchange with mathematical parent-child derivation lineage, HSM-backed ECDSA sealing, and instantaneous bit-level tamper attestation.
+        <p className="mt-5 text-sm sm:text-base lg:text-lg text-slate-400 max-w-3xl mx-auto font-normal leading-relaxed">
+          Cryptographically seal forensic exhibits, enforce multi-agency custody handoffs with mTLS handshakes, and verify integrity with zero off-chain data leakage—powered by SHA-256 and EVM smart contracts.
         </p>
 
         {/* Dual Primary CTAs */}
         <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
           <button
-            onClick={() => launchConsole('ORG_B', '/dashboard')}
+            onClick={() => launchConsole('ORG_B', '/dashboard', true)}
             className="w-full sm:w-auto px-7 py-3.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-mono font-bold text-sm shadow-[0_0_25px_rgba(6,182,212,0.35)] transition-all flex items-center justify-center gap-2.5 cursor-pointer"
           >
-            <Activity className="w-4 h-4 text-slate-950" />
-            <span>EXPLORE LIVE PROTOTYPE (SANDBOX)</span>
+            <Zap className="w-4 h-4 text-slate-950 fill-slate-950" />
+            <span>⚡ ONE-CLICK EVALUATOR SANDBOX</span>
             <ArrowRight className="w-4 h-4" />
           </button>
 
           <button
-            onClick={() => launchConsole('AUDITOR', '/verification')}
-            className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700/90 text-slate-200 font-mono font-semibold text-sm transition-all flex items-center justify-center gap-2 cursor-pointer shadow-lg hover:border-cyan-500/40"
+            onClick={() => navigate('/login')}
+            className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700 text-slate-200 font-mono font-semibold text-sm transition-all flex items-center justify-center gap-2 cursor-pointer shadow-lg hover:border-cyan-500/40"
           >
-            <ShieldCheck className="w-4 h-4 text-cyan-400" />
-            <span>AUDITOR VERIFICATION PORTAL</span>
+            <UserPlus className="w-4 h-4 text-cyan-400" />
+            <span>REGISTER AGENCY NODE (GENUINE APP)</span>
           </button>
         </div>
 
-        {/* Trust Metrics Bar */}
-        <div className="mt-14 pt-8 border-t border-slate-800/80 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
-          <div className="p-3 bg-slate-900/40 rounded-lg border border-slate-800/60">
-            <div className="text-2xl font-bold font-mono text-cyan-400">0%</div>
-            <div className="text-xs text-slate-400 mt-1 font-mono uppercase">Tamper Tolerance</div>
+        <p className="mt-3 text-[11px] font-mono text-slate-500">
+          *Evaluator Sandbox is pre-loaded with SIH malware specimens & adversary tamper drills for rapid judging.
+        </p>
+
+        {/* Compliance & Standards Strip */}
+        <div className="mt-12 pt-8 border-t border-slate-800/80 flex flex-wrap items-center justify-center gap-6 sm:gap-10 text-xs font-mono text-slate-400">
+          <div className="flex items-center gap-2">
+            <ShieldCheck className="w-4 h-4 text-cyan-400" />
+            <span>ISO/IEC 27037:2012</span>
           </div>
-          <div className="p-3 bg-slate-900/40 rounded-lg border border-slate-800/60">
-            <div className="text-2xl font-bold font-mono text-white">SHA-256</div>
-            <div className="text-xs text-slate-400 mt-1 font-mono uppercase">Bit Digest Anchoring</div>
+          <div className="flex items-center gap-2">
+            <Lock className="w-4 h-4 text-emerald-400" />
+            <span>Sec 65B Indian Evidence Act</span>
           </div>
-          <div className="p-3 bg-slate-900/40 rounded-lg border border-slate-800/60">
-            <div className="text-2xl font-bold font-mono text-cyan-400">secp256k1</div>
-            <div className="text-xs text-slate-400 mt-1 font-mono uppercase">HSM ECDSA Signatures</div>
+          <div className="flex items-center gap-2">
+            <Fingerprint className="w-4 h-4 text-blue-400" />
+            <span>NIST SP 800-86 Compliant</span>
           </div>
-          <div className="p-3 bg-slate-900/40 rounded-lg border border-slate-800/60">
-            <div className="text-2xl font-bold font-mono text-emerald-400">RFC 3161</div>
-            <div className="text-xs text-slate-400 mt-1 font-mono uppercase">Monotonic Custody Logs</div>
+          <div className="flex items-center gap-2">
+            <Database className="w-4 h-4 text-purple-400" />
+            <span>EVM Hash Consensus</span>
           </div>
         </div>
       </section>
 
       {/* INTERACTIVE SECURITY CONSOLE PREVIEW */}
-      <section id="architecture" className="relative z-10 py-12 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section id="architecture" className="relative z-10 py-8 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-[#0b1120] border border-slate-800 rounded-2xl shadow-2xl overflow-hidden backdrop-blur-xl">
           {/* Simulated Terminal Window Header */}
           <div className="bg-slate-900/90 px-4 py-3 border-b border-slate-800 flex items-center justify-between">
@@ -292,10 +285,10 @@ export const LandingPage = () => {
                   </span>
                 </div>
                 <button
-                  onClick={() => launchConsole('ORG_B', '/evidence')}
+                  onClick={() => launchConsole('AUDITOR', '/verification', true)}
                   className="text-xs font-mono text-cyan-400 hover:text-cyan-300 font-bold flex items-center gap-1 cursor-pointer"
                 >
-                  <span>Explore Repository</span>
+                  <span>Launch Auditor Verification Portal</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </button>
               </div>
@@ -357,11 +350,11 @@ export const LandingPage = () => {
 
               <div className="flex justify-center">
                 <button
-                  onClick={() => launchConsole('ORG_B', '/lineage')}
+                  onClick={() => launchConsole('ORG_B', '/lineage', true)}
                   className="px-5 py-2.5 rounded-lg bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 text-cyan-300 text-xs font-mono transition-all flex items-center gap-2 cursor-pointer"
                 >
                   <GitFork className="w-3.5 h-3.5 text-cyan-400" />
-                  <span>Open Full Interactive React Flow Lineage DAG</span>
+                  <span>Open Interactive React Flow Lineage DAG</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </button>
               </div>
@@ -374,7 +367,7 @@ export const LandingPage = () => {
               <div className="text-center max-w-2xl mx-auto space-y-2">
                 <h4 className="text-lg font-bold text-white">Live Tamper Demonstration Testbed</h4>
                 <p className="text-xs text-slate-400 font-mono">
-                  Toggle the specimen below to simulate an adversary modifying 1 single bit in off-chain evidence storage. Watch how on-chain verification immediately triggers an alert.
+                  Toggle the specimen below to simulate an adversary modifying 1 single bit in off-chain evidence storage. Watch how on-chain verification immediately triggers a breach alert.
                 </p>
               </div>
 
@@ -427,10 +420,10 @@ export const LandingPage = () => {
 
               <div className="flex justify-center">
                 <button
-                  onClick={() => launchConsole('ORG_B', '/dashboard')}
+                  onClick={() => launchConsole('ORG_B', '/dashboard', true)}
                   className="px-5 py-2.5 rounded-lg bg-cyan-500 text-slate-950 font-mono font-bold text-xs hover:bg-cyan-400 transition-all cursor-pointer flex items-center gap-2"
                 >
-                  <span>Test Full Tamper System Inside Console</span>
+                  <span>Test Full Tamper System Inside Sandbox Console</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </button>
               </div>
@@ -504,7 +497,7 @@ export const LandingPage = () => {
         </div>
       </section>
 
-      {/* CORE ARCHITECTURE GRID (6 CARDS) */}
+      {/* CORE ARCHITECTURE GRID */}
       <section id="features" className="relative z-10 py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-slate-800/80">
         <div className="text-center max-w-3xl mx-auto mb-12">
           <h2 className="text-xs font-mono uppercase tracking-widest text-cyan-400 font-semibold mb-2">Technical Capabilities</h2>
@@ -603,7 +596,7 @@ export const LandingPage = () => {
               </p>
             </div>
             <button
-              onClick={() => launchConsole('ORG_A', '/evidence')}
+              onClick={() => launchConsole('ORG_A', '/evidence', true)}
               className="mt-6 w-full py-2.5 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/30 text-blue-300 text-xs font-mono font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5"
             >
               <span>Launch as CERT-Alpha</span>
@@ -623,7 +616,7 @@ export const LandingPage = () => {
               </p>
             </div>
             <button
-              onClick={() => launchConsole('ORG_B', '/dashboard')}
+              onClick={() => launchConsole('ORG_B', '/dashboard', true)}
               className="mt-6 w-full py-2.5 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 text-xs font-mono font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5"
             >
               <span>Launch as Forensic Analyst</span>
@@ -643,7 +636,7 @@ export const LandingPage = () => {
               </p>
             </div>
             <button
-              onClick={() => launchConsole('AUDITOR', '/verification')}
+              onClick={() => launchConsole('AUDITOR', '/verification', true)}
               className="mt-6 w-full py-2.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 text-xs font-mono font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5"
             >
               <span>Launch as Auditor</span>
@@ -665,7 +658,7 @@ export const LandingPage = () => {
               <h3 className="text-xl sm:text-2xl font-bold text-white mt-1">Evaluator Runbook: Architecture Verification Protocol</h3>
             </div>
             <button
-              onClick={() => launchConsole('ORG_B', '/dashboard')}
+              onClick={() => launchConsole('ORG_B', '/dashboard', true)}
               className="px-5 py-2.5 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-mono font-bold text-xs transition-all shadow-[0_0_15px_rgba(6,182,212,0.3)] cursor-pointer self-start sm:self-auto"
             >
               START EVALUATION RUNBOOK
@@ -708,14 +701,21 @@ export const LandingPage = () => {
         <p className="mt-4 text-sm text-slate-400 font-mono">
           Interactive evaluator sandbox configured. Zero installation required.
         </p>
-        <div className="mt-8 flex justify-center">
+        <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
           <button
-            onClick={() => launchConsole('ORG_B', '/dashboard')}
+            onClick={() => launchConsole('ORG_B', '/dashboard', true)}
             className="px-8 py-4 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-mono font-bold text-sm shadow-[0_0_30px_rgba(6,182,212,0.4)] transition-all flex items-center gap-2 cursor-pointer"
           >
-            <ShieldCheck className="w-5 h-5" />
+            <Zap className="w-5 h-5 text-slate-950 fill-slate-950" />
             <span>EXPLORE LIVE PROTOTYPE (INSTANT SANDBOX)</span>
             <ArrowRight className="w-4 h-4" />
+          </button>
+          <button
+            onClick={() => navigate('/login')}
+            className="px-6 py-4 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 font-mono font-bold text-sm transition-all flex items-center gap-2 cursor-pointer"
+          >
+            <UserPlus className="w-4 h-4 text-cyan-400" />
+            <span>CREATE GENUINE AGENCY ACCOUNT</span>
           </button>
         </div>
       </section>
@@ -731,11 +731,16 @@ export const LandingPage = () => {
           </div>
 
           <div className="flex items-center gap-4 text-[11px] text-slate-500">
-            <span>NIST SP 800-86 Compliant</span>
+            <span className="flex items-center gap-1.5 text-emerald-400">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span>Consortium Nodes Synced</span>
+            </span>
             <span>•</span>
-            <span>RFC 3161 Timestamping</span>
+            <span>NIST SP 800-86</span>
             <span>•</span>
-            <span>ECDSA secp256k1</span>
+            <span>Section 65B Certified</span>
+            <span>•</span>
+            <span>ISO/IEC 27037</span>
           </div>
         </div>
       </footer>

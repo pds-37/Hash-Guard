@@ -26,7 +26,12 @@ export const TransferQueue = ({
       </div>
 
       <div className="divide-y divide-ce-border">
-        {transfers.map((item) => {
+        {transfers.length === 0 ? (
+          <div className="p-8 text-center text-xs font-mono text-ce-text-muted">
+            No inter-agency transfers currently in queue. Ingest evidence exhibits and initiate a cross-agency transfer to begin.
+          </div>
+        ) : (
+          transfers.map((item) => {
           const isSelected = selectedTransferId === item.id;
           return (
             <div
@@ -124,7 +129,7 @@ export const TransferQueue = ({
               </div>
             </div>
           );
-        })}
+        }))}
       </div>
     </div>
   );

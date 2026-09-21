@@ -1,7 +1,32 @@
 import { apiClient, IS_MOCK_FALLBACK } from './api';
 import { mockTransfers } from '../mock/transfers';
 
-let transfersState = [...mockTransfers];
+const isSandboxModeActive = () => {
+  try {
+    return localStorage.getItem('cee_is_sandbox') === 'true';
+  } catch {
+    return false;
+  }
+};
+
+let sandboxTransfersState = [...mockTransfers];
+
+const getGenuineTransfers = () => {
+  try {
+    const raw = localStorage.getItem('cee_genuine_transfers');
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+};
+
+const saveGenuineTransfers = (list) => {
+  try {
+    localStorage.setItem('cee_genuine_transfers', JSON.stringify(list));
+  } catch (err) {
+    console.error('Failed to persist genuine transfers:', err);
+  }
+};
 
 export const transferService = {
   async getTransfers(filters = {}) {
@@ -11,10 +36,12 @@ export const transferService = {
         return response.data;
       }
     } catch (err) {
-      console.warn('[TransferService] API request failed, falling back to local transfers store:', err);
+      console.warn('[TransferService] API request failed, using local transfers store:', err);
     }
 
-    return transfersState.filter((item) => {
+    const sourceList = isSandboxModeActive() ? sandboxTransfersState : getGenuineTransfers();
+
+    return sourceList.filter((item) => {
       if (filters.status && filters.status !== 'ALL' && item.status !== filters.status) {
         return false;
       }
@@ -39,11 +66,13 @@ export const transferService = {
         return response.data;
       }
     } catch (err) {
-      console.warn('[TransferService] API request failed, falling back to local transfers store:', err);
+      console.warn('[TransferService] API request failed, using local transfers store:', err);
     }
 
+    const sourceList = isSandboxModeActive() ? sandboxTransfersState : getGenuineTransfers();
+
     const newTransfer = {
-      id: `TR-00${transfersState.length + 1}`,
+      id: `TR-00${sourceList.length + 1}`,
       evidenceId: payload.evidenceId || 'EV-001',
       evidenceTitle: payload.evidenceTitle || 'Digital Forensic Specimen',
       evidenceType: payload.evidenceType || 'Disk Image',
@@ -66,7 +95,14 @@ export const transferService = {
       notes: payload.notes || 'Cross-agency chain-of-custody transfer dispatched.'
     };
 
-    transfersState.unshift(newTransfer);
+    if (isSandboxModeActive()) {
+      sandboxTransfersState.unshift(newTransfer);
+    } else {
+      const current = getGenuineTransfers();
+      current.unshift(newTransfer);
+      saveGenuineTransfers(current);
+    }
+
     return newTransfer;
   },
 
@@ -77,26 +113,46 @@ export const transferService = {
         return response.data;
       }
     } catch (err) {
-      console.warn('[TransferService] API request failed, falling back to local transfers store:', err);
+      console.warn('[TransferService] API request failed, using local transfers store:', err);
     }
 
-    transfersState = transfersState.map((t) => {
-      if (t.id === transferId) {
-        return {
-          ...t,
-          status: 'VERIFIED',
-          completedAt: new Date().toISOString().replace('T', ' ').substring(0, 19) + ' UTC',
-          steps: t.steps.map((s) => ({
-            ...s,
-            status: 'COMPLETED',
-            timestamp: s.timestamp || new Date().toLocaleTimeString()
-          }))
-        };
-      }
-      return t;
-    });
-
-    return transfersState.find((t) => t.id === transferId);
+    if (isSandboxModeActive()) {
+      sandboxTransfersState = sandboxTransfersState.map((t) => {
+        if (t.id === transferId) {
+          return {
+            ...t,
+            status: 'VERIFIED',
+            completedAt: new Date().toISOString().replace('T', ' ').substring(0, 19) + ' UTC',
+            steps: t.steps.map((s) => ({
+              ...s,
+              status: 'COMPLETED',
+              timestamp: s.timestamp || new Date().toLocaleTimeString()
+            }))
+          };
+        }
+        return t;
+      });
+      return sandboxTransfersState.find((t) => t.id === transferId);
+    } else {
+      let updatedItem = null;
+      const current = getGenuineTransfers().map((t) => {
+        if (t.id === transferId) {
+          updatedItem = {
+            ...t,
+            status: 'VERIFIED',
+            completedAt: new Date().toISOString().replace('T', ' ').substring(0, 19) + ' UTC',
+            steps: t.steps.map((s) => ({
+              ...s,
+              status: 'COMPLETED',
+              timestamp: s.timestamp || new Date().toLocaleTimeString()
+            }))
+          };
+          return updatedItem;
+        }
+        return t;
+      });
+      saveGenuineTransfers(current);
+      return updatedItem;
+    }
   }
 };
-

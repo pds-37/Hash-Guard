@@ -116,27 +116,37 @@ export const LineageFlowGraph = ({ initialGraph }) => {
       </div>
 
       {/* React Flow Viewport */}
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        onNodeClick={onNodeClick}
-        nodeTypes={nodeTypes}
-        fitView
-        fitViewOptions={{ padding: 0.2 }}
-        minZoom={0.4}
-        maxZoom={1.5}
-        attributionPosition="bottom-left"
-      >
-        <Background color="#2a303c" gap={24} size={1} />
-        <Controls showInteractive={false} className="bg-ce-surface text-ce-text-muted border-ce-border fill-ce-text-muted" />
-        <MiniMap
-          nodeColor={(n) => (n.data?.isRoot ? 'var(--color-brand)' : 'var(--color-success)')}
-          maskColor="rgba(0, 0, 0, 0.7)"
-          className="bg-ce-surface border border-ce-border rounded-md"
-        />
-      </ReactFlow>
+      {nodes.length === 0 ? (
+        <div className="w-full h-full flex flex-col items-center justify-center bg-ce-bg p-6 text-center">
+          <GitFork className="w-12 h-12 text-ce-text-muted mb-3 opacity-60" />
+          <h3 className="text-sm font-bold font-mono text-ce-text-primary uppercase tracking-wider">No Lineage Tree Active</h3>
+          <p className="text-xs text-ce-text-secondary mt-1.5 max-w-sm font-sans">
+            Lineage DAG automatically maps root evidence exhibits and derived forensic artifacts. Ingest your first exhibit to begin.
+          </p>
+        </div>
+      ) : (
+        <ReactFlow
+          nodes={nodes}
+          edges={edges}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          onNodeClick={onNodeClick}
+          nodeTypes={nodeTypes}
+          fitView
+          fitViewOptions={{ padding: 0.2 }}
+          minZoom={0.4}
+          maxZoom={1.5}
+          attributionPosition="bottom-left"
+        >
+          <Background color="#2a303c" gap={24} size={1} />
+          <Controls showInteractive={false} className="bg-ce-surface text-ce-text-muted border-ce-border fill-ce-text-muted" />
+          <MiniMap
+            nodeColor={(n) => (n.data?.isRoot ? 'var(--color-brand)' : 'var(--color-success)')}
+            maskColor="rgba(0, 0, 0, 0.7)"
+            className="bg-ce-surface border border-ce-border rounded-md"
+          />
+        </ReactFlow>
+      )}
 
       {/* Selected Node Details Drawer */}
       {selectedNode && (

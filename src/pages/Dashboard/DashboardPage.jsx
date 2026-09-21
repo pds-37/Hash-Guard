@@ -12,6 +12,7 @@ import { custodyService } from '../../services/custodyService';
 import { transferService } from '../../services/transferService';
 import { useApp } from '../../context/AppContext';
 import { NewEvidenceModal } from '../../components/evidence/NewEvidenceModal';
+import { OnboardingGuideCard } from '../../components/dashboard/OnboardingGuideCard';
 
 export const DashboardPage = () => {
   const { isTamperSimulated, refreshTrigger, triggerRefresh } = useApp();
@@ -62,6 +63,12 @@ export const DashboardPage = () => {
 
       {/* Hero Section */}
       <HeroSection />
+
+      {/* Operational Onboarding Guide for Agency Nodes */}
+      <OnboardingGuideCard
+        evidenceCount={evidenceList.length}
+        onRegister={() => setShowNewEvidenceModal(true)}
+      />
 
       {/* KPI Cards Row */}
       <DashboardStatsRow evidenceList={evidenceList} transfers={transfers} />
