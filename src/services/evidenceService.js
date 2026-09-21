@@ -118,6 +118,23 @@ export const evidenceService = {
     return { success: true };
   },
 
+  async wipeAllEvidence() {
+    try {
+      if (!IS_MOCK_FALLBACK) {
+        await apiClient.delete('/evidence/wipe/all');
+      }
+    } catch (err) {
+      console.warn('[EvidenceService] Remote wipe error, clearing local:', err);
+    }
+
+    if (isSandboxModeActive()) {
+      sandboxEvidenceState = [];
+    } else {
+      localStorage.removeItem('cee_genuine_evidence');
+    }
+    return { success: true };
+  },
+
   async createEvidence(evidencePayload, file) {
     const rawSize = file ? (file.size / (1024 * 1024)).toFixed(2) + ' MB' : '1.0 MB';
     const sanitizedPayload = {

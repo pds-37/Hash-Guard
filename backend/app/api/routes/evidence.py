@@ -80,3 +80,15 @@ async def create_evidence(
             raise HTTPException(status_code=422, detail=f"Invalid evidence JSON: {e}")
             
     return EvidenceService.create(db, ev_data, file_bytes)
+
+@router.delete("/wipe/all")
+def wipe_all_evidence(db: Session = Depends(get_db)):
+    """Wipes all evidence exhibits, custody events, and transfers for clean testing."""
+    return EvidenceService.wipe_all(db)
+
+@router.delete("/{evidence_id}")
+def delete_evidence(evidence_id: str, db: Session = Depends(get_db)):
+    success = EvidenceService.delete(db, evidence_id)
+    if not success:
+        raise HTTPException(status_code=404, detail="Evidence not found")
+    return {"status": "DELETED", "id": evidence_id}

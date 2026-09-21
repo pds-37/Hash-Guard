@@ -146,6 +146,46 @@ class EvidenceService:
         return EvidenceService._format_response(new_ev)
 
     @staticmethod
+    def delete(db: Session, evidence_id: str):
+        from app.models.custody_event import CustodyEvent
+        from app.models.transfer import Transfer
+        
+        evidence = db.query(Evidence).filter(Evidence.id == evidence_id).first()
+        if not evidence:
+            return False
+            
+        try:
+            db.query(CustodyEvent).filter(CustodyEvent.evidence_id == evidence_id).delete()
+            db.query(Transfer).filter(Transfer.evidence_id == evidence_id).delete()
+            db.delete(evidence)
+            db.commit()
+            return True
+        except Exception as e:
+            db.rollback()
+            print(f"Failed to delete evidence {evidence_id}: {e}")
+            return False
+
+    @staticmethod
+    def wipe_all(db: Session):
+        from app.models.custody_event import CustodyEvent
+        from app.models.transfer import Transfer
+        
+        try:
+            db.query(CustodyEvent).delete()
+            db.query(Transfer).delete()
+            try:
+                from app.models.retention import RetentionEvent
+                db.query(RetentionEvent).delete()
+            except Exception:
+                pass
+            deleted_count = db.query(Evidence).delete()
+            db.commit()
+            return {"status": "SUCCESS", "message": f"Successfully wiped {deleted_count} evidence exhibits and related events."}
+        except Exception as e:
+            db.rollback()
+            raise HTTPException(status_code=500, detail=f"Database wipe failed: {e}")
+
+    @staticmethod
     def _format_response(e: Evidence) -> EvidenceResponse:
         return EvidenceResponse(
             id=e.id,
