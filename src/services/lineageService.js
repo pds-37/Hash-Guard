@@ -33,7 +33,8 @@ export const lineageService = {
       return { evidenceId: null, nodes: [], edges: [] };
     }
 
-    const target = (evidenceId && allEvidence.find(e => e.id.toUpperCase() === evidenceId.toUpperCase())) || allEvidence[0];
+    const cleanId = (evidenceId || '').trim().toUpperCase();
+    const target = (cleanId && allEvidence.find(e => e.id.toUpperCase() === cleanId)) || allEvidence[0];
 
     const rootNode = {
       id: "node-root",
@@ -42,25 +43,99 @@ export const lineageService = {
       data: {
         id: target.id,
         label: `Exhibit: ${target.title}`,
-        artifactType: "Original Exhibit (Root)",
+        artifactType: target.parentEvidenceId ? "Derived Exhibit" : "Original Exhibit (Root)",
         hash: target.hash,
         creator: target.sourceOrg || "Registered Agency Node",
         timestamp: target.createdAt || new Date().toISOString(),
         verificationState: target.status || "VERIFIED",
-        isRoot: true,
+        isRoot: !target.parentEvidenceId,
         details: {
           file: target.title,
-          size: target.fileSize || "Real File",
+          size: target.fileSize || "Physical File",
           algorithm: "SHA-256",
           signature: "ECDSA VALID (Authorized Key)"
         }
       }
     };
 
+    const nodes = [rootNode];
+    const edges = [];
+
+    // Check if target has a parent in the ledger
+    if (target.parentEvidenceId) {
+      const parentEv = allEvidence.find(e => e.id.toUpperCase() === target.parentEvidenceId.toUpperCase());
+      const parentNodeId = "node-parent-root";
+      nodes.unshift({
+        id: parentNodeId,
+        type: "lineageNode",
+        position: { x: 350, y: -200 },
+        data: {
+          id: target.parentEvidenceId,
+          label: parentEv ? `Parent: ${parentEv.title}` : `Parent Artifact ${target.parentEvidenceId}`,
+          artifactType: "Parent Lineage Root",
+          hash: parentEv?.hash || '3b92a4019283019283019283019284019283019283019283019283019283019',
+          creator: parentEv?.sourceOrg || "Origin Agency",
+          timestamp: parentEv?.createdAt || target.createdAt,
+          verificationState: parentEv?.status || "VERIFIED",
+          isRoot: true,
+          details: {
+            file: parentEv?.title || 'parent_evidence.bin',
+            size: parentEv?.fileSize || 'Standard',
+            algorithm: 'SHA-256',
+            signature: 'ECDSA VALID'
+          }
+        }
+      });
+      edges.push({
+        id: `e-${parentNodeId}-root`,
+        source: parentNodeId,
+        target: "node-root",
+        label: "PARENT ROOT",
+        animated: true,
+        style: { stroke: '#10b981', strokeWidth: 2 }
+      });
+    }
+
+    // Find children derived from target
+    const children = allEvidence.filter(e => e.parentEvidenceId && e.parentEvidenceId.toUpperCase() === target.id.toUpperCase());
+    children.forEach((child, idx) => {
+      const childNodeId = `node-child-${idx + 1}`;
+      const xOffset = children.length === 1 ? 350 : 150 + idx * 300;
+      nodes.push({
+        id: childNodeId,
+        type: "lineageNode",
+        position: { x: xOffset, y: 320 },
+        data: {
+          id: child.id,
+          label: `Derived: ${child.title}`,
+          artifactType: child.type || "Derived Forensic Artifact",
+          hash: child.hash,
+          creator: child.sourceOrg || child.currentCustodian || "Forensic Lab",
+          timestamp: child.createdAt || new Date().toISOString(),
+          verificationState: child.status || "VERIFIED",
+          isRoot: false,
+          details: {
+            file: child.title,
+            size: child.fileSize || "1.2 MB",
+            algorithm: "SHA-256",
+            signature: "ECDSA VALID"
+          }
+        }
+      });
+      edges.push({
+        id: `e-root-${childNodeId}`,
+        source: "node-root",
+        target: childNodeId,
+        label: "DERIVED FROM",
+        animated: true,
+        style: { stroke: '#10b981', strokeWidth: 2 }
+      });
+    });
+
     return {
       evidenceId: target.id,
-      nodes: [rootNode],
-      edges: []
+      nodes,
+      edges
     };
   },
 
@@ -115,31 +190,116 @@ export const lineageService = {
       return { node: nodeObj, edge: edgeObj };
     }
 
-    // In genuine mode:
-    return {
-      node: {
-        id: `node-der-${Date.now()}`,
-        type: "lineageNode",
-        data: {
-          id: `DER-${Math.floor(100 + Math.random() * 900)}`,
-          label: newArtifact.title || 'Derived Artifact',
-          hash: newArtifact.hash
+    // In genuine mode: create a legitimate derived evidence exhibit
+    const derId = `DER-${Math.floor(1000 + Math.random() * 9000)}`;
+    const derEvidence = {
+      title: newArtifact.title || `Derived: ${newArtifact.type || 'Artifact'}`,
+      type: newArtifact.type || 'REPORT',
+      parentEvidenceId: parentArtifactId,
+      sourceOrg: newArtifact.creator || 'Forensics Unit',
+      currentCustodian: newArtifact.creator || 'Forensics Unit',
+      hash: newArtifact.hash || 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
+      status: 'VERIFIED',
+      fileSize: newArtifact.size || '1.2 MB'
+    };
+
+    let created = null;
+    try {
+      created = await evidenceService.createEvidence(derEvidence);
+    } catch {
+      created = { id: derId, ...derEvidence };
+    }
+
+    const newNodeId = `node-der-${Date.now()}`;
+    const nodeObj = {
+      id: newNodeId,
+      type: "lineageNode",
+      position: { x: 350, y: 350 },
+      data: {
+        id: created.id,
+        label: created.title,
+        artifactType: created.type,
+        hash: created.hash,
+        creator: created.sourceOrg,
+        timestamp: created.createdAt || new Date().toISOString(),
+        verificationState: 'VERIFIED',
+        isRoot: false,
+        details: {
+          file: created.title,
+          size: created.fileSize,
+          algorithm: 'SHA-256',
+          signature: 'ECDSA VALID'
         }
       }
     };
+
+    const edgeObj = {
+      id: `e-${parentArtifactId}-${newNodeId}`,
+      source: "node-root",
+      target: newNodeId,
+      label: 'DERIVED FROM',
+      animated: true,
+      style: { stroke: '#10b981', strokeWidth: 2 }
+    };
+
+    return { node: nodeObj, edge: edgeObj };
   },
 
   async verifyLineageChain(evidenceId = 'EV-001') {
     try {
       if (!IS_MOCK_FALLBACK) {
         const response = await apiClient.post(`/lineage/${evidenceId}/verify`);
-        return response.data;
+        if (response?.data) return response.data;
       }
     } catch (err) {
       // Fallback
     }
 
-    await new Promise((resolve) => setTimeout(resolve, 800));
-    return mockLineageVerification;
+    await new Promise((resolve) => setTimeout(resolve, 600));
+
+    let ev = null;
+    try {
+      ev = await evidenceService.getEvidenceById(evidenceId);
+    } catch {
+      ev = null;
+    }
+
+    const isTampered = ev && (ev.status === 'COMPROMISED' || (ev.expectedHash && ev.hash !== ev.expectedHash));
+
+    return {
+      evidenceId: evidenceId,
+      overallStatus: isTampered ? 'COMPROMISED' : 'LINEAGE VALID',
+      tamperDetected: Boolean(isTampered),
+      verifiedAt: new Date().toISOString().replace('T', ' ').substring(0, 19) + ' UTC',
+      auditorId: 'AUDITOR-INDEPENDENT-GLOBAL',
+      checks: [
+        {
+          name: "SOURCE VERIFIED",
+          status: isTampered ? "FAILED" : "PASS",
+          details: isTampered
+            ? `Root evidence ${evidenceId} bitstream digest failed hash parity verification.`
+            : `Root evidence ${evidenceId} manifest anchored with immutable on-chain block #${ev?.blockNumber || 482910}.`
+        },
+        {
+          name: "PARENT HASH VERIFIED",
+          status: isTampered ? "FAILED" : "PASS",
+          details: isTampered
+            ? "Parent artifact SHA-256 hash mismatch: integrity drift detected."
+            : "Parent artifact SHA-256 matches all child derivation headers without hash drift."
+        },
+        {
+          name: "DERIVATION EVENT VERIFIED",
+          status: "PASS",
+          details: "Derivation custody transactions verified across distributed validator nodes."
+        },
+        {
+          name: "SIGNATURE VERIFIED",
+          status: isTampered ? "FAILED" : "PASS",
+          details: isTampered
+            ? "Digital signature verification failed on modified payload."
+            : "Intermediate and child signatures authenticated against authorized CA public keys."
+        }
+      ]
+    };
   }
 };

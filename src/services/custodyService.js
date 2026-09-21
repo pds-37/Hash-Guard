@@ -113,5 +113,28 @@ export const custodyService = {
     }
 
     return newEvent;
+  },
+
+  async deleteEventsByEvidenceId(evidenceId) {
+    if (isSandboxModeActive()) {
+      sandboxCustodyEventsState = sandboxCustodyEventsState.filter(
+        ev => ev.evidenceId.toUpperCase() !== (evidenceId || '').toUpperCase()
+      );
+    } else {
+      const current = getGenuineCustodyEvents().filter(
+        ev => ev.evidenceId.toUpperCase() !== (evidenceId || '').toUpperCase()
+      );
+      saveGenuineCustodyEvents(current);
+    }
+    return { success: true };
+  },
+
+  async wipeAllEvents() {
+    if (isSandboxModeActive()) {
+      sandboxCustodyEventsState = [];
+    } else {
+      localStorage.removeItem('cee_genuine_custody');
+    }
+    return { success: true };
   }
 };

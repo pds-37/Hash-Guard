@@ -1,5 +1,7 @@
 import { apiClient, IS_MOCK_FALLBACK } from './api';
 import { mockTransfers } from '../mock/transfers';
+import { custodyService } from './custodyService';
+import { evidenceService } from './evidenceService';
 
 const isSandboxModeActive = () => {
   try {
@@ -103,6 +105,25 @@ export const transferService = {
       saveGenuineTransfers(current);
     }
 
+    // Auto-record TRANSFER event in custody timeline
+    try {
+      await custodyService.recordCustodyEvent({
+        evidenceId: newTransfer.evidenceId,
+        event: 'TRANSFER',
+        actor: newTransfer.fromActor,
+        organization: newTransfer.fromOrg,
+        hash: newTransfer.manifestHash,
+        notes: `Transfer dispatched to ${newTransfer.toOrg}. Protocol: mTLS Encrypted Transport.`
+      });
+      await evidenceService.updateEvidenceCustodian(
+        newTransfer.evidenceId,
+        `${newTransfer.fromOrg} -> ${newTransfer.toOrg} (In Transit)`,
+        'TRANSFER'
+      );
+    } catch (e) {
+      console.warn('Auto transfer event creation skipped:', e);
+    }
+
     return newTransfer;
   },
 
@@ -116,10 +137,12 @@ export const transferService = {
       console.warn('[TransferService] API request failed, using local transfers store:', err);
     }
 
+    let acceptedTransfer = null;
+
     if (isSandboxModeActive()) {
       sandboxTransfersState = sandboxTransfersState.map((t) => {
         if (t.id === transferId) {
-          return {
+          acceptedTransfer = {
             ...t,
             status: 'VERIFIED',
             completedAt: new Date().toISOString().replace('T', ' ').substring(0, 19) + ' UTC',
@@ -129,15 +152,14 @@ export const transferService = {
               timestamp: s.timestamp || new Date().toLocaleTimeString()
             }))
           };
+          return acceptedTransfer;
         }
         return t;
       });
-      return sandboxTransfersState.find((t) => t.id === transferId);
     } else {
-      let updatedItem = null;
       const current = getGenuineTransfers().map((t) => {
         if (t.id === transferId) {
-          updatedItem = {
+          acceptedTransfer = {
             ...t,
             status: 'VERIFIED',
             completedAt: new Date().toISOString().replace('T', ' ').substring(0, 19) + ' UTC',
@@ -147,12 +169,54 @@ export const transferService = {
               timestamp: s.timestamp || new Date().toLocaleTimeString()
             }))
           };
-          return updatedItem;
+          return acceptedTransfer;
         }
         return t;
       });
       saveGenuineTransfers(current);
-      return updatedItem;
     }
+
+    // Auto-record RECEIVE event in custody timeline and update evidence custodian
+    if (acceptedTransfer) {
+      try {
+        await custodyService.recordCustodyEvent({
+          evidenceId: acceptedTransfer.evidenceId,
+          event: 'RECEIVE',
+          actor: acceptedTransfer.toActor,
+          organization: acceptedTransfer.toOrg,
+          hash: acceptedTransfer.manifestHash,
+          notes: `Transfer verified and received by ${acceptedTransfer.toOrg}. ECDSA manifest seal confirmed.`
+        });
+        await evidenceService.updateEvidenceCustodian(
+          acceptedTransfer.evidenceId,
+          acceptedTransfer.toOrg,
+          'RECEIVE'
+        );
+      } catch (e) {
+        console.warn('Auto receive event creation skipped:', e);
+      }
+    }
+
+    return acceptedTransfer;
+  },
+
+  async deleteTransfersByEvidenceId(evidenceId) {
+    const cleanId = (evidenceId || '').toUpperCase();
+    if (isSandboxModeActive()) {
+      sandboxTransfersState = sandboxTransfersState.filter(t => (t.evidenceId || '').toUpperCase() !== cleanId);
+    } else {
+      const current = getGenuineTransfers().filter(t => (t.evidenceId || '').toUpperCase() !== cleanId);
+      saveGenuineTransfers(current);
+    }
+    return { success: true };
+  },
+
+  async wipeAllTransfers() {
+    if (isSandboxModeActive()) {
+      sandboxTransfersState = [];
+    } else {
+      localStorage.removeItem('cee_genuine_transfers');
+    }
+    return { success: true };
   }
 };

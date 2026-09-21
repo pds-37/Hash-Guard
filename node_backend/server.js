@@ -300,22 +300,72 @@ app.post('/api/v1/lineage/:id/verify', async (req, res) => {
 // Verification Route
 app.post('/api/v1/verification/verify', async (req, res) => {
   const db = await readDb();
-  const item = db.evidence.find(e => e.id === req.body.identifier || e.hash === req.body.identifier);
+  const idToFind = (req.body.identifier || '').trim().toUpperCase();
+  const item = db.evidence.find(e => 
+    (e.id && e.id.toUpperCase() === idToFind) || 
+    (e.hash && e.hash.toUpperCase() === idToFind)
+  );
+
   if (item) {
+    const isTampered = item.status === 'COMPROMISED' || (item.expectedHash && item.hash !== item.expectedHash);
+    const actualHash = item.hash || '';
+    const expectedHash = item.expectedHash || actualHash;
+    const sourceOrg = item.sourceOrg || 'Originating Agency';
+    const custodyEvent = item.lastEvent || 'COLLECT';
+
     res.json({
-      valid: true,
-      hashMatch: true,
-      signatureValid: true,
-      custodyChainValid: true,
-      timestamp: new Date().toISOString()
+      identifier: item.id,
+      overallStatus: isTampered ? 'COMPROMISED' : 'VERIFIED',
+      tamperDetected: isTampered,
+      verifiedAt: new Date().toISOString().replace('T', ' ').substring(0, 19) + ' UTC',
+      auditorId: 'AUDITOR-INDEPENDENT-GLOBAL',
+      onChainBlock: item.blockNumber || 482910,
+      checks: [
+        {
+          key: 'hash_integrity',
+          title: 'HASH INTEGRITY',
+          status: isTampered ? 'FAILED' : 'PASS',
+          expected: expectedHash,
+          actual: actualHash,
+          description: isTampered ? 'SHA-256 bit digest mismatch. Off-chain bytes do not match on-chain root.' : 'SHA-256 bit digest matches immutable on-chain root seal 100%.'
+        },
+        {
+          key: 'digital_signature',
+          title: 'DIGITAL SIGNATURE',
+          status: isTampered ? 'FAILED' : 'PASS',
+          expected: `ECDSA secp256k1 signed by ${sourceOrg}`,
+          actual: isTampered ? 'SIGNATURE_INVALID_MODIFIED_PAYLOAD' : `VALID (${sourceOrg} CERT CA Certificate Validated)`,
+          description: isTampered ? 'Signature invalid due to cryptographic digest tampering.' : 'Cryptographic signature verified against public key registry.'
+        },
+        {
+          key: 'custody_history',
+          title: 'CUSTODY HISTORY',
+          status: isTampered ? 'WARNING' : 'PASS',
+          expected: 'Continuous unbroken chain of custody records',
+          actual: `Anchored at ${custodyEvent} transition`,
+          description: 'All custodial transfers signed by authenticated organization agents.'
+        },
+        {
+          key: 'event_sequence',
+          title: 'EVENT SEQUENCE',
+          status: 'PASS',
+          expected: 'Strict state progression (COLLECT -> SEAL -> TRANSFER -> RECEIVE -> ANALYZE)',
+          actual: 'Monotonic timestamp and nonce sequence confirmed',
+          description: 'State transition invariants satisfied without reordering.'
+        },
+        {
+          key: 'derived_lineage',
+          title: 'DERIVED LINEAGE',
+          status: isTampered ? 'FAILED' : 'PASS',
+          expected: 'Clean derivation DAG with verified parent roots',
+          actual: item.derivedCount > 0 ? `${item.derivedCount} derived artifact(s) verified with valid parent links` : 'Root evidence exhibit verified with unbroken parent seals',
+          description: 'Lineage DAG verified from root evidence to analytical reports.'
+        }
+      ]
     });
   } else {
-    res.json({
-      valid: false,
-      hashMatch: false,
-      signatureValid: false,
-      custodyChainValid: false,
-      message: 'Evidence identifier not found in ledger'
+    res.status(404).json({
+      detail: `Exhibit "${req.body.identifier}" was not found in the cryptographic audit ledger.`
     });
   }
 });

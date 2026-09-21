@@ -15,7 +15,12 @@ class VerificationService:
                 detail="Evidence identifier cannot be empty."
             )
 
-        evidence = db.query(Evidence).filter(Evidence.id == evidence_id).first()
+        evidence = db.query(Evidence).filter(
+            (Evidence.id == evidence_id) | 
+            (Evidence.id.ilike(evidence_id)) | 
+            (Evidence.hash == evidence_id) | 
+            (Evidence.hash.ilike(evidence_id))
+        ).first()
         
         if not evidence:
             raise HTTPException(

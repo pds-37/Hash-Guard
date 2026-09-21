@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Badge } from '../common/Badge';
 import { truncateHash, getEventColor } from '../../utils/formatters';
-import { ExternalLink, Copy, Check, Trash2 } from 'lucide-react';
+import { ExternalLink, Copy, Check, Trash2, ShieldCheck } from 'lucide-react';
 import { evidenceService } from '../../services/evidenceService';
 import { useApp } from '../../context/AppContext';
 
@@ -128,7 +128,7 @@ export const EvidenceTable = ({ evidenceList = [] }) => {
                   </span>
                 </td>
                 <td className="py-3 px-4 text-ce-text-muted font-mono whitespace-nowrap">
-                  {item.createdAt.split(' ')[0]}
+                  {item.createdAt ? (item.createdAt.includes('T') ? item.createdAt.split('T')[0] : item.createdAt.split(' ')[0]) : 'Recent'}
                 </td>
                 <td className="py-3 px-4 text-right whitespace-nowrap">
                   <div className="inline-flex items-center gap-2">
@@ -138,6 +138,13 @@ export const EvidenceTable = ({ evidenceList = [] }) => {
                     >
                       <span>Inspect</span>
                       <ExternalLink className="w-3.5 h-3.5" />
+                    </Link>
+                    <Link
+                      to={`/verification?id=${item.id}`}
+                      className="p-1.5 rounded-md bg-ce-bg border border-ce-border text-xs text-ce-text-muted hover:text-ce-brand hover:border-ce-brand/50 transition-all"
+                      title="Run Zero-Trust Verification"
+                    >
+                      <ShieldCheck className="w-3.5 h-3.5 text-ce-brand" />
                     </Link>
                     <button
                       onClick={(e) => handleDelete(item.id, e)}

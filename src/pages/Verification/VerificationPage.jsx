@@ -1,4 +1,5 @@
 import React from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { PageHeader } from '../../components/layout/PageHeader';
 import { IndependentVerificationPanel } from '../../components/verification/IndependentVerificationPanel';
 import { OffChainBadge } from '../../components/common/OffChainBadge';
@@ -6,7 +7,9 @@ import { ShieldCheck } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 
 export const VerificationPage = () => {
-  const { isTamperSimulated, isSandboxMode } = useApp();
+  const [searchParams] = useSearchParams();
+  const queryId = (searchParams.get('id') || searchParams.get('evidenceId') || '').trim();
+  const { isSandboxMode } = useApp();
 
   return (
     <div className="space-y-6">
@@ -26,7 +29,10 @@ export const VerificationPage = () => {
       <OffChainBadge />
 
       {/* Main Independent Verification Panel */}
-      <IndependentVerificationPanel defaultId={isSandboxMode ? 'EV-001' : ''} />
+      <IndependentVerificationPanel 
+        defaultId={queryId || (isSandboxMode ? 'EV-001' : '')} 
+        autoVerify={Boolean(queryId)}
+      />
     </div>
   );
 };

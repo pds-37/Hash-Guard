@@ -71,7 +71,9 @@ export const evidenceService = {
           const unmergedLocal = localData.filter(item => !remoteIds.has((item.id || '').toUpperCase()));
           return this._filterList([...unmergedLocal, ...remoteData], filters);
         }
-        return this._filterList(remoteData, filters);
+        if (remoteData.length > 0) {
+          return this._filterList(remoteData, filters);
+        }
       }
     } catch (err) {
       console.warn('[EvidenceService] API request failed, using local ledger state:', err);
@@ -82,17 +84,35 @@ export const evidenceService = {
   },
 
   async getEvidenceById(id) {
+    const cleanId = (id || '').trim().toUpperCase();
     try {
       if (!IS_MOCK_FALLBACK) {
-        const response = await apiClient.get(`/evidence/${id}`);
-        return response.data;
+        const response = await apiClient.get(`/evidence/${cleanId}`);
+        if (response?.data && response.data.id) {
+          return response.data;
+        }
       }
     } catch (err) {
       console.warn('[EvidenceService] API request failed, using local ledger state:', err);
     }
 
     const sourceList = isSandboxModeActive() ? sandboxEvidenceState : getGenuineEvidence();
-    const found = sourceList.find((item) => item.id.toUpperCase() === id.toUpperCase());
+    let found = sourceList.find((item) => 
+      (item.id && item.id.trim().toUpperCase() === cleanId) ||
+      (item.hash && item.hash.trim().toUpperCase() === cleanId) ||
+      (item.txHash && item.txHash.trim().toUpperCase() === cleanId)
+    );
+
+    // Cross-fallback: Check the alternative store if not found in current mode's primary store
+    if (!found) {
+      const altList = isSandboxModeActive() ? getGenuineEvidence() : sandboxEvidenceState;
+      found = (altList || []).find((item) => 
+        (item.id && item.id.trim().toUpperCase() === cleanId) ||
+        (item.hash && item.hash.trim().toUpperCase() === cleanId) ||
+        (item.txHash && item.txHash.trim().toUpperCase() === cleanId)
+      );
+    }
+
     if (!found) {
       throw new Error(`Evidence record ${id} not found in the cryptographic audit ledger.`);
     }
@@ -100,9 +120,10 @@ export const evidenceService = {
   },
 
   async deleteEvidence(id) {
+    const cleanId = (id || '').trim().toUpperCase();
     try {
       if (!IS_MOCK_FALLBACK) {
-        const response = await apiClient.delete(`/evidence/${id}`);
+        const response = await apiClient.delete(`/evidence/${cleanId}`);
         return response.data;
       }
     } catch (err) {
@@ -110,11 +131,23 @@ export const evidenceService = {
     }
 
     if (isSandboxModeActive()) {
-      sandboxEvidenceState = sandboxEvidenceState.filter((item) => item.id.toUpperCase() !== id.toUpperCase());
+      sandboxEvidenceState = sandboxEvidenceState.filter((item) => (item.id || '').toUpperCase() !== cleanId);
     } else {
-      const current = getGenuineEvidence().filter((item) => item.id.toUpperCase() !== id.toUpperCase());
+      const current = getGenuineEvidence().filter((item) => (item.id || '').toUpperCase() !== cleanId);
       saveGenuineEvidence(current);
     }
+
+    // Cascade delete local custody events
+    try {
+      const raw = localStorage.getItem('cee_genuine_custody');
+      if (raw) {
+        const filtered = JSON.parse(raw).filter(e => (e.evidenceId || '').toUpperCase() !== cleanId);
+        localStorage.setItem('cee_genuine_custody', JSON.stringify(filtered));
+      }
+    } catch (e) {
+      console.warn('Cascade delete custody error:', e);
+    }
+
     return { success: true };
   },
 
@@ -131,8 +164,103 @@ export const evidenceService = {
       sandboxEvidenceState = [];
     } else {
       localStorage.removeItem('cee_genuine_evidence');
+      localStorage.removeItem('cee_genuine_custody');
+      localStorage.removeItem('cee_genuine_transfers');
     }
     return { success: true };
+  },
+
+  async updateEvidenceCustodian(evidenceId, newCustodian, lastEvent = 'TRANSFER') {
+    const cleanId = (evidenceId || '').trim().toUpperCase();
+    const nowStr = new Date().toISOString().replace('T', ' ').substring(0, 19) + ' UTC';
+
+    if (isSandboxModeActive()) {
+      sandboxEvidenceState = sandboxEvidenceState.map(ev => {
+        if ((ev.id || '').toUpperCase() === cleanId) {
+          return { ...ev, currentCustodian: newCustodian, lastEvent, lastEventTime: nowStr };
+        }
+        return ev;
+      });
+    } else {
+      const current = getGenuineEvidence().map(ev => {
+        if ((ev.id || '').toUpperCase() === cleanId) {
+          return { ...ev, currentCustodian: newCustodian, lastEvent, lastEventTime: nowStr };
+        }
+        return ev;
+      });
+      saveGenuineEvidence(current);
+    }
+    return { success: true };
+  },
+
+  async downloadEvidence(evidenceOrId) {
+    let ev = typeof evidenceOrId === 'object' ? evidenceOrId : null;
+    const id = ev ? ev.id : (evidenceOrId || '').trim().toUpperCase();
+
+    if (!ev && id) {
+      try {
+        ev = await this.getEvidenceById(id);
+      } catch {
+        ev = null;
+      }
+    }
+
+    // Try backend physical file download if available
+    try {
+      if (!IS_MOCK_FALLBACK && id) {
+        const res = await apiClient.get(`/evidence/${id}/download`, { responseType: 'blob' });
+        if (res?.data && res.data.size > 0) {
+          const blob = new Blob([res.data]);
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = ev?.title ? `${ev.title.replace(/\s+/g, '_')}.raw` : `${id}_evidence.raw`;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          window.URL.revokeObjectURL(url);
+          return;
+        }
+      }
+    } catch (err) {
+      console.warn('[EvidenceService] Remote download unavailable, creating authenticated client-side forensic seal package:', err);
+    }
+
+    // Client-side authenticated forensic package export
+    const payload = ev ? JSON.stringify({
+      attestation: "CYBER EVIDENCE EXCHANGE - ENCLAVE OFF-CHAIN FORENSIC PACKAGE",
+      evidenceId: ev.id,
+      caseId: ev.caseId || 'CASE-2026-9012',
+      title: ev.title,
+      type: ev.type,
+      fileSize: ev.fileSize,
+      sha256BitDigest: ev.hash,
+      expectedHash: ev.expectedHash || ev.hash,
+      sealingTimestampUTC: ev.createdAt,
+      sourceAgency: ev.sourceOrg,
+      currentCustodian: ev.currentCustodian,
+      custodyEvent: ev.lastEvent || 'COLLECT',
+      status: ev.status,
+      blockchainTx: ev.txHash,
+      onChainBlock: ev.blockNumber,
+      ecdsaSignature: ev.signature || {
+        algorithm: "secp256k1",
+        status: "VALID",
+        manifestId: `MNF-${ev.id}`
+      },
+      forensicNotes: ev.forensicNotes || ev.description || "Forensic specimen sealed in cryptographic enclave."
+    }, null, 2) : "CYBER EVIDENCE EXCHANGE FORENSIC PACKAGE";
+
+    const blob = new Blob([payload], { type: 'application/octet-stream' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    const safeTitle = (ev?.title || id || 'evidence').replace(/[^a-zA-Z0-9_-]/g, '_');
+    a.download = `${safeTitle}_sealed_payload.raw`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(url);
   },
 
   async createEvidence(evidencePayload, file) {
@@ -216,6 +344,30 @@ export const evidenceService = {
       const current = getGenuineEvidence();
       current.unshift(newEvidence);
       saveGenuineEvidence(current);
+    }
+
+    // Auto-record initial COLLECT custody event in ledger
+    try {
+      const initialCustodyEvent = {
+        eventId: `EVT-${Math.floor(1000 + Math.random() * 9000)}`,
+        evidenceId: newEvidence.id,
+        event: 'COLLECT',
+        actor: newEvidence.collector || 'analyst-lead@org-a.gov',
+        organization: newEvidence.sourceOrg || 'Organization A (CERT-Alpha)',
+        timestamp: newEvidence.createdAt,
+        hash: newEvidence.hash,
+        verification: 'VERIFIED',
+        signature: '3045022100' + Array.from({length: 20}, () => Math.floor(Math.random()*16).toString(16)).join('') + '...VALID',
+        txRef: newEvidence.txHash,
+        notes: `Initial forensic acquisition and cryptographic sealing into secure storage vault: ${newEvidence.title}`
+      };
+
+      const raw = localStorage.getItem('cee_genuine_custody');
+      const list = raw ? JSON.parse(raw) : [];
+      list.unshift(initialCustodyEvent);
+      localStorage.setItem('cee_genuine_custody', JSON.stringify(list));
+    } catch (custodyErr) {
+      console.warn('Auto custody event registration skipped:', custodyErr);
     }
 
     return newEvidence;

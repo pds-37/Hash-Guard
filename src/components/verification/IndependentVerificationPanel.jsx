@@ -19,11 +19,11 @@ import { NewEvidenceModal } from '../evidence/NewEvidenceModal';
 import { Badge } from '../common/Badge';
 import { useApp } from '../../context/AppContext';
 
-export const IndependentVerificationPanel = ({ defaultId = '' }) => {
+export const IndependentVerificationPanel = ({ defaultId = '', autoVerify = false }) => {
   const { isSandboxMode, refreshTrigger, triggerRefresh } = useApp();
   
-  // In sandbox mode, default to pre-loaded EV-001; in genuine mode start blank
-  const [evidenceId, setEvidenceId] = useState(() => (isSandboxMode ? (defaultId || 'EV-001') : ''));
+  // In sandbox mode, default to pre-loaded EV-001; in genuine mode default to defaultId or first exhibit
+  const [evidenceId, setEvidenceId] = useState(() => (defaultId || (isSandboxMode ? 'EV-001' : '')));
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
@@ -35,29 +35,8 @@ export const IndependentVerificationPanel = ({ defaultId = '' }) => {
   const [availableEvidence, setAvailableEvidence] = useState([]);
   const [loadingLedger, setLoadingLedger] = useState(true);
 
-  const loadLedgerState = async () => {
-    setLoadingLedger(true);
-    try {
-      const list = await evidenceService.getAllEvidence();
-      setAvailableEvidence(list || []);
-      // If genuine mode and we have items, don't force EV-001
-      if (!isSandboxMode && list && list.length > 0 && !evidenceId) {
-        // Leave empty until user picks or types
-      }
-    } catch (err) {
-      console.error('Failed to query ledger evidence items:', err);
-    } finally {
-      setLoadingLedger(false);
-    }
-  };
-
-  useEffect(() => {
-    loadLedgerState();
-  }, [refreshTrigger, isSandboxMode]);
-
-  const handleVerify = async (e) => {
-    if (e) e.preventDefault();
-    const clean = (evidenceId || '').trim();
+  const executeVerify = async (targetId) => {
+    const clean = (targetId !== undefined ? targetId : evidenceId || '').trim();
     if (!clean) {
       setError("Please enter a valid Evidence ID or Artifact ID to verify.");
       setNotFoundId(null);
@@ -87,6 +66,40 @@ export const IndependentVerificationPanel = ({ defaultId = '' }) => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const loadLedgerState = async () => {
+    setLoadingLedger(true);
+    try {
+      const list = await evidenceService.getAllEvidence();
+      setAvailableEvidence(list || []);
+      // If genuine mode and no ID is chosen yet, pre-populate with first available registered exhibit
+      if (!isSandboxMode && list && list.length > 0 && !evidenceId && !defaultId) {
+        setEvidenceId(list[0].id);
+      }
+    } catch (err) {
+      console.error('Failed to query ledger evidence items:', err);
+    } finally {
+      setLoadingLedger(false);
+    }
+  };
+
+  useEffect(() => {
+    loadLedgerState();
+  }, [refreshTrigger, isSandboxMode]);
+
+  useEffect(() => {
+    if (defaultId) {
+      setEvidenceId(defaultId);
+      if (autoVerify) {
+        executeVerify(defaultId);
+      }
+    }
+  }, [defaultId, autoVerify]);
+
+  const handleVerify = (e) => {
+    if (e) e.preventDefault();
+    executeVerify(evidenceId);
   };
 
   // If ledger is empty in genuine mode (0 evidence recorded in the ledger)
@@ -183,6 +196,7 @@ export const IndependentVerificationPanel = ({ defaultId = '' }) => {
                     setEvidenceId('EV-001');
                     setError(null);
                     setNotFoundId(null);
+                    executeVerify('EV-001');
                   }}
                   className="text-ce-brand hover:underline font-bold cursor-pointer"
                 >
@@ -195,6 +209,7 @@ export const IndependentVerificationPanel = ({ defaultId = '' }) => {
                     setEvidenceId('EV-009');
                     setError(null);
                     setNotFoundId(null);
+                    executeVerify('EV-009');
                   }}
                   className="text-ce-danger hover:underline font-bold cursor-pointer"
                 >
@@ -206,7 +221,7 @@ export const IndependentVerificationPanel = ({ defaultId = '' }) => {
               availableEvidence.length > 0 && (
                 <div className="mt-4 flex flex-wrap items-center gap-2 text-[11px] font-mono text-ce-text-muted">
                   <span className="font-semibold text-ce-text-secondary">Registered in Ledger:</span>
-                  {availableEvidence.slice(0, 4).map((ev) => (
+                  {availableEvidence.slice(0, 5).map((ev) => (
                     <button
                       key={ev.id}
                       type="button"
@@ -214,18 +229,20 @@ export const IndependentVerificationPanel = ({ defaultId = '' }) => {
                         setEvidenceId(ev.id);
                         setError(null);
                         setNotFoundId(null);
+                        executeVerify(ev.id);
                       }}
-                      className={`px-2 py-0.5 rounded border transition-colors cursor-pointer ${
+                      className={`px-2.5 py-1 rounded border transition-colors cursor-pointer text-xs font-bold ${
                         evidenceId === ev.id
-                          ? 'bg-ce-brand/20 border-ce-brand text-ce-brand font-bold'
+                          ? 'bg-ce-brand/20 border-ce-brand text-ce-brand'
                           : 'bg-ce-surface-subtle border-ce-border hover:border-ce-brand/50 text-ce-text-primary'
                       }`}
+                      title={`Verify exhibit ${ev.id}`}
                     >
                       {ev.id}
                     </button>
                   ))}
-                  {availableEvidence.length > 4 && (
-                    <span className="text-[10px] text-ce-text-muted">+{availableEvidence.length - 4} more</span>
+                  {availableEvidence.length > 5 && (
+                    <span className="text-[10px] text-ce-text-muted">+{availableEvidence.length - 5} more</span>
                   )}
                 </div>
               )

@@ -62,8 +62,9 @@ export const LineageFlowGraph = ({ initialGraph }) => {
 
   const handleVerifyLineage = async () => {
     setIsVerifying(true);
+    const targetId = initialGraph?.evidenceId || 'EV-001';
     try {
-      const result = await lineageService.verifyLineageChain('EV-001');
+      const result = await lineageService.verifyLineageChain(targetId);
       setVerificationResult(result);
       setShowVerificationModal(true);
     } catch (err) {
