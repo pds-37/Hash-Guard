@@ -1,4 +1,2 @@
-# Ignore backend from Vercel frontend build
-backend
-node_backend
-contracts
+/backend
+/node_backend
