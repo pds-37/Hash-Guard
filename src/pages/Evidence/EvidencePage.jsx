@@ -6,14 +6,13 @@ import { NewEvidenceModal } from '../../components/evidence/NewEvidenceModal';
 import { EmptyState, LoadingState, ErrorState } from '../../components/common/StateViews';
 import { evidenceService } from '../../services/evidenceService';
 import { useApp } from '../../context/AppContext';
-import { Plus, ShieldAlert, Trash2 } from 'lucide-react';
+import { Plus } from 'lucide-react';
 
 export const EvidencePage = () => {
   const { searchQuery, isTamperSimulated, refreshTrigger, triggerRefresh } = useApp();
   const [evidenceList, setEvidenceList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [isWiping, setIsWiping] = useState(false);
 
   // Filters
   const [search, setSearch] = useState(searchQuery || '');
@@ -21,21 +20,6 @@ export const EvidencePage = () => {
   const [typeFilter, setTypeFilter] = useState('ALL');
   const [orgFilter, setOrgFilter] = useState('ALL');
   const [showModal, setShowModal] = useState(false);
-
-  const handleWipeLedger = async () => {
-    if (!window.confirm("Are you sure you want to wipe all evidence exhibits from the database? This resets the ledger to a clean slate.")) {
-      return;
-    }
-    setIsWiping(true);
-    try {
-      await evidenceService.wipeAllEvidence();
-      triggerRefresh();
-    } catch (err) {
-      alert("Failed to wipe ledger: " + (err.message || 'Unknown error'));
-    } finally {
-      setIsWiping(false);
-    }
-  };
 
   useEffect(() => {
     if (searchQuery) {
@@ -78,26 +62,13 @@ export const EvidencePage = () => {
         subtitle="Manage and track digital evidence exhibits."
         breadcrumbs={['Dashboard', 'Evidence']}
         actionButton={
-          <div className="flex items-center gap-2">
-            {evidenceList.length > 0 && (
-              <button
-                onClick={handleWipeLedger}
-                disabled={isWiping}
-                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-md bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 text-xs font-mono transition-colors disabled:opacity-50 cursor-pointer"
-                title="Wipe all evidence exhibits for a clean testing slate"
-              >
-                <Trash2 className="w-3.5 h-3.5" />
-                <span>{isWiping ? 'Wiping...' : 'Wipe DB'}</span>
-              </button>
-            )}
-            <button
-              onClick={() => setShowModal(true)}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-ce-brand hover:bg-ce-brand-hover text-white text-xs font-mono font-bold transition-colors shadow-sm cursor-pointer"
-            >
-              <Plus className="w-4 h-4" />
-              <span>Collect & Seal Evidence</span>
-            </button>
-          </div>
+          <button
+            onClick={() => setShowModal(true)}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-ce-brand hover:bg-ce-brand-hover text-white text-xs font-mono font-bold transition-colors shadow-sm cursor-pointer"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Collect & Seal Evidence</span>
+          </button>
         }
       />
 

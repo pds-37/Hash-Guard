@@ -113,9 +113,12 @@ export const NewEvidenceModal = ({ isOpen, onClose, onCreated }) => {
               const contract = new ethers.Contract(contractAddress, HashGuardABI.abi, signer);
               const contentHash = '0x' + computedHash;
               const metadataHash = ethers.id(formData.title || 'metadata');
+              const targetRecipient = (formData.allocatedTo && formData.allocatedTo.startsWith('0x')) 
+                ? formData.allocatedTo 
+                : signer.address;
 
-              const tx = await contract.mintEvidenceNFT(
-                signer.address,
+              const tx = await (contract.mintAssetNFT || contract.mintEvidenceNFT)(
+                targetRecipient,
                 assetId,
                 contentHash,
                 metadataHash
@@ -269,6 +272,26 @@ export const NewEvidenceModal = ({ isOpen, onClose, onCreated }) => {
             placeholder="Select a file above or enter SHA-256 manually..."
             className={`w-full bg-ce-bg border border-ce-border rounded-md px-3 py-2 placeholder:text-ce-text-muted focus:outline-none focus:border-ce-brand focus:ring-1 focus:ring-ce-brand font-mono text-xs transition-colors ${computingHash ? 'text-ce-brand animate-pulse' : 'text-ce-text-primary'}`}
           />
+        </div>
+
+        {/* NFT Asset Allocation to DID / Recipient */}
+        <div>
+          <div className="flex items-center justify-between mb-1.5">
+            <label className="block text-ce-text-primary text-xs font-semibold uppercase tracking-wider">
+              Allocate NFT Ownership to Recipient DID / Wallet:
+            </label>
+            <span className="text-[10px] font-mono text-ce-brand">Smart Contract Governed</span>
+          </div>
+          <input
+            type="text"
+            value={formData.allocatedTo || ''}
+            onChange={(e) => setFormData({ ...formData, allocatedTo: e.target.value })}
+            placeholder="e.g. 0x70997970C51812dc3A010C7d01b50e0d17dc79C8 or did:ethr:0x... (Default: Your Identity)"
+            className="w-full bg-ce-bg border border-ce-border rounded-md px-3 py-2 text-ce-text-primary placeholder:text-ce-text-muted focus:outline-none focus:border-ce-brand focus:ring-1 focus:ring-ce-brand font-mono text-xs transition-colors"
+          />
+          <p className="text-[10px] text-ce-text-muted mt-1 font-mono">
+            Directly assigns the newly minted ERC-721 NFT to the recipient's decentralized identifier.
+          </p>
         </div>
 
         <div>

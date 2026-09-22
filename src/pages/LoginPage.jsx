@@ -220,18 +220,76 @@ export const LoginPage = () => {
                 <div className="w-full border-t border-ce-border"></div>
               </div>
               <div className="relative flex justify-center text-[10px] font-mono uppercase">
-                <span className="bg-ce-surface px-2 text-ce-text-muted">Or For SIH Judging</span>
+                <span className="bg-ce-surface px-2 text-ce-text-muted">Or Instant RBAC Persona Login</span>
               </div>
             </div>
 
-            <button
-              type="button"
-              onClick={() => handleLogin(null, true)}
-              className="w-full bg-gradient-to-r from-cyan-500/10 to-blue-500/10 hover:from-cyan-500/20 hover:to-blue-500/20 border border-cyan-500/40 text-cyan-300 font-mono font-bold text-xs py-2.5 rounded-lg flex items-center justify-center gap-2 transition-all cursor-pointer shadow-[0_0_15px_rgba(6,182,212,0.15)]"
-            >
-              <Zap className="w-4 h-4 text-cyan-400" />
-              <span>⚡ ONE-CLICK EVALUATOR SANDBOX (PRE-LOADED DEMO)</span>
-            </button>
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  switchRole('ADMIN');
+                  initiateSession({
+                    id: 'USR-ADMIN',
+                    email: 'admin@hashguard.gov',
+                    name: 'Super Administrator',
+                    organization_id: 'ADMIN',
+                    role: 'ADMIN'
+                  }, null, true);
+                }}
+                className="p-2 rounded border border-rose-500/30 bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 font-mono text-[11px] font-bold text-center transition-all cursor-pointer"
+              >
+                👑 Admin
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  switchRole('MANAGER');
+                  initiateSession({
+                    id: 'USR-MGR',
+                    email: 'manager@hashguard.gov',
+                    name: 'Custody Manager',
+                    organization_id: 'MANAGER',
+                    role: 'MANAGER'
+                  }, null, true);
+                }}
+                className="p-2 rounded border border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 font-mono text-[11px] font-bold text-center transition-all cursor-pointer"
+              >
+                🛡️ Manager
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  switchRole('AUDITOR');
+                  initiateSession({
+                    id: 'USR-AUDIT',
+                    email: 'auditor@auditboard.gov',
+                    name: 'Chief Compliance Auditor',
+                    organization_id: 'AUDITOR',
+                    role: 'AUDITOR'
+                  }, null, true);
+                }}
+                className="p-2 rounded border border-cyan-500/30 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 font-mono text-[11px] font-bold text-center transition-all cursor-pointer"
+              >
+                🔍 Auditor
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  switchRole('USER');
+                  initiateSession({
+                    id: 'USR-CUST',
+                    email: 'investigator@field.gov',
+                    name: 'Evidence Custodian',
+                    organization_id: 'USER',
+                    role: 'USER'
+                  }, null, true);
+                }}
+                className="p-2 rounded border border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 font-mono text-[11px] font-bold text-center transition-all cursor-pointer"
+              >
+                👤 User
+              </button>
+            </div>
           </form>
         ) : (
           /* REGISTRATION FORM */
@@ -293,9 +351,10 @@ export const LoginPage = () => {
                 onChange={(e) => setRegRole(e.target.value)}
                 className="w-full bg-ce-bg border border-ce-border rounded px-3 py-2 text-xs text-ce-text-primary focus:outline-none focus:border-ce-brand font-mono transition-colors cursor-pointer"
               >
-                <option value="ORG_A">Evidence Collector / Originator (CERT-Alpha)</option>
-                <option value="ORG_B">Forensic Analyst / Receiver (Cyber Defense Lab)</option>
-                <option value="AUDITOR">Independent Court / Regulatory Auditor</option>
+                <option value="ADMIN">ADMIN - System Administrator & Governance Authority</option>
+                <option value="MANAGER">MANAGER - Asset & Custody Operations</option>
+                <option value="AUDITOR">AUDITOR - Independent Compliance & Verification</option>
+                <option value="USER">USER - Evidence Custodian & Field Officer</option>
               </select>
             </div>
 
