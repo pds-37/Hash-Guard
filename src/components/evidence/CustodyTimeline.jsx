@@ -52,7 +52,7 @@ export const CustodyTimeline = ({ events = [], currentStatus = 'VERIFIED' }) => 
               onClick={() => setViewMode('script')}
               className={`px-2.5 py-1 rounded transition-colors ${viewMode === 'script' ? 'bg-ce-brand text-white font-bold' : 'text-ce-text-muted hover:text-ce-text-primary'}`}
             >
-              Script Sequence View (09:41–11:05)
+              Investigation Sequence (09:41–11:05)
             </button>
           </div>
 
@@ -66,7 +66,7 @@ export const CustodyTimeline = ({ events = [], currentStatus = 'VERIFIED' }) => 
         <div className="p-4 rounded-md bg-ce-surface-subtle border border-ce-border">
           <div className="text-xs font-mono font-bold text-ce-brand uppercase tracking-wider mb-4 flex items-center gap-2">
             <Hash className="w-4 h-4" />
-            SIH DEMO INVESTIGATION TIMELINE (SCRIPT SECTION 14)
+            FORENSIC INCIDENT INVESTIGATION TIMELINE (STANDARD RUNBOOK)
           </div>
           <div className="space-y-3 font-mono text-xs">
             {scriptTimeline.map((item, i) => (

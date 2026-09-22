@@ -10,7 +10,7 @@ const isSandboxModeActive = () => {
   }
 };
 
-// Sandbox in-memory store (pre-loaded with SIH specimens EV-001, EV-009, etc.)
+// Sandbox in-memory store (pre-loaded with forensic specimens EV-001, EV-009, etc.)
 let sandboxEvidenceState = [...mockEvidenceList];
 
 // Persistent genuine store (starts empty [] for real registered operators)
@@ -373,7 +373,7 @@ export const evidenceService = {
     return newEvidence;
   },
 
-  // SIH DEMO SIMULATION HELPER (strictly for sandbox mode)
+  // TAMPER SIMULATION HELPER (strictly for sandbox mode)
   toggleTamperSimulation(targetId = 'EV-001', shouldTamper = true) {
     if (!isSandboxModeActive()) return;
 

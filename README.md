@@ -1,7 +1,7 @@
 <div align="center">
   <img src="public/cyber_evidence_logo.jpg" alt="HashGuard Cyber Evidence Exchange Logo" width="260" style="border-radius: 12px; margin-bottom: 12px;" />
 
-  # Cyber Evidence Exchange (SIH 2026)
+  # Cyber Evidence Exchange
   ### HASHGUARD • Immutable Forensic Custody & Integrity Ledger
 
   **Production-Quality Platform for Cross-Organization Digital Forensic Evidence Verification**
@@ -22,7 +22,7 @@
    - Interactive React Flow graph demonstrating provenance from raw seized payloads to decompilations, YARA/Sigma IOC sets, and final executive reports.
 4. **Independent Zero-Knowledge Verification**:
    - Dedicated auditor portal to prove bit-level integrity, signer validity, and unbroken custody history without accessing sensitive underlying raw files.
-5. **SIH Live Tamper Demonstration Mode**:
+5. **Live Tamper Demonstration Mode**:
    - Live one-click toggle in topbar simulating bit-level tamper on specimen exhibits, immediately triggering `✕ INTEGRITY COMPROMISED` across the entire platform.
 
 ---

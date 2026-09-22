@@ -53,8 +53,8 @@ export const LoginPage = () => {
         switchRole('ORG_B');
         initiateSession({
           id: 'EVAL-001',
-          email: 'evaluator@sih.gov.in',
-          name: 'SIH Evaluator / Jury Member',
+          email: 'evaluator@forensic-consortium.gov',
+          name: 'Lead Forensic Evaluator / Lead Auditor',
           organization_id: 'ORG_B',
           role: 'ADMIN'
         }, null, true);

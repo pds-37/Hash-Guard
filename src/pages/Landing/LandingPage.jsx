@@ -100,7 +100,7 @@ export const LandingPage = () => {
     const mockUser = {
       id: 'EVAL-001',
       email: targetRole === 'AUDITOR' ? 'auditor@cyber-audit.gov' : 'analyst-lead@cyberlab.local',
-      name: isSandbox ? 'SIH Evaluator / Jury Member' : roleConfig.roleName,
+      name: isSandbox ? 'Lead Forensic Evaluator / Lead Auditor' : roleConfig.roleName,
       organization_id: targetRole === 'ORG_A' ? 'ORG_A' : targetRole === 'ORG_B' ? 'ORG_B' : 'AUDITOR',
       role: targetRole === 'AUDITOR' ? 'AUDITOR' : 'ADMIN'
     };
@@ -310,7 +310,7 @@ export const LandingPage = () => {
         </div>
 
         <p className="mt-3 text-[11px] font-mono text-slate-500">
-          *Evaluator Sandbox is pre-loaded with SIH malware specimens & adversary tamper drills for rapid judging.
+          *Evaluator Sandbox is pre-loaded with forensic malware specimens & adversary tamper drills for rapid demonstration.
         </p>
 
         {/* Compliance & Standards Strip */}
@@ -1079,7 +1079,7 @@ export const LandingPage = () => {
             <LogoIcon className="w-5 h-5 text-cyan-500 dark:text-cyan-400" />
             <span className="text-slate-900 dark:text-white font-bold tracking-wider">HASH<span className="text-cyan-500 dark:text-cyan-400">GUARD</span></span>
             <span className="text-slate-300 dark:text-slate-600">|</span>
-            <span className="text-slate-600 dark:text-slate-400">Cyber Evidence Exchange (SIH 2026)</span>
+            <span className="text-slate-600 dark:text-slate-400">Cyber Evidence Exchange Platform</span>
           </div>
 
           <div className="flex items-center gap-4 text-[11px] text-slate-500">

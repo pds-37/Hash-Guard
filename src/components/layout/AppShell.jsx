@@ -17,14 +17,14 @@ export const AppShell = () => {
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         <Topbar setMobileOpen={setMobileOpen} />
 
-        {/* Global Tamper Alert Banner when SIH Tamper Simulation is active */}
+        {/* Global Tamper Alert Banner when Tamper Simulation is active */}
         {isTamperSimulated && (
           <div className="bg-ce-danger/10 border-b border-ce-danger/30 px-6 py-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-ce-danger animate-tamper-flash shrink-0 z-10">
             <div className="flex items-start sm:items-center gap-2.5">
               <ShieldAlert className="w-5 h-5 shrink-0 mt-0.5 sm:mt-0" />
               <div className="text-xs font-mono leading-relaxed">
                 <span className="font-bold uppercase tracking-wider">
-                  TAMPER DETECTED [SIH Simulation]:
+                  TAMPER DETECTED [Integrity Breach Simulation]:
                 </span>{' '}
                 Evidence <strong className="text-ce-text-primary">EV-001</strong> hash altered from{' '}
                 <code className="text-ce-success bg-ce-success/10 px-1 rounded">8f3a91bc...91bc</code> to{' '}
