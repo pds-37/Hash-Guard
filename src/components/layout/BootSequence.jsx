@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ShieldCheck } from 'lucide-react';
+import { LogoIcon } from '../common/Logo';
 
 export const BootSequence = ({ onComplete }) => {
   const [isFading, setIsFading] = useState(false);
@@ -61,8 +61,8 @@ export const BootSequence = ({ onComplete }) => {
         
         {/* Minimal Logo */}
         <div className="relative mb-8">
-          <div className="absolute inset-0 bg-cyan-400/20 blur-2xl rounded-full animate-pulse" />
-          <ShieldCheck className="w-16 h-16 text-cyan-400 relative z-10" />
+          <div className="absolute inset-0 bg-cyan-400/25 blur-2xl rounded-full animate-pulse" />
+          <LogoIcon className="w-16 h-16 text-cyan-400 relative z-10 drop-shadow-[0_0_25px_rgba(6,182,212,0.6)]" />
         </div>
         
         {/* Typography */}

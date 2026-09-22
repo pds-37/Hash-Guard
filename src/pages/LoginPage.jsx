@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { ShieldAlert, LogIn, Loader2, UserPlus, Building, ShieldCheck, Zap } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { ShieldAlert, LogIn, Loader2, UserPlus, Building, ArrowLeft } from 'lucide-react';
+import { useNavigate, Link } from 'react-router-dom';
 import { apiClient } from '../services/api';
-import { useApp, ROLES } from '../context/AppContext';
+import { useApp } from '../context/AppContext';
+import { ThemeToggle } from '../components/common/ThemeToggle';
 
 export const LoginPage = () => {
   const [authMode, setAuthMode] = useState('login'); // 'login' | 'register'
@@ -110,7 +111,19 @@ export const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#070b14] flex flex-col items-center justify-center p-4 relative font-sans">
+    <div className="min-h-screen bg-ce-bg text-ce-text-primary flex flex-col items-center justify-center p-4 relative font-sans transition-colors duration-200">
+      {/* Top Header Controls */}
+      <div className="fixed top-4 left-4 right-4 max-w-5xl mx-auto flex items-center justify-between z-20 pointer-events-auto">
+        <Link
+          to="/"
+          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-ce-surface/80 hover:bg-ce-surface border border-ce-border text-xs font-mono text-ce-text-secondary hover:text-ce-text-primary backdrop-blur transition-all shadow-sm"
+        >
+          <ArrowLeft className="w-3.5 h-3.5" />
+          <span>Back to Home</span>
+        </Link>
+        <ThemeToggle size="md" />
+      </div>
+
       {/* Background glow effects */}
       <div className="fixed inset-0 pointer-events-none z-0">
         <div className="absolute top-1/4 left-1/3 w-[500px] h-[500px] bg-cyan-500/10 rounded-full blur-[140px]" />
@@ -237,7 +250,7 @@ export const LoginPage = () => {
                     role: 'ADMIN'
                   }, null, true);
                 }}
-                className="p-2 rounded border border-rose-500/30 bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 font-mono text-[11px] font-bold text-center transition-all cursor-pointer"
+                className="p-2 rounded border border-rose-500/30 bg-rose-500/10 hover:bg-rose-500/20 text-rose-700 dark:text-rose-300 font-mono text-[11px] font-bold text-center transition-all cursor-pointer"
               >
                 👑 Admin
               </button>
@@ -253,7 +266,7 @@ export const LoginPage = () => {
                     role: 'MANAGER'
                   }, null, true);
                 }}
-                className="p-2 rounded border border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 font-mono text-[11px] font-bold text-center transition-all cursor-pointer"
+                className="p-2 rounded border border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20 text-amber-700 dark:text-amber-300 font-mono text-[11px] font-bold text-center transition-all cursor-pointer"
               >
                 🛡️ Manager
               </button>
@@ -269,7 +282,7 @@ export const LoginPage = () => {
                     role: 'AUDITOR'
                   }, null, true);
                 }}
-                className="p-2 rounded border border-cyan-500/30 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 font-mono text-[11px] font-bold text-center transition-all cursor-pointer"
+                className="p-2 rounded border border-cyan-500/30 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 font-mono text-[11px] font-bold text-center transition-all cursor-pointer"
               >
                 🔍 Auditor
               </button>
@@ -285,7 +298,7 @@ export const LoginPage = () => {
                     role: 'USER'
                   }, null, true);
                 }}
-                className="p-2 rounded border border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 font-mono text-[11px] font-bold text-center transition-all cursor-pointer"
+                className="p-2 rounded border border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 font-mono text-[11px] font-bold text-center transition-all cursor-pointer"
               >
                 👤 User
               </button>

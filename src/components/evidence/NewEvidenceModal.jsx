@@ -182,10 +182,10 @@ export const NewEvidenceModal = ({ isOpen, onClose, onCreated }) => {
         </div>
 
         {/* Zero-Gas Cryptographic Sealing Banner */}
-        <div className="p-3 rounded-md bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs font-mono flex items-start gap-2">
-          <ShieldPlus className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
+        <div className="p-3 rounded-md bg-cyan-500/10 border border-cyan-500/30 text-cyan-800 dark:text-cyan-300 text-xs font-mono flex items-start gap-2">
+          <ShieldPlus className="w-4 h-4 text-cyan-600 dark:text-cyan-400 shrink-0 mt-0.5" />
           <div>
-            <strong className="text-white">Zero-Gas Cryptographic Manifest Signing:</strong> Exhibits are authenticated via your MetaMask ECDSA private key ($0.00 network fee, 100% free). No mainnet gas or ETH spent.
+            <strong className="text-cyan-950 dark:text-white">Zero-Gas Cryptographic Manifest Signing:</strong> Exhibits are authenticated via your MetaMask ECDSA private key ($0.00 network fee, 100% free). No mainnet gas or ETH spent.
           </div>
         </div>
 

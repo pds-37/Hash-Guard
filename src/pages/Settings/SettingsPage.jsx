@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { PageHeader } from '../../components/layout/PageHeader';
 import { useApp } from '../../context/AppContext';
+import { useTheme } from '../../context/ThemeContext';
 import { 
   Building2, 
   ShieldCheck, 
@@ -10,13 +11,17 @@ import {
   UserCheck, 
   PlusCircle, 
   Fingerprint, 
-  Lock,
-  ArrowRightLeft,
-  Eye,
-  FileCheck
+  Lock, 
+  ArrowRightLeft, 
+  Eye, 
+  FileCheck,
+  Sun,
+  Moon,
+  Palette
 } from 'lucide-react';
 
 export const SettingsPage = () => {
+  const { theme, isDark, setTheme } = useTheme();
   const { 
     currentRole, 
     switchRole, 
@@ -199,6 +204,89 @@ export const SettingsPage = () => {
                 </button>
               );
             })}
+          </div>
+        </div>
+      </div>
+
+      {/* Appearance & Theme Mode Switcher */}
+      <div className="rounded-lg bg-ce-surface border border-ce-border p-6 shadow-sm space-y-4">
+        <div className="flex items-center justify-between pb-3 border-b border-ce-border">
+          <div className="flex items-center gap-2">
+            <Palette className="w-4 h-4 text-ce-brand" />
+            <h3 className="text-sm font-mono font-bold uppercase tracking-wider text-ce-text-primary">
+              Appearance & Interface Theme
+            </h3>
+          </div>
+          <span className="text-[11px] font-mono px-2.5 py-0.5 rounded bg-ce-surface-subtle border border-ce-border text-ce-text-secondary font-semibold">
+            {theme === 'dark' ? 'Dark SOC Mode Active' : 'Light Forensic Mode Active'}
+          </span>
+        </div>
+
+        <p className="text-xs text-ce-text-secondary leading-relaxed">
+          Select your preferred display theme. The selected mode is automatically stored locally and applies to the entire forensics and chain-of-custody dashboard.
+        </p>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+          {/* Light Theme Option Card */}
+          <div
+            onClick={() => setTheme('light')}
+            className={`p-4 rounded-xl border transition-all cursor-pointer flex items-start gap-3.5 select-none ${
+              !isDark
+                ? 'bg-amber-500/5 border-amber-500/50 shadow-sm ring-1 ring-amber-500/30'
+                : 'bg-ce-bg border-ce-border hover:border-ce-text-muted/60 opacity-80 hover:opacity-100'
+            }`}
+          >
+            <div className={`p-2.5 rounded-lg border shrink-0 ${
+              !isDark ? 'bg-amber-500/10 border-amber-500/30 text-amber-600' : 'bg-ce-surface-subtle border-ce-border text-ce-text-muted'
+            }`}>
+              <Sun className="w-5 h-5" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-xs font-mono font-bold text-ce-text-primary uppercase tracking-wide">
+                  Light Theme
+                </span>
+                {!isDark && (
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-700 dark:text-amber-300 font-bold border border-amber-500/30">
+                    ACTIVE
+                  </span>
+                )}
+              </div>
+              <p className="text-xs text-ce-text-secondary mt-1 leading-relaxed">
+                Crisp off-white surfaces with deep navy typography. Ideal for daylight analysis, courtroom projection, and audit documentation.
+              </p>
+            </div>
+          </div>
+
+          {/* Dark Theme Option Card */}
+          <div
+            onClick={() => setTheme('dark')}
+            className={`p-4 rounded-xl border transition-all cursor-pointer flex items-start gap-3.5 select-none ${
+              isDark
+                ? 'bg-ce-brand/5 border-ce-brand/50 shadow-sm ring-1 ring-ce-brand/30'
+                : 'bg-ce-bg border-ce-border hover:border-ce-text-muted/60 opacity-80 hover:opacity-100'
+            }`}
+          >
+            <div className={`p-2.5 rounded-lg border shrink-0 ${
+              isDark ? 'bg-ce-brand/10 border-ce-brand/30 text-ce-brand' : 'bg-ce-surface-subtle border-ce-border text-ce-text-muted'
+            }`}>
+              <Moon className="w-5 h-5" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-xs font-mono font-bold text-ce-text-primary uppercase tracking-wide">
+                  Dark Theme
+                </span>
+                {isDark && (
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-ce-brand/15 text-ce-brand font-bold border border-ce-brand/30">
+                    ACTIVE
+                  </span>
+                )}
+              </div>
+              <p className="text-xs text-ce-text-secondary mt-1 leading-relaxed">
+                Deep cybersecurity SOC mode with high-contrast neon telemetry accents. Ideal for low-light command centers and security operations.
+              </p>
+            </div>
           </div>
         </div>
       </div>

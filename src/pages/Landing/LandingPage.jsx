@@ -12,14 +12,12 @@ import {
   Sparkles, 
   Eye, 
   Zap,
-  Activity,
   FileCheck2,
   Clock,
   CheckCircle2,
   AlertTriangle,
   UserPlus,
   LogIn,
-  Layers,
   ChevronRight,
   Wallet,
   Upload,
@@ -28,6 +26,8 @@ import {
   X
 } from 'lucide-react';
 import { useApp, ROLES } from '../../context/AppContext';
+import { Logo, LogoIcon } from '../../components/common/Logo';
+import { ThemeToggle } from '../../components/common/ThemeToggle';
 
 export const LandingPage = () => {
   const navigate = useNavigate();
@@ -114,7 +114,7 @@ export const LandingPage = () => {
   const sampleTamperedHash = '7a21f9c82e04192b47e301293840192830192840192830192830192830192830';
 
   return (
-    <div className="min-h-screen bg-[#070b14] text-slate-100 selection:bg-cyan-500/30 selection:text-cyan-200 relative overflow-hidden font-sans">
+    <div className="min-h-screen bg-slate-50 dark:bg-[#070b14] text-slate-900 dark:text-slate-100 selection:bg-cyan-500/30 selection:text-cyan-200 relative overflow-hidden font-sans transition-colors duration-200">
       {/* Dynamic Background Glows */}
       <div className="fixed inset-0 pointer-events-none z-0">
         <div className="absolute top-0 left-1/4 w-[600px] h-[500px] bg-cyan-500/10 rounded-full blur-[140px]" />
@@ -125,68 +125,57 @@ export const LandingPage = () => {
       </div>
 
       {/* STICKY GLASSMORPHIC NAVBAR */}
-      <header className="sticky top-0 z-50 backdrop-blur-md bg-[#070b14]/90 border-b border-slate-800/80 transition-all">
+      <header className="sticky top-0 z-50 backdrop-blur-md bg-white/90 dark:bg-[#070b14]/90 border-b border-slate-200 dark:border-slate-800/80 transition-all shadow-sm dark:shadow-none">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
-          {/* Brand Logo */}
-          <div 
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="flex items-center gap-3 shrink-0 cursor-pointer select-none group"
-          >
-            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-500/20 to-blue-600/20 border border-cyan-500/40 flex items-center justify-center shadow-[0_0_15px_rgba(6,182,212,0.25)] group-hover:border-cyan-400/80 group-hover:shadow-[0_0_20px_rgba(6,182,212,0.4)] transition-all shrink-0">
-              <ShieldCheck className="w-6 h-6 text-cyan-400" />
-            </div>
-            <div className="shrink-0">
-              <span className="font-mono font-bold tracking-wider text-base text-white whitespace-nowrap block">
-                HASHGUARD
-              </span>
-              <p className="text-[10px] font-mono text-slate-400 tracking-wider whitespace-nowrap">
-                CYBER EVIDENCE EXCHANGE
-              </p>
-            </div>
-          </div>
+          <Logo 
+            size="md" 
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} 
+          />
 
           {/* Nav Links (Desktop) */}
-          <nav className="hidden lg:flex items-center gap-4 xl:gap-7 text-xs font-mono uppercase tracking-wider text-slate-400 shrink-0">
+          <nav className="hidden lg:flex items-center gap-4 xl:gap-7 text-xs font-mono uppercase tracking-wider text-slate-600 dark:text-slate-400 shrink-0">
             <button 
               onClick={() => scrollToSection('architecture')}
-              className="hover:text-cyan-400 transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+              className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors whitespace-nowrap shrink-0 cursor-pointer"
             >
               Architecture
             </button>
             <button 
               onClick={() => scrollToTab('lineage')}
-              className="hover:text-cyan-400 transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+              className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors whitespace-nowrap shrink-0 cursor-pointer"
             >
               Lineage DAG
             </button>
             <button 
               onClick={() => scrollToTab('tamper')}
-              className="hover:text-cyan-400 transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+              className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors whitespace-nowrap shrink-0 cursor-pointer"
             >
               Tamper Engine
             </button>
             <button 
               onClick={() => scrollToSection('roles')}
-              className="hover:text-cyan-400 transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+              className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors whitespace-nowrap shrink-0 cursor-pointer"
             >
               Agency Roles
             </button>
             <button 
               onClick={() => scrollToSection('judges-tour')}
-              className="hover:text-cyan-400 transition-colors text-cyan-400 font-semibold flex items-center gap-1.5 whitespace-nowrap shrink-0 cursor-pointer"
+              className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors text-cyan-600 dark:text-cyan-400 font-semibold flex items-center gap-1.5 whitespace-nowrap shrink-0 cursor-pointer"
             >
-              <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+              <Sparkles className="w-3.5 h-3.5 text-cyan-500 dark:text-cyan-400" />
               <span>Evaluator SOP</span>
             </button>
           </nav>
 
           {/* Action CTAs + Mobile Menu Trigger */}
           <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+            <ThemeToggle size="sm" />
+
             <button
               onClick={() => navigate('/login')}
-              className="hidden sm:flex px-3 py-1.5 rounded-lg border border-slate-700/80 bg-slate-900/60 hover:bg-slate-800 text-slate-300 hover:text-white text-xs font-mono transition-all cursor-pointer items-center gap-1.5 shrink-0 whitespace-nowrap"
+              className="hidden sm:flex px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700/80 bg-white dark:bg-slate-900/60 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white text-xs font-mono transition-all cursor-pointer items-center gap-1.5 shrink-0 whitespace-nowrap shadow-sm"
             >
-              <LogIn className="w-3.5 h-3.5 text-slate-400" />
+              <LogIn className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
               <span>Sign In<span className="hidden xl:inline"> / Register</span></span>
             </button>
 
@@ -201,71 +190,75 @@ export const LandingPage = () => {
             {/* Mobile / Tablet Menu Button */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2 rounded-lg border border-slate-800 bg-slate-900/70 hover:bg-slate-800 text-slate-400 hover:text-white transition-colors cursor-pointer shrink-0"
+              className="lg:hidden p-2 rounded-lg border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900/70 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer shrink-0"
               aria-label="Toggle navigation menu"
             >
-              {mobileMenuOpen ? <X className="w-5 h-5 text-cyan-400" /> : <Menu className="w-5 h-5" />}
+              {mobileMenuOpen ? <X className="w-5 h-5 text-cyan-500 dark:text-cyan-400" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
         </div>
 
         {/* Mobile / Tablet Dropdown Menu */}
         {mobileMenuOpen && (
-          <div className="lg:hidden border-t border-slate-800/90 bg-[#070b14]/98 backdrop-blur-xl px-4 py-4 space-y-3 shadow-2xl transition-all">
+          <div className="lg:hidden border-t border-slate-200 dark:border-slate-800/90 bg-white/98 dark:bg-[#070b14]/98 backdrop-blur-xl px-4 py-4 space-y-3 shadow-2xl transition-all">
             <div className="flex flex-col space-y-1 text-xs font-mono uppercase tracking-wider">
               <button
                 onClick={() => scrollToSection('architecture')}
-                className="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-slate-800/60 text-slate-300 hover:text-white transition-colors cursor-pointer text-left"
+                className="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/60 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer text-left"
               >
                 <span>Architecture Overview</span>
-                <ChevronRight className="w-3.5 h-3.5 text-slate-500" />
+                <ChevronRight className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
               </button>
 
               <button
                 onClick={() => scrollToTab('lineage')}
-                className="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-slate-800/60 text-slate-300 hover:text-white transition-colors cursor-pointer text-left"
+                className="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/60 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer text-left"
               >
-                <span>Lineage DAG Visualizer</span>
-                <ChevronRight className="w-3.5 h-3.5 text-slate-500" />
+                <span>Lineage DAG Protocol</span>
+                <ChevronRight className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
               </button>
 
               <button
                 onClick={() => scrollToTab('tamper')}
-                className="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-slate-800/60 text-slate-300 hover:text-white transition-colors cursor-pointer text-left"
+                className="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/60 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer text-left"
               >
-                <span>Tamper Engine Simulator</span>
-                <ChevronRight className="w-3.5 h-3.5 text-slate-500" />
+                <span>Live Tamper Engine</span>
+                <ChevronRight className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
               </button>
 
               <button
                 onClick={() => scrollToSection('roles')}
-                className="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-slate-800/60 text-slate-300 hover:text-white transition-colors cursor-pointer text-left"
+                className="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/60 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer text-left"
               >
-                <span>Agency Stakeholder Roles</span>
-                <ChevronRight className="w-3.5 h-3.5 text-slate-500" />
+                <span>Agency Roles (RBAC)</span>
+                <ChevronRight className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
               </button>
 
               <button
                 onClick={() => scrollToSection('judges-tour')}
-                className="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-slate-800/60 text-cyan-400 font-semibold transition-colors cursor-pointer text-left"
+                className="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 font-semibold transition-colors cursor-pointer text-left"
               >
                 <div className="flex items-center gap-2">
-                  <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+                  <Sparkles className="w-3.5 h-3.5 text-cyan-500 dark:text-cyan-400" />
                   <span>Evaluator SOP Walkthrough</span>
                 </div>
-                <ChevronRight className="w-3.5 h-3.5 text-cyan-400" />
+                <ChevronRight className="w-3.5 h-3.5 text-cyan-500 dark:text-cyan-400" />
               </button>
             </div>
 
-            <div className="pt-2 border-t border-slate-800/80 flex flex-col gap-2 font-mono">
+            <div className="pt-2 border-t border-slate-200 dark:border-slate-800/80 flex flex-col gap-2 font-mono">
+              <div className="flex items-center justify-between px-2 py-1">
+                <span className="text-xs text-slate-600 dark:text-slate-400">Theme</span>
+                <ThemeToggle variant="pill" />
+              </div>
               <button
                 onClick={() => {
                   setMobileMenuOpen(false);
                   navigate('/login');
                 }}
-                className="w-full flex items-center justify-center gap-2 py-2 rounded-lg border border-slate-700 bg-slate-900/80 text-slate-300 hover:text-white text-xs cursor-pointer"
+                className="w-full flex items-center justify-center gap-2 py-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900/80 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white text-xs cursor-pointer shadow-sm"
               >
-                <LogIn className="w-3.5 h-3.5 text-slate-400" />
+                <LogIn className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
                 <span>Sign In / Agency Register</span>
               </button>
             </div>
@@ -276,23 +269,23 @@ export const LandingPage = () => {
       {/* HERO SECTION */}
       <section className="relative z-10 pt-14 pb-16 md:pt-20 md:pb-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         {/* Consensus Pulse Badge */}
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-900/90 border border-slate-700/80 shadow-inner mb-6">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-700/80 shadow-sm mb-6">
           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-          <span className="text-[11px] font-mono uppercase tracking-wider text-slate-300">
-            Permissioned Audit Ledger Active <span className="text-slate-500">•</span> EVM Block #483,192 <span className="text-slate-500">•</span> Smart India Hackathon 2026
+          <span className="text-[11px] font-mono uppercase tracking-wider text-slate-700 dark:text-slate-300">
+            Permissioned Audit Ledger Active <span className="text-slate-400 dark:text-slate-500">•</span> EVM Block #483,192 <span className="text-slate-400 dark:text-slate-500">•</span> Smart India Hackathon 2026
           </span>
         </div>
 
         {/* Main Headline */}
-        <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white max-w-5xl mx-auto leading-[1.15]">
+        <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-white max-w-5xl mx-auto leading-[1.15]">
           The Cryptographic Chain of Custody for{' '}
-          <span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-400 bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-500 dark:from-cyan-400 dark:via-blue-400 dark:to-indigo-400 bg-clip-text text-transparent">
             Digital Forensic Evidence
           </span>
         </h1>
 
         {/* Subtitle */}
-        <p className="mt-5 text-sm sm:text-base lg:text-lg text-slate-400 max-w-3xl mx-auto font-normal leading-relaxed">
+        <p className="mt-5 text-sm sm:text-base lg:text-lg text-slate-600 dark:text-slate-400 max-w-3xl mx-auto font-normal leading-relaxed">
           Cryptographically seal forensic exhibits, enforce multi-agency custody handoffs with mTLS handshakes, and verify integrity with zero off-chain data leakage—powered by SHA-256 and EVM smart contracts.
         </p>
 
@@ -309,9 +302,9 @@ export const LandingPage = () => {
 
           <button
             onClick={() => navigate('/login')}
-            className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700 text-slate-200 font-mono font-semibold text-sm transition-all flex items-center justify-center gap-2 cursor-pointer shadow-lg hover:border-cyan-500/40"
+            className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-white dark:bg-slate-900/90 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 font-mono font-semibold text-sm transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md hover:border-cyan-500/40"
           >
-            <UserPlus className="w-4 h-4 text-cyan-400" />
+            <UserPlus className="w-4 h-4 text-cyan-500 dark:text-cyan-400" />
             <span>REGISTER AGENCY NODE (GENUINE APP)</span>
           </button>
         </div>
@@ -321,7 +314,7 @@ export const LandingPage = () => {
         </p>
 
         {/* Compliance & Standards Strip */}
-        <div className="mt-12 pt-8 border-t border-slate-800/80 flex flex-wrap items-center justify-center gap-6 sm:gap-10 text-xs font-mono text-slate-400">
+        <div className="mt-12 pt-8 border-t border-slate-200 dark:border-slate-800/80 flex flex-wrap items-center justify-center gap-6 sm:gap-10 text-xs font-mono text-slate-600 dark:text-slate-400">
           <div className="flex items-center gap-2">
             <ShieldCheck className="w-4 h-4 text-cyan-400" />
             <span>ISO/IEC 27037:2012</span>
@@ -343,26 +336,26 @@ export const LandingPage = () => {
 
       {/* INTERACTIVE OPERATIONAL RUNBOOK (MATCHING USER SCREENSHOT) */}
       <section id="onboarding-pipeline" className="relative z-10 py-6 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="rounded-xl bg-[#0b1120]/95 border border-cyan-500/30 p-5 md:p-6 shadow-[0_0_35px_rgba(6,182,212,0.12)] backdrop-blur-xl relative overflow-hidden">
+        <div className="rounded-xl bg-white dark:bg-[#0b1120]/95 border border-slate-200 dark:border-cyan-500/30 p-5 md:p-6 shadow-lg dark:shadow-[0_0_35px_rgba(6,182,212,0.12)] backdrop-blur-xl relative overflow-hidden">
           {/* Subtle glow */}
           <div className="absolute -top-10 -right-10 w-48 h-48 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
 
           {/* Header */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200 dark:border-slate-800">
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-lg bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center shrink-0 shadow-[0_0_10px_rgba(6,182,212,0.2)]">
-                <Sparkles className="w-5 h-5 text-cyan-400" />
+                <Sparkles className="w-5 h-5 text-cyan-500 dark:text-cyan-400" />
               </div>
               <div>
                 <div className="flex items-center gap-2.5 flex-wrap">
-                  <h3 className="text-sm font-bold font-mono text-white tracking-wide uppercase">
+                  <h3 className="text-sm font-bold font-mono text-slate-900 dark:text-white tracking-wide uppercase">
                     AGENCY NODE ACTIVATION RUNBOOK
                   </h3>
-                  <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-semibold">
+                  <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 font-semibold">
                     GENUINE PRODUCTION MODE
                   </span>
                 </div>
-                <p className="text-xs text-slate-400 mt-0.5">
+                <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
                   Follow the 4-step cryptographic pipeline to initialize custody sealing and zero-knowledge verification.
                 </p>
               </div>
@@ -372,7 +365,7 @@ export const LandingPage = () => {
               {(landingWalletConnected || landingEvidenceSealed) && (
                 <button
                   onClick={handleResetLandingPipeline}
-                  className="text-[11px] font-mono text-slate-400 hover:text-slate-200 px-2.5 py-1 rounded bg-slate-800/80 border border-slate-700 transition-colors cursor-pointer"
+                  className="text-[11px] font-mono text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 px-2.5 py-1 rounded bg-slate-100 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 transition-colors cursor-pointer"
                 >
                   Reset Pipeline Demo
                 </button>
@@ -386,18 +379,18 @@ export const LandingPage = () => {
             <div className="p-4 rounded-lg bg-emerald-500/5 border border-emerald-500/30 flex flex-col justify-between">
               <div>
                 <div className="flex items-center justify-between gap-2 mb-2.5">
-                  <span className="text-[10px] font-mono font-bold text-slate-400 uppercase">
+                  <span className="text-[10px] font-mono font-bold text-slate-500 dark:text-slate-400 uppercase">
                     STEP 01
                   </span>
-                  <span className="flex items-center gap-1 text-[10px] font-mono font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+                  <span className="flex items-center gap-1 text-[10px] font-mono font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
                     <CheckCircle2 className="w-3 h-3" />
                     <span>DONE</span>
                   </span>
                 </div>
-                <h4 className="text-xs font-bold text-white font-mono leading-tight">
+                <h4 className="text-xs font-bold text-slate-900 dark:text-white font-mono leading-tight">
                   Agency Node Authorization
                 </h4>
-                <p className="text-xs text-slate-400 mt-2 leading-relaxed">
+                <p className="text-xs text-slate-600 dark:text-slate-400 mt-2 leading-relaxed">
                   Logged in as Inspector Vikram (StateA). Session authenticated.
                 </p>
               </div>
@@ -407,28 +400,28 @@ export const LandingPage = () => {
             <div className={`p-4 rounded-lg border flex flex-col justify-between transition-all ${
               landingWalletConnected 
                 ? 'bg-emerald-500/5 border-emerald-500/30' 
-                : 'bg-slate-900/60 border-slate-800'
+                : 'bg-slate-50 dark:bg-slate-900/60 border-slate-200 dark:border-slate-800'
             }`}>
               <div>
                 <div className="flex items-center justify-between gap-2 mb-2.5">
-                  <span className="text-[10px] font-mono font-bold text-slate-400 uppercase">
+                  <span className="text-[10px] font-mono font-bold text-slate-500 dark:text-slate-400 uppercase">
                     STEP 02
                   </span>
                   {landingWalletConnected ? (
-                    <span className="flex items-center gap-1 text-[10px] font-mono font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+                    <span className="flex items-center gap-1 text-[10px] font-mono font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
                       <CheckCircle2 className="w-3 h-3" />
                       <span>DONE</span>
                     </span>
                   ) : (
-                    <span className="text-[10px] font-mono font-bold text-slate-400 bg-slate-800 px-2 py-0.5 rounded">
+                    <span className="text-[10px] font-mono font-bold text-slate-600 dark:text-slate-400 bg-slate-200 dark:bg-slate-800 px-2 py-0.5 rounded">
                       PENDING
                     </span>
                   )}
                 </div>
-                <h4 className="text-xs font-bold text-white font-mono leading-tight">
+                <h4 className="text-xs font-bold text-slate-900 dark:text-white font-mono leading-tight">
                   Web3 & DID Key Binding
                 </h4>
-                <p className="text-xs text-slate-400 mt-2 leading-relaxed">
+                <p className="text-xs text-slate-600 dark:text-slate-400 mt-2 leading-relaxed">
                   {landingWalletConnected
                     ? `Decentralized Identity bound: did:ethr:${landingWalletAddress ? landingWalletAddress.substring(0,6) + '...' + landingWalletAddress.substring(landingWalletAddress.length - 4) : '0x71C8...A18f'}. ECDSA secp256k1 key active.`
                     : 'Connect MetaMask wallet to bind an ECDSA key for cryptographic sealing & smart contract anchoring.'}
@@ -439,9 +432,9 @@ export const LandingPage = () => {
                 <div className="mt-3">
                   <button
                     onClick={handleLandingConnectWallet}
-                    className="w-full inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-300 text-xs font-mono font-bold transition-all cursor-pointer shadow-sm"
+                    className="w-full inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-700 dark:text-amber-300 text-xs font-mono font-bold transition-all cursor-pointer shadow-sm"
                   >
-                    <Wallet className="w-3.5 h-3.5 text-amber-400" />
+                    <Wallet className="w-3.5 h-3.5 text-amber-500 dark:text-amber-400" />
                     <span>Connect MetaMask Wallet</span>
                   </button>
                 </div>
@@ -452,28 +445,28 @@ export const LandingPage = () => {
             <div className={`p-4 rounded-lg border flex flex-col justify-between transition-all ${
               landingEvidenceSealed 
                 ? 'bg-emerald-500/5 border-emerald-500/30' 
-                : 'bg-slate-900/60 border-slate-800'
+                : 'bg-slate-50 dark:bg-slate-900/60 border-slate-200 dark:border-slate-800'
             }`}>
               <div>
                 <div className="flex items-center justify-between gap-2 mb-2.5">
-                  <span className="text-[10px] font-mono font-bold text-slate-400 uppercase">
+                  <span className="text-[10px] font-mono font-bold text-slate-500 dark:text-slate-400 uppercase">
                     STEP 03
                   </span>
                   {landingEvidenceSealed ? (
-                    <span className="flex items-center gap-1 text-[10px] font-mono font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+                    <span className="flex items-center gap-1 text-[10px] font-mono font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
                       <CheckCircle2 className="w-3 h-3" />
                       <span>DONE</span>
                     </span>
                   ) : (
-                    <span className="text-[10px] font-mono font-bold text-slate-400 bg-slate-800 px-2 py-0.5 rounded">
+                    <span className="text-[10px] font-mono font-bold text-slate-600 dark:text-slate-400 bg-slate-200 dark:bg-slate-800 px-2 py-0.5 rounded">
                       PENDING
                     </span>
                   )}
                 </div>
-                <h4 className="text-xs font-bold text-white font-mono leading-tight">
+                <h4 className="text-xs font-bold text-slate-900 dark:text-white font-mono leading-tight">
                   Ingest & Client-Side Hash Exhibit
                 </h4>
-                <p className="text-xs text-slate-400 mt-2 leading-relaxed">
+                <p className="text-xs text-slate-600 dark:text-slate-400 mt-2 leading-relaxed">
                   {landingEvidenceSealed
                     ? 'Exhibit EV-892F1 sealed. Local WebCrypto SHA-256: 4a7b8c...c5d6 anchored.'
                     : 'Select a forensic file. Binary bytes are hashed directly in browser memory before being anchored.'}
@@ -485,12 +478,12 @@ export const LandingPage = () => {
                   <button
                     onClick={handleLandingSealExhibit}
                     disabled={landingHashing}
-                    className="w-full inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 text-cyan-300 text-xs font-mono font-bold transition-all cursor-pointer shadow-sm disabled:opacity-50"
+                    className="w-full inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 text-cyan-700 dark:text-cyan-300 text-xs font-mono font-bold transition-all cursor-pointer shadow-sm disabled:opacity-50"
                   >
                     {landingHashing ? (
-                      <RefreshCw className="w-3.5 h-3.5 animate-spin text-cyan-400" />
+                      <RefreshCw className="w-3.5 h-3.5 animate-spin text-cyan-500 dark:text-cyan-400" />
                     ) : (
-                      <Upload className="w-3.5 h-3.5 text-cyan-400" />
+                      <Upload className="w-3.5 h-3.5 text-cyan-500 dark:text-cyan-400" />
                     )}
                     <span>{landingHashing ? 'Hashing SHA-256...' : '+ Collect & Seal First Exhibit'}</span>
                   </button>
@@ -502,27 +495,27 @@ export const LandingPage = () => {
             <div className={`p-4 rounded-lg border flex flex-col justify-between transition-all ${
               landingEvidenceSealed 
                 ? 'bg-cyan-500/5 border-cyan-500/30' 
-                : 'bg-slate-900/60 border-slate-800'
+                : 'bg-slate-50 dark:bg-slate-900/60 border-slate-200 dark:border-slate-800'
             }`}>
               <div>
                 <div className="flex items-center justify-between gap-2 mb-2.5">
-                  <span className="text-[10px] font-mono font-bold text-slate-400 uppercase">
+                  <span className="text-[10px] font-mono font-bold text-slate-500 dark:text-slate-400 uppercase">
                     STEP 04
                   </span>
                   {landingEvidenceSealed ? (
-                    <span className="text-[10px] font-mono font-bold text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded border border-cyan-500/20">
+                    <span className="text-[10px] font-mono font-bold text-cyan-600 dark:text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded border border-cyan-500/20">
                       READY
                     </span>
                   ) : (
-                    <span className="text-[10px] font-mono font-bold text-slate-400 bg-slate-800 px-2 py-0.5 rounded">
+                    <span className="text-[10px] font-mono font-bold text-slate-600 dark:text-slate-400 bg-slate-200 dark:bg-slate-800 px-2 py-0.5 rounded">
                       PENDING
                     </span>
                   )}
                 </div>
-                <h4 className="text-xs font-bold text-white font-mono leading-tight">
+                <h4 className="text-xs font-bold text-slate-900 dark:text-white font-mono leading-tight">
                   Zero-Knowledge Independent Verification
                 </h4>
-                <p className="text-xs text-slate-400 mt-2 leading-relaxed">
+                <p className="text-xs text-slate-600 dark:text-slate-400 mt-2 leading-relaxed">
                   Verify cryptographic root and chain of custody without exposing raw evidence content.
                 </p>
               </div>
@@ -794,61 +787,61 @@ export const LandingPage = () => {
       {/* THE PROBLEM VS THE SOLUTION SECTION */}
       <section className="relative z-10 py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-12">
-          <h2 className="text-xs font-mono uppercase tracking-widest text-cyan-400 font-semibold mb-2">The Forensic Challenge</h2>
-          <h3 className="text-2xl sm:text-4xl font-extrabold text-white">Why Existing Chain-of-Custody Fails in Court</h3>
-          <p className="mt-3 text-sm text-slate-400">
+          <h2 className="text-xs font-mono uppercase tracking-widest text-cyan-600 dark:text-cyan-400 font-semibold mb-2">The Forensic Challenge</h2>
+          <h3 className="text-2xl sm:text-4xl font-extrabold text-slate-900 dark:text-white">Why Existing Chain-of-Custody Fails in Court</h3>
+          <p className="mt-3 text-sm text-slate-600 dark:text-slate-400">
             Digital evidence cross-organization exchange between police forces, CERT teams, defense labs, and judicial courts is vulnerable to tampering disputes and lack of mathematical provenance.
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
           {/* Traditional */}
-          <div className="p-6 rounded-2xl bg-rose-950/10 border border-rose-900/30 space-y-4">
-            <div className="flex items-center gap-2 text-rose-400 font-mono text-xs uppercase font-bold">
+          <div className="p-6 rounded-2xl bg-rose-500/5 dark:bg-rose-950/10 border border-rose-300 dark:border-rose-900/30 space-y-4 shadow-sm">
+            <div className="flex items-center gap-2 text-rose-600 dark:text-rose-400 font-mono text-xs uppercase font-bold">
               <ShieldAlert className="w-4 h-4" />
               <span>Legacy Custody Process (Vulnerable)</span>
             </div>
-            <ul className="space-y-3 text-xs text-slate-300 font-mono">
+            <ul className="space-y-3 text-xs text-slate-700 dark:text-slate-300 font-mono">
               <li className="flex items-start gap-2">
-                <span className="text-rose-400 font-bold">✕</span>
+                <span className="text-rose-500 font-bold">✕</span>
                 <span>Paper forms and spreadsheets easily edited or forged post-seizure.</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-rose-400 font-bold">✕</span>
+                <span className="text-rose-500 font-bold">✕</span>
                 <span>Derivative malware decompilations lack cryptographic parent linkage.</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-rose-400 font-bold">✕</span>
+                <span className="text-rose-500 font-bold">✕</span>
                 <span>Transfers over insecure FTP or cloud shares risk MITM substitution.</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-rose-400 font-bold">✕</span>
+                <span className="text-rose-500 font-bold">✕</span>
                 <span>Defense attorneys contest bit integrity due to lack of independent audit logs.</span>
               </li>
             </ul>
           </div>
 
           {/* HashGuard Solution */}
-          <div className="p-6 rounded-2xl bg-emerald-950/10 border border-emerald-500/30 space-y-4 shadow-[0_0_25px_rgba(16,185,129,0.08)]">
-            <div className="flex items-center gap-2 text-emerald-400 font-mono text-xs uppercase font-bold">
+          <div className="p-6 rounded-2xl bg-emerald-500/5 dark:bg-emerald-950/10 border border-emerald-400 dark:border-emerald-500/30 space-y-4 shadow-sm dark:shadow-[0_0_25px_rgba(16,185,129,0.08)]">
+            <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-mono text-xs uppercase font-bold">
               <ShieldCheck className="w-4 h-4" />
               <span>HashGuard Protocol (Cryptographic Proof)</span>
             </div>
-            <ul className="space-y-3 text-xs text-slate-300 font-mono">
+            <ul className="space-y-3 text-xs text-slate-700 dark:text-slate-300 font-mono">
               <li className="flex items-start gap-2">
-                <span className="text-emerald-400 font-bold">✓</span>
+                <span className="text-emerald-500 font-bold">✓</span>
                 <span>Deterministic SHA-256 bit digests locked to immutable blockchain blocks.</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-emerald-400 font-bold">✓</span>
+                <span className="text-emerald-500 font-bold">✓</span>
                 <span>Directed Acyclic Graph (DAG) records parent-to-child forensic lineage.</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-emerald-400 font-bold">✓</span>
+                <span className="text-emerald-500 font-bold">✓</span>
                 <span>mTLS encrypted transfers with dual-signed cryptographic transfer manifests.</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-emerald-400 font-bold">✓</span>
+                <span className="text-emerald-500 font-bold">✓</span>
                 <span>1-click zero-knowledge courtroom attestation certificates.</span>
               </li>
             </ul>
@@ -857,75 +850,75 @@ export const LandingPage = () => {
       </section>
 
       {/* CORE ARCHITECTURE GRID */}
-      <section id="features" className="relative z-10 py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-slate-800/80">
+      <section id="features" className="relative z-10 py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-slate-200 dark:border-slate-800/80">
         <div className="text-center max-w-3xl mx-auto mb-12">
-          <h2 className="text-xs font-mono uppercase tracking-widest text-cyan-400 font-semibold mb-2">Technical Capabilities</h2>
-          <h3 className="text-2xl sm:text-4xl font-extrabold text-white">Engineered for Cross-Organization Trust</h3>
+          <h2 className="text-xs font-mono uppercase tracking-widest text-cyan-600 dark:text-cyan-400 font-semibold mb-2">Technical Capabilities</h2>
+          <h3 className="text-2xl sm:text-4xl font-extrabold text-slate-900 dark:text-white">Engineered for Cross-Organization Trust</h3>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Card 1 */}
-          <div className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 hover:border-cyan-500/40 transition-all space-y-3">
-            <div className="w-10 h-10 rounded-lg bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400">
+          <div className="p-6 rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 hover:border-cyan-500/40 shadow-sm transition-all space-y-3">
+            <div className="w-10 h-10 rounded-lg bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-500 dark:text-cyan-400">
               <Fingerprint className="w-5 h-5" />
             </div>
-            <h4 className="text-base font-bold text-white">SHA-256 Bit Attestation</h4>
-            <p className="text-xs text-slate-400 leading-relaxed">
+            <h4 className="text-base font-bold text-slate-900 dark:text-white">SHA-256 Bit Attestation</h4>
+            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
               Every digital exhibit is deterministically hashed upon physical seizure. Continuous off-chain vs on-chain comparison guarantees bit-level integrity.
             </p>
           </div>
 
           {/* Card 2 */}
-          <div className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 hover:border-cyan-500/40 transition-all space-y-3">
-            <div className="w-10 h-10 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400">
+          <div className="p-6 rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 hover:border-cyan-500/40 shadow-sm transition-all space-y-3">
+            <div className="w-10 h-10 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-500 dark:text-blue-400">
               <ArrowLeftRight className="w-5 h-5" />
             </div>
-            <h4 className="text-base font-bold text-white">Cryptographic Transfers</h4>
-            <p className="text-xs text-slate-400 leading-relaxed">
+            <h4 className="text-base font-bold text-slate-900 dark:text-white">Cryptographic Transfers</h4>
+            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
               Inter-agency custody handoffs require mTLS mutual authentication, recipient acceptance signatures, and automated block confirmation.
             </p>
           </div>
 
           {/* Card 3 */}
-          <div className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 hover:border-cyan-500/40 transition-all space-y-3">
-            <div className="w-10 h-10 rounded-lg bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
+          <div className="p-6 rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 hover:border-cyan-500/40 shadow-sm transition-all space-y-3">
+            <div className="w-10 h-10 rounded-lg bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-500 dark:text-purple-400">
               <GitFork className="w-5 h-5" />
             </div>
-            <h4 className="text-base font-bold text-white">Lineage Provenance DAG</h4>
-            <p className="text-xs text-slate-400 leading-relaxed">
+            <h4 className="text-base font-bold text-slate-900 dark:text-white">Lineage Provenance DAG</h4>
+            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
               Decompiled modules, memory carvings, and YARA IOCs inherit parent specimen signatures in an interactive mathematical derivation graph.
             </p>
           </div>
 
           {/* Card 4 */}
-          <div className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 hover:border-cyan-500/40 transition-all space-y-3">
-            <div className="w-10 h-10 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+          <div className="p-6 rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 hover:border-cyan-500/40 shadow-sm transition-all space-y-3">
+            <div className="w-10 h-10 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-500 dark:text-emerald-400">
               <Eye className="w-5 h-5" />
             </div>
-            <h4 className="text-base font-bold text-white">Zero-Knowledge Auditing</h4>
-            <p className="text-xs text-slate-400 leading-relaxed">
+            <h4 className="text-base font-bold text-slate-900 dark:text-white">Zero-Knowledge Auditing</h4>
+            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
               Judicial courts and independent oversight boards can mathematically prove custody continuity without gaining access to classified raw payloads.
             </p>
           </div>
 
           {/* Card 5 */}
-          <div className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 hover:border-cyan-500/40 transition-all space-y-3">
-            <div className="w-10 h-10 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
+          <div className="p-6 rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 hover:border-cyan-500/40 shadow-sm transition-all space-y-3">
+            <div className="w-10 h-10 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-500 dark:text-amber-400">
               <Clock className="w-5 h-5" />
             </div>
-            <h4 className="text-base font-bold text-white">Automated Retention Policies</h4>
-            <p className="text-xs text-slate-400 leading-relaxed">
+            <h4 className="text-base font-bold text-slate-900 dark:text-white">Automated Retention Policies</h4>
+            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
               Regulatory lifecycles, automated secure wiping, and cold-storage time-locks adhere to statutory retention guidelines with signed proof.
             </p>
           </div>
 
           {/* Card 6 */}
-          <div className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 hover:border-cyan-500/40 transition-all space-y-3">
-            <div className="w-10 h-10 rounded-lg bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400">
+          <div className="p-6 rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 hover:border-cyan-500/40 shadow-sm transition-all space-y-3">
+            <div className="w-10 h-10 rounded-lg bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-500 dark:text-cyan-400">
               <FileCheck2 className="w-5 h-5" />
             </div>
-            <h4 className="text-base font-bold text-white">Courtroom Attestation PDF/JSON</h4>
-            <p className="text-xs text-slate-400 leading-relaxed">
+            <h4 className="text-base font-bold text-slate-900 dark:text-white">Courtroom Attestation PDF/JSON</h4>
+            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
               Export cryptographic attestation certificates with 5-point verification checkmarks, block heights, and HSM fingerprints ready for legal submission.
             </p>
           </div>
@@ -933,30 +926,30 @@ export const LandingPage = () => {
       </section>
 
       {/* MULTI-AGENCY STAKEHOLDER ROLES */}
-      <section id="roles" className="relative z-10 py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-slate-800/80">
+      <section id="roles" className="relative z-10 py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-slate-200 dark:border-slate-800/80">
         <div className="text-center max-w-3xl mx-auto mb-12">
-          <h2 className="text-xs font-mono uppercase tracking-widest text-cyan-400 font-semibold mb-2">Role-Based Access Control</h2>
-          <h3 className="text-2xl sm:text-4xl font-extrabold text-white">Multi-Agency Perspectives</h3>
-          <p className="mt-3 text-sm text-slate-400">
+          <h2 className="text-xs font-mono uppercase tracking-widest text-cyan-600 dark:text-cyan-400 font-semibold mb-2">Role-Based Access Control</h2>
+          <h3 className="text-2xl sm:text-4xl font-extrabold text-slate-900 dark:text-white">Multi-Agency Perspectives</h3>
+          <p className="mt-3 text-sm text-slate-600 dark:text-slate-400">
             Click on any role below to immediately enter the prototype with pre-configured role permissions.
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
           {/* Role 1: CERT-Alpha */}
-          <div className="p-6 rounded-2xl bg-slate-900/70 border border-slate-800 hover:border-blue-500/40 transition-all flex flex-col justify-between">
+          <div className="p-6 rounded-2xl bg-white dark:bg-slate-900/70 border border-slate-200 dark:border-slate-800 hover:border-blue-500/40 shadow-sm transition-all flex flex-col justify-between">
             <div className="space-y-3">
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20 font-bold uppercase">
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 font-bold uppercase">
                 ORGANIZATION A
               </span>
-              <h4 className="text-base font-bold text-white">CERT-Alpha (Collector)</h4>
-              <p className="text-xs text-slate-400 leading-relaxed">
+              <h4 className="text-base font-bold text-slate-900 dark:text-white">CERT-Alpha (Collector)</h4>
+              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                 Initial seizure of disk images, memory dumps, and network logs. Performs bit-level hashing, HSM signing, and mTLS dispatch.
               </p>
             </div>
             <button
               onClick={() => launchConsole('ORG_A', '/evidence', true)}
-              className="mt-6 w-full py-2.5 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/30 text-blue-300 text-xs font-mono font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5"
+              className="mt-6 w-full py-2.5 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/30 text-blue-600 dark:text-blue-300 text-xs font-mono font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5"
             >
               <span>Launch as CERT-Alpha</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -964,19 +957,19 @@ export const LandingPage = () => {
           </div>
 
           {/* Role 2: Cyber Defense Lab */}
-          <div className="p-6 rounded-2xl bg-slate-900/70 border border-cyan-500/40 shadow-[0_0_20px_rgba(6,182,212,0.1)] flex flex-col justify-between">
+          <div className="p-6 rounded-2xl bg-white dark:bg-slate-900/70 border border-cyan-500/40 shadow-[0_0_20px_rgba(6,182,212,0.1)] flex flex-col justify-between">
             <div className="space-y-3">
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 font-bold uppercase">
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20 font-bold uppercase">
                 ORGANIZATION B (PRIMARY)
               </span>
-              <h4 className="text-base font-bold text-white">Cyber Defense Lab (Analyst)</h4>
-              <p className="text-xs text-slate-400 leading-relaxed">
+              <h4 className="text-base font-bold text-slate-900 dark:text-white">Cyber Defense Lab (Analyst)</h4>
+              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                 Receipt verification, air-gapped sandboxing, artifact derivation, dynamic execution, and child report generation.
               </p>
             </div>
             <button
               onClick={() => launchConsole('ORG_B', '/dashboard', true)}
-              className="mt-6 w-full py-2.5 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 text-xs font-mono font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5"
+              className="mt-6 w-full py-2.5 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 text-xs font-mono font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 shadow-md"
             >
               <span>Launch as Forensic Analyst</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -984,19 +977,19 @@ export const LandingPage = () => {
           </div>
 
           {/* Role 3: Independent Auditor */}
-          <div className="p-6 rounded-2xl bg-slate-900/70 border border-slate-800 hover:border-emerald-500/40 transition-all flex flex-col justify-between">
+          <div className="p-6 rounded-2xl bg-white dark:bg-slate-900/70 border border-slate-200 dark:border-slate-800 hover:border-emerald-500/40 shadow-sm transition-all flex flex-col justify-between">
             <div className="space-y-3">
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold uppercase">
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 font-bold uppercase">
                 INDEPENDENT OVERSIGHT
               </span>
-              <h4 className="text-base font-bold text-white">National Cyber Audit Board</h4>
-              <p className="text-xs text-slate-400 leading-relaxed">
+              <h4 className="text-base font-bold text-slate-900 dark:text-white">National Cyber Audit Board</h4>
+              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                 Zero-trust cryptographic verification of custody ledger and artifact lineage without file access. Exports legal certificates.
               </p>
             </div>
             <button
               onClick={() => launchConsole('AUDITOR', '/verification', true)}
-              className="mt-6 w-full py-2.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 text-xs font-mono font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5"
+              className="mt-6 w-full py-2.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-600 dark:text-emerald-300 text-xs font-mono font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5"
             >
               <span>Launch as Auditor</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -1007,7 +1000,7 @@ export const LandingPage = () => {
 
       {/* EVALUATOR RUNBOOK */}
       <section id="judges-tour" className="relative z-10 py-16 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="p-8 rounded-2xl bg-gradient-to-br from-slate-900 via-slate-900/90 to-[#0c1324] border border-cyan-500/40 shadow-2xl space-y-6">
+        <div className="p-8 rounded-2xl bg-gradient-to-br from-slate-900 via-slate-900/90 to-[#0c1324] text-white border border-cyan-500/40 shadow-2xl space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-800">
             <div>
               <div className="flex items-center gap-2 text-cyan-400 font-mono text-xs uppercase font-bold">
@@ -1054,10 +1047,10 @@ export const LandingPage = () => {
 
       {/* BOTTOM CTA BANNER */}
       <section className="relative z-10 py-16 text-center max-w-4xl mx-auto px-4">
-        <h3 className="text-2xl sm:text-4xl font-extrabold text-white">
+        <h3 className="text-2xl sm:text-4xl font-extrabold text-slate-900 dark:text-white">
           Ready to Inspect the Evidence Ledger?
         </h3>
-        <p className="mt-4 text-sm text-slate-400 font-mono">
+        <p className="mt-4 text-sm text-slate-600 dark:text-slate-400 font-mono">
           Interactive evaluator sandbox configured. Zero installation required.
         </p>
         <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -1071,26 +1064,26 @@ export const LandingPage = () => {
           </button>
           <button
             onClick={() => navigate('/login')}
-            className="px-6 py-4 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 font-mono font-bold text-sm transition-all flex items-center gap-2 cursor-pointer"
+            className="px-6 py-4 rounded-xl bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-300 font-mono font-bold text-sm transition-all flex items-center gap-2 cursor-pointer shadow-md"
           >
-            <UserPlus className="w-4 h-4 text-cyan-400" />
+            <UserPlus className="w-4 h-4 text-cyan-500 dark:text-cyan-400" />
             <span>CREATE GENUINE AGENCY ACCOUNT</span>
           </button>
         </div>
       </section>
 
       {/* ENTERPRISE FOOTER */}
-      <footer className="relative z-10 border-t border-slate-800/80 bg-slate-950/80 py-10 font-mono text-xs text-slate-400">
+      <footer className="relative z-10 border-t border-slate-200 dark:border-slate-800/80 bg-white/80 dark:bg-slate-950/80 py-10 font-mono text-xs text-slate-600 dark:text-slate-400 transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <ShieldCheck className="w-4 h-4 text-cyan-400" />
-            <span className="text-white font-bold">HASHGUARD</span>
-            <span className="text-slate-600">|</span>
-            <span className="text-slate-400">Cyber Evidence Exchange (SIH 2026)</span>
+          <div className="flex items-center gap-2.5">
+            <LogoIcon className="w-5 h-5 text-cyan-500 dark:text-cyan-400" />
+            <span className="text-slate-900 dark:text-white font-bold tracking-wider">HASH<span className="text-cyan-500 dark:text-cyan-400">GUARD</span></span>
+            <span className="text-slate-300 dark:text-slate-600">|</span>
+            <span className="text-slate-600 dark:text-slate-400">Cyber Evidence Exchange (SIH 2026)</span>
           </div>
 
           <div className="flex items-center gap-4 text-[11px] text-slate-500">
-            <span className="flex items-center gap-1.5 text-emerald-400">
+            <span className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
               <span>Consortium Nodes Synced</span>
             </span>

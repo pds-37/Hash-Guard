@@ -110,8 +110,8 @@ export const IndependentVerificationPanel = ({ defaultId = '', autoVerify = fals
       {/* 1. If 0 evidence present in ledger: Explicit Clean "No Evidence" State */}
       {isLedgerEmpty ? (
         <div className="rounded-xl bg-ce-surface border border-ce-border p-8 text-center shadow-lg animate-in fade-in duration-300">
-          <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-slate-800/80 border border-slate-700 flex items-center justify-center text-slate-400 shadow-inner">
-            <ShieldAlert className="w-8 h-8 text-amber-400" />
+          <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-ce-surface-subtle border border-ce-border flex items-center justify-center text-ce-text-muted shadow-inner">
+            <ShieldAlert className="w-8 h-8 text-amber-500 dark:text-amber-400" />
           </div>
           <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-amber-400 px-2.5 py-1 rounded bg-amber-400/10 border border-amber-400/30">
             LEDGER STATUS: NO EVIDENCE REGISTERED

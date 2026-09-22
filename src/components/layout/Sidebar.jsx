@@ -16,10 +16,11 @@ import {
   Menu,
   Wallet,
   LogOut,
-  Clock,
-  Globe
+  Globe,
+  Clock
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
+import { Logo } from '../common/Logo';
 
 export const Sidebar = ({ isMobileOpen, setMobileOpen }) => {
   const { currentRole, switchRole, isTamperSimulated, walletAddress, did, connectWallet } = useApp();
@@ -85,14 +86,13 @@ export const Sidebar = ({ isMobileOpen, setMobileOpen }) => {
         {/* Header / Logo Area */}
         <div className="flex items-center justify-between h-16 px-4 border-b border-ce-border shrink-0">
           {!isCollapsed && (
-            <NavLink to="/" className="flex items-center gap-2 font-semibold text-ce-text-primary truncate hover:opacity-80 transition-opacity">
-              <ShieldCheck className="w-5 h-5 text-ce-brand" />
-              <span className="tracking-tight">CYBER EVIDENCE</span>
+            <NavLink to="/" className="hover:opacity-90 transition-opacity truncate">
+              <Logo size="sm" tampered={isTamperSimulated} />
             </NavLink>
           )}
           {isCollapsed && (
-            <NavLink to="/" className="mx-auto hover:opacity-80 transition-opacity">
-              <ShieldCheck className="w-6 h-6 text-ce-brand" />
+            <NavLink to="/" className="mx-auto hover:opacity-90 transition-opacity">
+              <Logo variant="icon" size="sm" tampered={isTamperSimulated} />
             </NavLink>
           )}
           <button 

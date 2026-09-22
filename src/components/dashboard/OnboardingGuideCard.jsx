@@ -39,9 +39,9 @@ export const OnboardingGuideCard = ({ evidenceCount = 0, onRegister }) => {
       action: !walletAddress ? (
         <button
           onClick={connectWallet}
-          className="mt-2 inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-300 text-xs font-mono font-bold transition-all cursor-pointer"
+          className="mt-2 inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-700 dark:text-amber-300 text-xs font-mono font-bold transition-all cursor-pointer shadow-sm"
         >
-          <Wallet className="w-3.5 h-3.5 text-amber-400" />
+          <Wallet className="w-3.5 h-3.5 text-amber-500 dark:text-amber-400" />
           <span>Connect MetaMask Wallet</span>
         </button>
       ) : null
@@ -57,9 +57,9 @@ export const OnboardingGuideCard = ({ evidenceCount = 0, onRegister }) => {
       action: evidenceCount === 0 ? (
         <button
           onClick={onRegister}
-          className="mt-2 inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 text-cyan-300 text-xs font-mono font-bold transition-all cursor-pointer"
+          className="mt-2 inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 text-cyan-700 dark:text-cyan-300 text-xs font-mono font-bold transition-all cursor-pointer shadow-sm"
         >
-          <Upload className="w-3.5 h-3.5 text-cyan-400" />
+          <Upload className="w-3.5 h-3.5 text-cyan-500 dark:text-cyan-400" />
           <span>+ Collect & Seal First Exhibit</span>
         </button>
       ) : null
@@ -130,34 +130,34 @@ export const OnboardingGuideCard = ({ evidenceCount = 0, onRegister }) => {
                   ? 'bg-emerald-500/5 border-emerald-500/30'
                   : isReady
                   ? 'bg-cyan-500/5 border-cyan-500/30'
-                  : 'bg-slate-900/60 border-slate-800'
+                  : 'bg-ce-surface-subtle border-ce-border'
               }`}
             >
               <div>
                 <div className="flex items-center justify-between gap-2 mb-2">
-                  <span className="text-[10px] font-mono font-bold text-slate-400 uppercase">
+                  <span className="text-[10px] font-mono font-bold text-ce-text-muted uppercase">
                     STEP 0{step.id}
                   </span>
                   {isDone ? (
-                    <span className="flex items-center gap-1 text-[10px] font-mono font-bold text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20">
+                    <span className="flex items-center gap-1 text-[10px] font-mono font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20">
                       <CheckCircle2 className="w-3 h-3" />
                       <span>DONE</span>
                     </span>
                   ) : isReady ? (
-                    <span className="text-[10px] font-mono font-bold text-cyan-400 bg-cyan-500/10 px-1.5 py-0.5 rounded border border-cyan-500/20">
+                    <span className="text-[10px] font-mono font-bold text-cyan-600 dark:text-cyan-400 bg-cyan-500/10 px-1.5 py-0.5 rounded border border-cyan-500/20">
                       READY
                     </span>
                   ) : (
-                    <span className="text-[10px] font-mono font-bold text-slate-400 bg-slate-800 px-1.5 py-0.5 rounded">
+                    <span className="text-[10px] font-mono font-bold text-ce-text-muted bg-ce-surface border border-ce-border px-1.5 py-0.5 rounded">
                       PENDING
                     </span>
                   )}
                 </div>
 
-                <h4 className="text-xs font-bold text-white font-mono leading-tight">
+                <h4 className="text-xs font-bold text-ce-text-primary font-mono leading-tight">
                   {step.title}
                 </h4>
-                <p className="text-[11px] text-slate-400 mt-1.5 leading-relaxed">
+                <p className="text-[11px] text-ce-text-secondary mt-1.5 leading-relaxed">
                   {step.desc}
                 </p>
               </div>

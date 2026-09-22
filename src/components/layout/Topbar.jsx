@@ -2,11 +2,10 @@ import React, { useState } from 'react';
 import {
   Search,
   Bell,
-  Sun,
-  Moon,
   Menu
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
+import { ThemeToggle } from '../common/ThemeToggle';
 
 export const Topbar = ({ setMobileOpen }) => {
   const {
@@ -18,18 +17,6 @@ export const Topbar = ({ setMobileOpen }) => {
   } = useApp();
 
   const [showNotifications, setShowNotifications] = useState(false);
-  const [isDark, setIsDark] = useState(() => document.documentElement.classList.contains('dark'));
-
-  const toggleTheme = () => {
-    const root = document.documentElement;
-    if (root.classList.contains('dark')) {
-      root.classList.remove('dark');
-      setIsDark(false);
-    } else {
-      root.classList.add('dark');
-      setIsDark(true);
-    }
-  };
 
   return (
     <header className="h-16 bg-ce-surface/90 backdrop-blur border-b border-ce-border px-4 lg:px-6 flex items-center justify-between gap-4 sticky top-0 z-30 shrink-0">
@@ -55,19 +42,13 @@ export const Topbar = ({ setMobileOpen }) => {
 
       <div className="flex items-center gap-2 sm:gap-3">
         {isSandboxMode && (
-          <div className="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded bg-amber-500/10 border border-amber-500/30 text-amber-300 font-mono text-[11px] font-semibold">
+          <div className="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded bg-amber-500/10 border border-amber-500/30 text-amber-600 dark:text-amber-300 font-mono text-[11px] font-semibold">
             <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
             <span>SANDBOX EVALUATION ENCLAVE</span>
           </div>
         )}
 
-        <button
-          onClick={toggleTheme}
-          className="p-2 rounded-md hover:bg-ce-surface-subtle text-ce-text-secondary hover:text-ce-text-primary transition-colors"
-          aria-label="Toggle Theme"
-        >
-          {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-        </button>
+        <ThemeToggle size="md" />
 
         <div className="relative">
           <button

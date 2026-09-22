@@ -1,6 +1,11 @@
-# Cyber Evidence Exchange (SIH 2026)
+<div align="center">
+  <img src="public/cyber_evidence_logo.jpg" alt="HashGuard Cyber Evidence Exchange Logo" width="260" style="border-radius: 12px; margin-bottom: 12px;" />
 
-**Production-Quality Frontend for Cross-Organization Digital Forensic Evidence Verification**
+  # Cyber Evidence Exchange (SIH 2026)
+  ### HASHGUARD • Immutable Forensic Custody & Integrity Ledger
+
+  **Production-Quality Platform for Cross-Organization Digital Forensic Evidence Verification**
+</div>
 
 > **Core Value Proposition**: Secure, independently verifiable cross-organization cyber-evidence exchange with tamper-evident custody history and derived-evidence lineage.
 
