@@ -28,6 +28,7 @@ import {
 import { useApp, ROLES } from '../../context/AppContext';
 import { Logo, LogoIcon } from '../../components/common/Logo';
 import { ThemeToggle } from '../../components/common/ThemeToggle';
+import { SystemArchitectureSection } from '../../components/landing/SystemArchitectureSection';
 
 export const LandingPage = () => {
   const navigate = useNavigate();
@@ -38,7 +39,7 @@ export const LandingPage = () => {
 
   const scrollToTab = (tabKey) => {
     setActiveTab(tabKey);
-    const element = document.getElementById('architecture');
+    const element = document.getElementById('security-lab');
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
     }
@@ -536,8 +537,11 @@ export const LandingPage = () => {
         </div>
       </section>
 
-      {/* INTERACTIVE SECURITY CONSOLE PREVIEW */}
-      <section id="architecture" className="relative z-10 py-8 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* SYSTEM ARCHITECTURE BLUEPRINT SECTION */}
+      <SystemArchitectureSection onLaunchSandbox={launchConsole} />
+
+      {/* INTERACTIVE SECURITY CONSOLE & TAMPER LAB */}
+      <section id="security-lab" className="relative z-10 py-8 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-[#0b1120] border border-slate-800 rounded-2xl shadow-2xl overflow-hidden backdrop-blur-xl">
           {/* Simulated Terminal Window Header */}
           <div className="bg-slate-900/90 px-4 py-3 border-b border-slate-800 flex items-center justify-between">
