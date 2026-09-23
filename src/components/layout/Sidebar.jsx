@@ -124,9 +124,11 @@ export const Sidebar = ({ isMobileOpen, setMobileOpen }) => {
                   onChange={(e) => switchRole(e.target.value)}
                   className="w-full bg-ce-surface border border-ce-border text-[11px] text-ce-text-primary rounded px-2 py-1.5 font-mono focus:outline-none focus:border-ce-brand focus:ring-1 focus:ring-ce-brand cursor-pointer"
                 >
-                  <option value="ORG_B">Org B: Receiver / Analyst</option>
-                  <option value="ORG_A">Org A: Evidence Collector</option>
-                  <option value="AUDITOR">Audit Board</option>
+                  <option value="ORG_B">Org B: Cyber Defense Lab (Analyst)</option>
+                  <option value="ORG_A">Org A: CERT-Alpha (First Responder)</option>
+                  <option value="ORG_C">Org C: Judicial Court Registry</option>
+                  <option value="ORG_D">Org D: Cyber Crime Police (LEA)</option>
+                  <option value="AUDITOR">Audit Board (Independent Oversight)</option>
                 </select>
               </div>
 

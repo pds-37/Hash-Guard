@@ -53,6 +53,8 @@ export const AuditFilterBar = ({
             <option value="ALL">Org: All Organizations</option>
             <option value="Organization A">Organization A (CERT-Alpha)</option>
             <option value="Organization B">Organization B (Cyber Lab)</option>
+            <option value="Organization C">Organization C (Judicial Court)</option>
+            <option value="Organization D">Organization D (Cyber Police LEA)</option>
             <option value="Independent Auditor">Independent Auditor</option>
           </select>
 

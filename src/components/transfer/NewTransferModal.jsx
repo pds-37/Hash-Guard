@@ -153,8 +153,10 @@ export const NewTransferModal = ({ isOpen, onClose, onCreated, evidenceList = []
               className="w-full bg-ce-bg border border-ce-border rounded-md px-3 py-2 text-ce-text-primary focus:outline-none focus:border-ce-brand cursor-pointer"
             >
               <option value="Organization B (Cyber Lab)">Organization B (Cyber Defense Lab)</option>
-              <option value="Organization C (FinSec Ops)">Organization C (FinSec Ops)</option>
-              <option value="Independent Auditor">Independent Auditor</option>
+              <option value="Organization C (Judicial Court Registry)">Organization C (Judicial Court Registry)</option>
+              <option value="Organization D (Cyber Crime Police LEA)">Organization D (Cyber Crime Police LEA)</option>
+              <option value="Organization A (CERT-Alpha)">Organization A (CERT-Alpha)</option>
+              <option value="Independent Auditor">National Cyber Security Audit Board</option>
             </select>
           </div>
         </div>

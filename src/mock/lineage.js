@@ -105,6 +105,27 @@ export const mockLineageGraph = {
           signature: "ECDSA MULTI-SIG VALID"
         }
       }
+    },
+    {
+      id: "node-6",
+      type: "lineageNode",
+      position: { x: 350, y: 1050 },
+      data: {
+        id: "CRT-001",
+        label: "Section 65B Judicial Admissibility Certificate",
+        artifactType: "Court Trial Exhibit",
+        hash: "a1b2c3d4e5f67890123456789abcdef0123456789abcdef0123456789abcdef0",
+        creator: "Organization C (Judicial Court Registry)",
+        timestamp: "2026-08-16 14:30:00 UTC",
+        verificationState: "VERIFIED",
+        isRoot: false,
+        details: {
+          file: "judicial_admissibility_certificate.pdf",
+          size: "3.4 MB",
+          algorithm: "SHA-256",
+          signature: "JUDICIAL REGISTRAR SIGNED (Org C)"
+        }
+      }
     }
   ],
   edges: [
@@ -147,6 +168,14 @@ export const mockLineageGraph = {
       label: "CORRELATED",
       animated: false,
       style: { stroke: '#6366f1', strokeWidth: 2 }
+    },
+    {
+      id: "e5-6",
+      source: "node-5",
+      target: "node-6",
+      label: "JUDICIAL ADMISSION",
+      animated: true,
+      style: { stroke: '#10b981', strokeWidth: 2 }
     }
   ]
 };

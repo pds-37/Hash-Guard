@@ -28,7 +28,7 @@ export const ROLES = {
     roleName: 'Independent Auditor (ROLE_AUDITOR)',
     description: 'Zero-trust cryptographic verification of asset hashes, custody proofs, and auditor credentials without raw file access.',
     badgeColor: 'text-cyan-400 bg-cyan-500/10 border-cyan-500/30',
-    allowedPages: ['verification', 'lineage', 'custody', 'audit', 'settings'],
+    allowedPages: ['dashboard', 'evidence', 'evidence-details', 'verification', 'lineage', 'custody', 'audit', 'settings'],
     actions: ['Verify Hash Integrity', 'Verify Cryptographic Credentials', 'Export Attestation Certificate']
   },
   USER: {
@@ -40,14 +40,14 @@ export const ROLES = {
     allowedPages: ['dashboard', 'evidence', 'evidence-details', 'transfers', 'custody', 'settings'],
     actions: ['Register DID Identity', 'Accept Custody', 'Request Asset Transfer']
   },
-  // Backward compatibility mappings
+  // Consortium Organizations
   ORG_A: {
     id: 'ORG_A',
     orgName: 'Organization A (CERT-Alpha)',
     roleName: 'Evidence Collector / Originator',
     description: 'Initial seizure, SHA-256 hashing, HSM signing, and mTLS dispatch.',
     badgeColor: 'text-blue-400 bg-blue-500/10 border-blue-500/30',
-    allowedPages: ['dashboard', 'evidence', 'evidence-details', 'transfers', 'custody', 'audit', 'retention', 'settings'],
+    allowedPages: ['dashboard', 'evidence', 'evidence-details', 'transfers', 'custody', 'lineage', 'verification', 'audit', 'retention', 'settings'],
     actions: ['Collect Evidence', 'Hash & Sign Manifest', 'Initiate Secure Transfer']
   },
   ORG_B: {
@@ -58,6 +58,24 @@ export const ROLES = {
     badgeColor: 'text-purple-400 bg-purple-500/10 border-purple-500/30',
     allowedPages: ['dashboard', 'evidence', 'evidence-details', 'transfers', 'custody', 'lineage', 'verification', 'audit', 'retention', 'settings'],
     actions: ['Receive & Verify Transfer', 'Dynamic Sandbox Run', 'Derive Forensic Artifact', 'Generate Lineage']
+  },
+  ORG_C: {
+    id: 'ORG_C',
+    orgName: 'Organization C (Judicial Court Registry)',
+    roleName: 'Judicial Magistrate / Legal Prosecution',
+    description: 'Judicial exhibit receipt, Section 65B forensic certificate admissibility, case trial archiving.',
+    badgeColor: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30',
+    allowedPages: ['dashboard', 'evidence', 'evidence-details', 'transfers', 'custody', 'lineage', 'verification', 'audit', 'retention', 'settings'],
+    actions: ['Admit Court Exhibit', 'Verify Section 65B Certificate', 'Inspect Lineage Tree', 'Seal Case Ledger']
+  },
+  ORG_D: {
+    id: 'ORG_D',
+    orgName: 'Organization D (Cyber Crime Police LEA)',
+    roleName: 'Law Enforcement Agency / Lead Detective',
+    description: 'Physical device raid seizure, FIR crime scene evidence logging, dispatch to forensics lab.',
+    badgeColor: 'text-amber-400 bg-amber-500/10 border-amber-500/30',
+    allowedPages: ['dashboard', 'evidence', 'evidence-details', 'transfers', 'custody', 'lineage', 'verification', 'audit', 'retention', 'settings'],
+    actions: ['Seize Crime Scene Device', 'Register FIR Exhibit', 'Dispatch to Forensics Lab', 'Track Custody Chain']
   }
 };
 

@@ -69,7 +69,8 @@ export const EvidenceFilterBar = ({
             <option value="ALL">Org: All Organizations</option>
             <option value="Org A">Organization A (CERT-Alpha)</option>
             <option value="Org B">Organization B (Cyber Lab)</option>
-            <option value="Org C">Organization C (FinSec Ops)</option>
+            <option value="Org C">Organization C (Judicial Court)</option>
+            <option value="Org D">Organization D (Cyber Police LEA)</option>
           </select>
 
           <button

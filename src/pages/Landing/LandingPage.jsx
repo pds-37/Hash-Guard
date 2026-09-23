@@ -102,7 +102,7 @@ export const LandingPage = () => {
       id: 'EVAL-001',
       email: targetRole === 'AUDITOR' ? 'auditor@cyber-audit.gov' : 'analyst-lead@cyberlab.local',
       name: isSandbox ? 'Lead Forensic Evaluator / Lead Auditor' : roleConfig.roleName,
-      organization_id: targetRole === 'ORG_A' ? 'ORG_A' : targetRole === 'ORG_B' ? 'ORG_B' : 'AUDITOR',
+      organization_id: targetRole || 'ORG_B',
       role: targetRole === 'AUDITOR' ? 'AUDITOR' : 'ADMIN'
     };
 

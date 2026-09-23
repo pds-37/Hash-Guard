@@ -1,23 +1,36 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal } from '../common/Modal';
-import { ShieldPlus, Hash, Upload, Loader2 } from 'lucide-react';
+import { ShieldPlus, Hash, Upload, Loader2, Building2 } from 'lucide-react';
 import { evidenceService } from '../../services/evidenceService';
 import { BlockchainTerminalOverlay } from '../common/BlockchainTerminalOverlay';
 import { ethers } from 'ethers';
 import HashGuardABI from '../../contracts/HashGuard.json';
+import { useApp } from '../../context/AppContext';
 
 export const NewEvidenceModal = ({ isOpen, onClose, onCreated }) => {
+  const { currentRole } = useApp();
   const [formData, setFormData] = useState({
     title: '',
     caseId: 'CASE-2026-9012',
     type: 'Malware Binary',
     fileSize: '',
-    collector: 'analyst-lead@org-a.gov',
+    collector: 'lead-investigator@consortium.gov',
     description: '',
-    sourceOrg: 'Organization A (CERT-Alpha)',
-    currentCustodian: 'Organization A (CERT-Alpha)',
+    sourceOrg: currentRole?.orgName || 'Organization A (CERT-Alpha)',
+    currentCustodian: currentRole?.orgName || 'Organization A (CERT-Alpha)',
     parentEvidenceId: ''
   });
+
+  useEffect(() => {
+    if (currentRole?.orgName) {
+      setFormData(prev => ({
+        ...prev,
+        sourceOrg: currentRole.orgName,
+        currentCustodian: currentRole.orgName,
+        collector: `${currentRole.id.toLowerCase()}-officer@consortium.gov`
+      }));
+    }
+  }, [currentRole, isOpen]);
   const [computingHash, setComputingHash] = useState(false);
   const [computedHash, setComputedHash] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
@@ -219,7 +232,7 @@ export const NewEvidenceModal = ({ isOpen, onClose, onCreated }) => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div>
             <label className="block text-ce-text-primary text-xs font-semibold uppercase tracking-wider mb-1.5">
               Evidence Type:
@@ -252,6 +265,22 @@ export const NewEvidenceModal = ({ isOpen, onClose, onCreated }) => {
               placeholder="e.g. 14.8 MB"
               className="w-full bg-ce-bg border border-ce-border rounded-md px-3 py-2 text-ce-text-primary focus:outline-none focus:border-ce-brand focus:ring-1 focus:ring-ce-brand font-mono text-sm transition-colors"
             />
+          </div>
+
+          <div>
+            <label className="block text-ce-text-primary text-xs font-semibold uppercase tracking-wider mb-1.5">
+              Sealing Agency:
+            </label>
+            <select
+              value={formData.sourceOrg}
+              onChange={(e) => setFormData({ ...formData, sourceOrg: e.target.value, currentCustodian: e.target.value })}
+              className="w-full bg-ce-bg border border-ce-border rounded-md px-3 py-2 text-ce-text-primary focus:outline-none focus:border-ce-brand focus:ring-1 focus:ring-ce-brand cursor-pointer font-mono text-xs transition-colors"
+            >
+              <option value="Organization A (CERT-Alpha)">Organization A (CERT-Alpha)</option>
+              <option value="Organization B (Cyber Lab)">Organization B (Cyber Lab)</option>
+              <option value="Organization C (Judicial Court Registry)">Organization C (Judicial Court Registry)</option>
+              <option value="Organization D (Cyber Crime Police LEA)">Organization D (Cyber Crime Police LEA)</option>
+            </select>
           </div>
         </div>
 
