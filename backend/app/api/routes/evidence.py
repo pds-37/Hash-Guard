@@ -61,9 +61,6 @@ def download_evidence(evidence_id: str, user_address: str, db: Session = Depends
         content=decrypted_bytes,
         media_type="application/octet-stream",
         headers={"Content-Disposition": f'attachment; filename="{evidence.title}.bin"'}
-    )"',
-            "Content-Type": "application/octet-stream"
-        }
     )
 
 @router.post("", response_model=EvidenceResponse)
