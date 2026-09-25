@@ -273,21 +273,21 @@ export const LandingPage = () => {
         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-700/80 shadow-sm mb-6">
           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
           <span className="text-[11px] font-mono uppercase tracking-wider text-slate-700 dark:text-slate-300">
-            Permissioned Audit Ledger Active <span className="text-slate-400 dark:text-slate-500">•</span> EVM Block #483,192 <span className="text-slate-400 dark:text-slate-500">•</span> Smart India Hackathon 2026
+            ETHEREUM SEPOLIA <span className="text-slate-400 dark:text-slate-500">•</span> HASHGUARD SMART CONTRACT <span className="text-slate-400 dark:text-slate-500">•</span> SIH 2026
           </span>
         </div>
 
         {/* Main Headline */}
         <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-white max-w-5xl mx-auto leading-[1.15]">
-          The Cryptographic Chain of Custody for{' '}
+          The Blockchain Trust Layer for{' '}
           <span className="bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-500 dark:from-cyan-400 dark:via-blue-400 dark:to-indigo-400 bg-clip-text text-transparent">
-            Digital Forensic Evidence
-          </span>
+            Digital Assets
+            </span>
         </h1>
 
         {/* Subtitle */}
         <p className="mt-5 text-sm sm:text-base lg:text-lg text-slate-600 dark:text-slate-400 max-w-3xl mx-auto font-normal leading-relaxed">
-          Cryptographically seal forensic exhibits, enforce multi-agency custody handoffs with mTLS handshakes, and verify integrity with zero off-chain data leakage—powered by SHA-256 and EVM smart contracts.
+          Securely register, manage, transfer and verify digital assets with decentralized identity, role-based access control, cryptographic integrity and blockchain-backed ownership.
         </p>
 
         {/* Dual Primary CTAs */}
@@ -306,27 +306,27 @@ export const LandingPage = () => {
             className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-white dark:bg-slate-900/90 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 font-mono font-semibold text-sm transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md hover:border-cyan-500/40"
           >
             <UserPlus className="w-4 h-4 text-cyan-500 dark:text-cyan-400" />
-            <span>REGISTER AGENCY NODE (GENUINE APP)</span>
+            <span>CONNECT WALLET</span>
           </button>
         </div>
 
         <p className="mt-3 text-[11px] font-mono text-slate-500">
-          *Evaluator Sandbox is pre-loaded with forensic malware specimens & adversary tamper drills for rapid demonstration.
+          *Experience the zero-trust workflow with full cryptographic verification and decentralized identity access controls.
         </p>
 
         {/* Compliance & Standards Strip */}
         <div className="mt-12 pt-8 border-t border-slate-200 dark:border-slate-800/80 flex flex-wrap items-center justify-center gap-6 sm:gap-10 text-xs font-mono text-slate-600 dark:text-slate-400">
           <div className="flex items-center gap-2">
             <ShieldCheck className="w-4 h-4 text-cyan-400" />
-            <span>ISO/IEC 27037:2012</span>
+            <span>ISO/IEC 27037-informed evidence handling</span>
           </div>
           <div className="flex items-center gap-2">
             <Lock className="w-4 h-4 text-emerald-400" />
-            <span>Sec 65B Indian Evidence Act</span>
+            <span>Cryptographically verifiable</span>
           </div>
           <div className="flex items-center gap-2">
             <Fingerprint className="w-4 h-4 text-blue-400" />
-            <span>NIST SP 800-86 Compliant</span>
+            <span>On-chain integrity proofs</span>
           </div>
           <div className="flex items-center gap-2">
             <Database className="w-4 h-4 text-purple-400" />
@@ -335,7 +335,7 @@ export const LandingPage = () => {
         </div>
       </section>
 
-      {/* INTERACTIVE OPERATIONAL RUNBOOK (MATCHING USER SCREENSHOT) */}
+      {/* DIGITAL ASSET REGISTRATION FLOW */}
       <section id="onboarding-pipeline" className="relative z-10 py-6 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="rounded-xl bg-white dark:bg-[#0b1120]/95 border border-slate-200 dark:border-cyan-500/30 p-5 md:p-6 shadow-lg dark:shadow-[0_0_35px_rgba(6,182,212,0.12)] backdrop-blur-xl relative overflow-hidden">
           {/* Subtle glow */}
@@ -350,14 +350,14 @@ export const LandingPage = () => {
               <div>
                 <div className="flex items-center gap-2.5 flex-wrap">
                   <h3 className="text-sm font-bold font-mono text-slate-900 dark:text-white tracking-wide uppercase">
-                    AGENCY NODE ACTIVATION RUNBOOK
+                    DIGITAL ASSET REGISTRATION FLOW
                   </h3>
                   <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 font-semibold">
                     GENUINE PRODUCTION MODE
                   </span>
                 </div>
                 <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
-                  Follow the 4-step cryptographic pipeline to initialize custody sealing and zero-knowledge verification.
+                  Follow the 4-step cryptographic pipeline to initialize custody sealing and cryptographically verifiable verification.
                 </p>
               </div>
             </div>
@@ -514,7 +514,7 @@ export const LandingPage = () => {
                   )}
                 </div>
                 <h4 className="text-xs font-bold text-slate-900 dark:text-white font-mono leading-tight">
-                  Zero-Knowledge Independent Verification
+                  cryptographically verifiable Independent Verification
                 </h4>
                 <p className="text-xs text-slate-600 dark:text-slate-400 mt-2 leading-relaxed">
                   Verify cryptographic root and chain of custody without exposing raw evidence content.
@@ -637,7 +637,7 @@ export const LandingPage = () => {
                 <div className="flex items-center gap-3">
                   <Lock className="w-5 h-5 text-cyan-400 shrink-0" />
                   <span className="text-xs font-mono text-slate-300">
-                    Independent zero-knowledge auditors can verify absolute integrity without exposing classified payload data.
+                    Independent cryptographically verifiable auditors can verify absolute integrity without exposing classified payload data.
                   </span>
                 </div>
                 <button
@@ -846,7 +846,7 @@ export const LandingPage = () => {
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-emerald-500 font-bold">✓</span>
-                <span>1-click zero-knowledge courtroom attestation certificates.</span>
+                <span>1-click cryptographically verifiable courtroom attestation certificates.</span>
               </li>
             </ul>
           </div>
@@ -899,7 +899,7 @@ export const LandingPage = () => {
             <div className="w-10 h-10 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-500 dark:text-emerald-400">
               <Eye className="w-5 h-5" />
             </div>
-            <h4 className="text-base font-bold text-slate-900 dark:text-white">Zero-Knowledge Auditing</h4>
+            <h4 className="text-base font-bold text-slate-900 dark:text-white">cryptographically verifiable Auditing</h4>
             <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
               Judicial courts and independent oversight boards can mathematically prove custody continuity without gaining access to classified raw payloads.
             </p>
@@ -933,7 +933,7 @@ export const LandingPage = () => {
       <section id="roles" className="relative z-10 py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-slate-200 dark:border-slate-800/80">
         <div className="text-center max-w-3xl mx-auto mb-12">
           <h2 className="text-xs font-mono uppercase tracking-widest text-cyan-600 dark:text-cyan-400 font-semibold mb-2">Role-Based Access Control</h2>
-          <h3 className="text-2xl sm:text-4xl font-extrabold text-slate-900 dark:text-white">Multi-Agency Perspectives</h3>
+          <h3 className="text-2xl sm:text-4xl font-extrabold text-slate-900 dark:text-white">Role-Based Digital Asset Governance</h3>
           <p className="mt-3 text-sm text-slate-600 dark:text-slate-400">
             Click on any role below to immediately enter the prototype with pre-configured role permissions.
           </p>

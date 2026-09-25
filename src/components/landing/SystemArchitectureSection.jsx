@@ -69,7 +69,7 @@ export const SystemArchitectureSection = ({ onLaunchSandbox }) => {
     {
       id: 'tier4',
       number: 'TIER 04',
-      name: 'Permissioned EVM Consensus & Smart Contracts',
+      name: 'Permissioned EVM Consensus & ERC-721 Asset Ownership',
       badge: 'Solidity ^0.8.20 • ERC-721',
       accent: 'emerald',
       description: 'Immutable distributed ledger anchoring verifiable Decentralized Identifiers (DIDs), NFT-backed evidence custody, and bytecode-level RBAC.',
@@ -205,7 +205,7 @@ export const SystemArchitectureSection = ({ onLaunchSandbox }) => {
           <span className="w-1.5 h-1.5 rounded-full bg-cyan-500 animate-ping ml-1" />
         </div>
         <h2 className="text-2xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-          End-to-End Cryptographic Forensic Architecture
+          End-to-End Digital Asset Trust Architecture
         </h2>
         <p className="mt-3 text-sm sm:text-base text-slate-600 dark:text-slate-400 font-normal leading-relaxed">
           Engineered as a decoupled 4-tier stack separating user interfaces, encrypted off-chain storage vaults, asynchronous microservices, and permissioned EVM consensus smart contracts.
