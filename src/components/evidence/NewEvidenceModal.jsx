@@ -104,7 +104,7 @@ export const NewEvidenceModal = ({ isOpen, onClose, onCreated }) => {
               `SHA-256 Digest: ${computedHash}\n` +
               `Evidence Title: ${formData.title || 'Digital Forensic Exhibit'}\n` +
               `Sealing Timestamp: ${new Date().toISOString()}\n\n` +
-              `Attestation: I certify this bitstream digest under ISO/IEC 27037 and Section 65B Indian Evidence Act.`
+              `Attestation: I certify this bitstream digest under ISO/IEC 27037 and Cryptographically Verifiable Report.`
             );
             signatureData = {
               status: 'VALID',
@@ -203,9 +203,28 @@ export const NewEvidenceModal = ({ isOpen, onClose, onCreated }) => {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="sm:col-span-2">
+          
+            <div className="sm:col-span-1">
+              <label className="block text-ce-text-primary text-xs font-semibold uppercase tracking-wider mb-1.5">
+                Asset Category:
+              </label>
+              <select
+                required
+                className="w-full bg-ce-surface border border-ce-border text-ce-text-primary text-sm rounded-md px-3 py-2.5 focus:outline-none focus:border-ce-brand focus:ring-1 focus:ring-ce-brand transition-colors"
+                value={formData.assetCategory || 'FORENSIC_EVIDENCE'}
+                onChange={(e) => setFormData({...formData, assetCategory: e.target.value})}
+              >
+                <option value="FORENSIC_EVIDENCE">Forensic Evidence</option>
+                <option value="DOCUMENT">Document</option>
+                <option value="IMAGE">Image / Media</option>
+                <option value="DATASET">Dataset</option>
+                <option value="SECURITY_ARTIFACT">Security Artifact</option>
+              </select>
+            </div>
+            <div className="sm:col-span-2">
+
             <label className="block text-ce-text-primary text-xs font-semibold uppercase tracking-wider mb-1.5">
-              Evidence Title / Specimen Label:
+              Asset Name / Specimen Label:
             </label>
             <input
               type="text"

@@ -33,6 +33,12 @@ class Evidence(Base):
     description = Column(String, nullable=True)
     forensic_notes = Column(String, nullable=True)
 
+    # SIH Digital Asset Management Fields
+    asset_category = Column(String, default="FORENSIC_EVIDENCE") # DOCUMENT, IMAGE, MEDIA, DATASET, SECURITY_ARTIFACT, FORENSIC_EVIDENCE
+    owner = Column(String, nullable=True) # Registered Asset Owner of the asset
+    owner_did = Column(String, nullable=True) # Owner's Decentralized Identifier
+    access_list = Column(String, default="[]") # JSON string of allowed DIDs/Organizations
+
     # Retention fields
     retention_policy_id = Column(String, ForeignKey("retention_policies.id"), nullable=True)
     retention_start_at = Column(DateTime, nullable=True)

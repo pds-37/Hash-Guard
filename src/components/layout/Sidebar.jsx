@@ -35,9 +35,9 @@ export const Sidebar = ({ isMobileOpen, setMobileOpen }) => {
       ]
     },
     {
-      label: 'Evidence',
+      label: 'Digital Assets',
       items: [
-        { name: 'Evidence', path: '/evidence', icon: ShieldAlert },
+        { name: 'Digital Assets', path: '/evidence', icon: ShieldAlert },
         // Evidence Details is omitted from sidebar to avoid clutter, accessed via list
       ]
     },

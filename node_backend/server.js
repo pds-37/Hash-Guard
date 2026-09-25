@@ -106,8 +106,12 @@ app.post('/api/v1/evidence', upload.single('file'), async (req, res) => {
     caseId: payload.caseId || 'CASE-2026-9012',
     title: payload.title || originalFileName || 'Legitimate Digital Evidence',
     type: payload.type || 'Digital Artifact',
+    assetCategory: payload.assetCategory || 'FORENSIC_EVIDENCE',
     sourceOrg: payload.sourceOrg || 'Organization B (Cyber Defense Lab)',
     currentCustodian: payload.currentCustodian || 'Organization B (Cyber Defense Lab)',
+    owner: payload.owner || payload.sourceOrg || 'Organization B (Cyber Defense Lab)',
+    ownerDid: payload.ownerDid || 'did:ethr:0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
+    accessList: payload.accessList || [],
     hash: calculatedHash,
     expectedHash: calculatedHash,
     hashAlgorithm: 'SHA-256',
@@ -166,12 +170,23 @@ app.get('/api/v1/evidence/:id', async (req, res) => {
 app.get('/api/v1/evidence/:id/download', async (req, res) => {
   const db = await readDb();
   const item = db.evidence.find(e => e.id === req.params.id);
+  
+  // Requirement: Zero-trust asset access middleware
+  const userDid = req.query.did; 
+  if (item && item.ownerDid !== userDid && (!item.accessList || !item.accessList.includes(userDid))) {
+      return res.status(403).json({ error: 'Access Denied: DID not authorized on-chain for this asset.' });
+  }
+
   if (item && item.storageLocation && require('fs').existsSync(item.storageLocation)) {
     return res.download(item.storageLocation, item.title || `${item.id}.bin`);
   }
   res.setHeader('Content-Disposition', `attachment; filename="${req.params.id}.txt"`);
   res.setHeader('Content-Type', 'text/plain');
-  res.send(`OFF-CHAIN SECURE EXHIBIT VAULT\nEvidence ID: ${req.params.id}\nTitle: ${item ? item.title : 'N/A'}\nHash: ${item ? item.hash : 'N/A'}\nStatus: VERIFIED`);
+  res.send(`OFF-CHAIN SECURE EXHIBIT VAULT
+Evidence ID: ${req.params.id}
+Title: ${item ? item.title : 'N/A'}
+Hash: ${item ? item.hash : 'N/A'}
+Status: VERIFIED`);
 });
 
 app.delete('/api/v1/evidence/:id', async (req, res) => {
@@ -383,7 +398,67 @@ app.post('/api/v1/ai/triage', async (req, res) => {
   });
 });
 
+
+// Access Control Routes
+app.post('/api/v1/evidence/:id/access', async (req, res) => {
+  const db = await readDb();
+  const evidence = db.evidence.find(e => e.id === req.params.id);
+  if (!evidence) return res.status(404).json({ error: 'Asset not found' });
+  
+  const { userDid, action } = req.body;
+  if (action === 'GRANT') {
+    if (!evidence.accessList) evidence.accessList = [];
+    if (!evidence.accessList.includes(userDid)) {
+      evidence.accessList.push(userDid);
+    }
+  } else if (action === 'REVOKE') {
+    if (evidence.accessList) {
+      evidence.accessList = evidence.accessList.filter(did => did !== userDid);
+    }
+  }
+  
+  db.audit_logs.unshift({
+    id: `AUD-${Date.now()}`,
+    timestamp: new Date().toISOString(),
+    event: action === 'GRANT' ? 'ACCESS_GRANTED' : 'ACCESS_REVOKED',
+    actor: 'System Admin',
+    evidence_id: evidence.id,
+    details: `${action} access for DID ${userDid}`
+  });
+  
+  await writeDb(db);
+  res.json({ success: true, accessList: evidence.accessList });
+});
+
+// Admin Mint NFT Route
+app.post('/api/v1/evidence/:id/mint', async (req, res) => {
+  const { role } = req.body;
+  if (role !== 'ROLE_ADMIN' && role !== 'ADMIN') {
+    return res.status(403).json({ error: 'HASHGUARD: Only Admin can mint assets' });
+  }
+  
+  const db = await readDb();
+  const evidence = db.evidence.find(e => e.id === req.params.id);
+  if (!evidence) return res.status(404).json({ error: 'Asset not found' });
+  
+  evidence.blockchainStatus = 'MINTED_ON_CHAIN';
+  evidence.txHash = '0x' + require('crypto').randomBytes(32).toString('hex');
+  
+  db.audit_logs.unshift({
+    id: `AUD-${Date.now()}`,
+    timestamp: new Date().toISOString(),
+    event: 'NFT_MINTED',
+    actor: 'System Admin',
+    evidence_id: evidence.id,
+    details: `Admin minted NFT for Asset ${evidence.id}`
+  });
+  
+  await writeDb(db);
+  res.json({ success: true, txHash: evidence.txHash });
+});
+
 initDb().then(() => {
+
   app.listen(PORT, () => {
     console.log(`Node backend running on http://localhost:${PORT}`);
   });

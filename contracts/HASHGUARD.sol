@@ -52,6 +52,12 @@ contract HASHGUARD is ERC721, AccessControl {
     mapping(string => uint256) public assetIdToTokenId;
 
     // ==========================================
+    // CUSTODY & ACCESS CONTROL MAPPINGS
+    // ==========================================
+    mapping(uint256 => address) public assetCustodian;
+    mapping(uint256 => mapping(address => bool)) public hasAccess;
+
+    // ==========================================
     // IMMUTABLE AUDIT TRAIL EVENTS
     // ==========================================
     event IdentityRegistered(address indexed user, bytes32 didDocumentHash);
@@ -65,6 +71,11 @@ contract HASHGUARD is ERC721, AccessControl {
 
     event AssetNFTMinted(uint256 indexed tokenId, string assetId, address indexed to, bytes32 contentHash, uint256 timestamp);
     event EvidenceNFTMinted(uint256 indexed tokenId, string assetId, address indexed to);
+    event AccessGranted(uint256 indexed tokenId, address indexed user, address indexed grantedBy, uint256 timestamp);
+    event AccessRevoked(uint256 indexed tokenId, address indexed user, address indexed revokedBy, uint256 timestamp);
+    event PermissionUpdated(uint256 indexed tokenId, address indexed user, string permission, uint256 timestamp);
+    event OwnershipTransferred(uint256 indexed tokenId, address indexed previousOwner, address indexed newOwner, uint256 timestamp);
+    event AssetRegistered(string assetId, address indexed creator, bytes32 contentHash, uint256 timestamp);
     event AssetAllocated(uint256 indexed tokenId, address indexed previousOwner, address indexed newOwner, address executor, uint256 timestamp);
     event CustodyTransferred(uint256 indexed tokenId, address indexed from, address indexed to);
 
@@ -195,6 +206,7 @@ contract HASHGUARD is ERC721, AccessControl {
         });
         
         assetIdToTokenId[assetId] = newItemId;
+        assetCustodian[newItemId] = to; // Default custodian is the initial owner
 
         emit AssetNFTMinted(newItemId, assetId, to, contentHash, block.timestamp);
         emit EvidenceNFTMinted(newItemId, assetId, to);
@@ -218,34 +230,67 @@ contract HASHGUARD is ERC721, AccessControl {
      */
     function allocateAsset(uint256 tokenId, address newOwner) external {
         require(
-            hasRole(ROLE_ADMIN, msg.sender) || 
-            hasRole(ROLE_MANAGER, msg.sender) || 
-            ownerOf(tokenId) == msg.sender, 
+            hasRole(ROLE_ADMIN, msg.sender) || ownerOf(tokenId) == msg.sender, 
             "HASHGUARD: Unauthorized allocation"
         );
         address previousOwner = ownerOf(tokenId);
         _transfer(previousOwner, newOwner, tokenId);
         emit AssetAllocated(tokenId, previousOwner, newOwner, msg.sender, block.timestamp);
-        emit CustodyTransferred(tokenId, previousOwner, newOwner);
+        emit OwnershipTransferred(tokenId, previousOwner, newOwner, block.timestamp);
     }
 
     /**
-     * @notice Secure custody transfer executed by asset custodian or admin override
+     * @notice True NFT Ownership transfer (SIH Requirement)
      */
-    function transferCustody(uint256 tokenId, address newOwner) external {
+    function transferOwnership(uint256 tokenId, address newOwner) external {
         require(
-            ownerOf(tokenId) == msg.sender || hasRole(ROLE_ADMIN, msg.sender), 
-            "HASHGUARD: Not custodian or admin"
+            ownerOf(tokenId) == msg.sender || hasRole(ROLE_ADMIN, msg.sender),
+            "HASHGUARD: Not owner or admin"
         );
-        address from = ownerOf(tokenId);
-        _transfer(from, newOwner, tokenId);
-        emit CustodyTransferred(tokenId, from, newOwner);
+        address previousOwner = ownerOf(tokenId);
+        _transfer(previousOwner, newOwner, tokenId);
+        emit OwnershipTransferred(tokenId, previousOwner, newOwner, block.timestamp);
     }
 
-    // ==========================================
-    // 4. VERIFICATION & AUDIT INTEGRITY ENGINE
-    // ==========================================
-    
+    /**
+     * @notice Forensic custody transfer (Does NOT change legal NFT ownership)
+     */
+    function transferCustody(uint256 tokenId, address newCustodian) external {
+        require(
+            assetCustodian[tokenId] == msg.sender || ownerOf(tokenId) == msg.sender || hasRole(ROLE_ADMIN, msg.sender), 
+            "HASHGUARD: Not current custodian, owner, or admin"
+        );
+        address oldCustodian = assetCustodian[tokenId];
+        assetCustodian[tokenId] = newCustodian;
+        emit CustodyTransferred(tokenId, oldCustodian, newCustodian);
+    }
+
+    /**
+     * @notice Grant read/access permission to an asset
+     */
+    function grantAccess(uint256 tokenId, address user) external {
+        require(
+            ownerOf(tokenId) == msg.sender || hasRole(ROLE_ADMIN, msg.sender) || hasRole(ROLE_MANAGER, msg.sender),
+            "HASHGUARD: Unauthorized to grant access"
+        );
+        hasAccess[tokenId][user] = true;
+        emit AccessGranted(tokenId, user, msg.sender, block.timestamp);
+        emit PermissionUpdated(tokenId, user, "READ", block.timestamp);
+    }
+
+    /**
+     * @notice Revoke read/access permission from an asset
+     */
+    function revokeAccess(uint256 tokenId, address user) external {
+        require(
+            ownerOf(tokenId) == msg.sender || hasRole(ROLE_ADMIN, msg.sender) || hasRole(ROLE_MANAGER, msg.sender),
+            "HASHGUARD: Unauthorized to revoke access"
+        );
+        hasAccess[tokenId][user] = false;
+        emit AccessRevoked(tokenId, user, msg.sender, block.timestamp);
+        emit PermissionUpdated(tokenId, user, "REVOKED", block.timestamp);
+    }
+
     function verifyHash(uint256 tokenId, bytes32 observedHash) external returns (bool) {
         require(_ownerOf(tokenId) != address(0), "HASHGUARD: Evidence does not exist");
         EvidenceMetadata memory asset = evidenceAssets[tokenId];

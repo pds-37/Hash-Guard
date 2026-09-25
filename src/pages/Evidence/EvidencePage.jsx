@@ -58,7 +58,7 @@ export const EvidencePage = () => {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Evidence Repository"
+        title="Digital Asset Repository"
         subtitle="Manage and track digital evidence exhibits."
         breadcrumbs={['Dashboard', 'Evidence']}
         actionButton={

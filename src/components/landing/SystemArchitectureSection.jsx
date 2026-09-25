@@ -64,7 +64,7 @@ export const SystemArchitectureSection = ({ onLaunchSandbox }) => {
       protocols: ['RESTful API v1 (OpenAPI 3.0)', 'mTLS Mutual Node Authentication', 'JWT Bearer Authorization'],
       security: 'Strict API key segregation, automated Shannon entropy evaluation, and MITRE ATT&CK extraction from raw forensic samples.',
       ports: 'Port 8000 / 8001 (FastAPI Core) / Port 5432 (PostgreSQL)',
-      compliance: 'Section 65B Indian Evidence Act Compliance Engine'
+      compliance: 'Cryptographically Verifiable Report Compliance Engine'
     },
     {
       id: 'tier4',
@@ -73,11 +73,11 @@ export const SystemArchitectureSection = ({ onLaunchSandbox }) => {
       badge: 'Solidity ^0.8.20 • ERC-721',
       accent: 'emerald',
       description: 'Immutable distributed ledger anchoring verifiable Decentralized Identifiers (DIDs), NFT-backed evidence custody, and bytecode-level RBAC.',
-      components: ['Solidity ^0.8.20 (HASHGUARD.sol)', 'OpenZeppelin ERC-721 & AccessControl', 'Foundry Anvil / Hyperledger Besu', 'W3C DID Registry (did:ethr)'],
+      components: ['Solidity ^0.8.20 (HASHGUARD.sol)', 'OpenZeppelin ERC-721 & AccessControl', 'Foundry Anvil / Hyperledger Besu', 'Ethereum-linked decentralized identity representation Registry (did:ethr)'],
       protocols: ['EVM Bytecode Execution', 'JSON-RPC over HTTP/IPC', 'EIP-712 Typed Structured Data'],
       security: 'Non-fungible token reverse lookup (assetIdToTokenId). Modifiers onlyRole(ROLE_ADMIN) and onlyRole(ROLE_MANAGER) prevent privilege escalation.',
       ports: 'Port 8545 (EVM RPC Endpoint)',
-      compliance: 'W3C DID v1.0 • ERC-721 Standard • FRE Rule 902(13)/(14)'
+      compliance: 'Ethereum-linked decentralized identity representation v1.0 • ERC-721 Standard • FRE Rule 902(13)/(14)'
     }
   ];
 
@@ -187,7 +187,7 @@ export const SystemArchitectureSection = ({ onLaunchSandbox }) => {
       action: 'Case finalized. Statutory legal hold applied or NIST SP 800-88 cryptographic shredding scheduled.',
       onChainEvent: 'RetentionEvent',
       solidityCall: 'applyRetentionPolicy(tokenId, retentionYears, isLegalHold)',
-      guarantee: 'Court-admissible certificate generated under Section 65B Indian Evidence Act.'
+      guarantee: 'Court-admissible certificate generated under Cryptographically Verifiable Report.'
     }
   ];
 

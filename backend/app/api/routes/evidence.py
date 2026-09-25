@@ -29,19 +29,39 @@ def get_evidence(evidence_id: str, db: Session = Depends(get_db)):
 from fastapi.responses import Response
 
 @router.get("/{evidence_id}/download")
-def download_evidence(evidence_id: str, db: Session = Depends(get_db)):
+def download_evidence(evidence_id: str, user_address: str, db: Session = Depends(get_db)):
     evidence = EvidenceService.get_by_id(db, evidence_id)
     if not evidence:
         raise HTTPException(status_code=404, detail="Evidence not found")
         
+    # ZERO-TRUST ARCHITECTURE: Query Blockchain for Access Right
+    from app.blockchain.evm_client import evm_client
+    token_id = evm_client.get_token_id_for_asset(evidence.id)
+    if not token_id:
+        raise HTTPException(status_code=403, detail="Asset not minted on blockchain.")
+        
+    # Smart contract is the single source of truth for authorization
+    # 2. Call HASHGUARD.sol hasAccess(tokenId, userAddress)
+    try:
+        has_access = evm_client.check_has_access(token_id, user_address)
+    except Exception as e:
+        import logging
+        logging.error(f"Blockchain RPC Error checking access for token {token_id}: {str(e)}")
+        raise HTTPException(status_code=503, detail="Blockchain RPC unavailable or contract call failed.")
+        
+    # 3. HTTP 403 if Blockchain Rejects Access
+    if not has_access:
+        raise HTTPException(status_code=403, detail="Access Denied: Wallet address not authorized on-chain for this asset.")
+
     decrypted_bytes = EvidenceService.download(db, evidence_id)
     if not decrypted_bytes:
         raise HTTPException(status_code=404, detail="File could not be retrieved or decrypted.")
         
     return Response(
         content=decrypted_bytes,
-        headers={
-            "Content-Disposition": f'attachment; filename="{evidence.title}"',
+        media_type="application/octet-stream",
+        headers={"Content-Disposition": f'attachment; filename="{evidence.title}.bin"'}
+    )"',
             "Content-Type": "application/octet-stream"
         }
     )

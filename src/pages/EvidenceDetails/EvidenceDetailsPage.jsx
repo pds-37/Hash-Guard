@@ -79,7 +79,7 @@ export const EvidenceDetailsPage = () => {
           <ArrowLeft className="w-4 h-4" />
           <span>Back to Evidence Repository</span>
         </button>
-        <ErrorState title="Evidence Dossier Not Found" description={error} />
+        <ErrorState title="Digital Asset Dossier Not Found" description={error} />
       </div>
     );
   }

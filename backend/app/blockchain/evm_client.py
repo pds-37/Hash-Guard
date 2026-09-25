@@ -101,10 +101,36 @@ class EvmClient:
             print("Verify hash error:", e)
         return False
 
+
     def get_token_id_for_asset(self, asset_id: str):
         contract = self.get_contract()
         if not contract: return None
         return contract.functions.assetIdToTokenId(asset_id).call()
+
+    def check_has_access(self, token_id: int, user_address: str):
+        contract = self.get_contract()
+        if not contract:
+            raise Exception("Blockchain contract not connected/deployed.")
+            
+        # Check 1: Is Legal NFT Owner?
+        is_owner = contract.functions.ownerOf(token_id).call() == user_address
+        if is_owner:
+            return True
+            
+        # Check 2: Is explicitly granted access in mapping(uint256 => mapping(address => bool))?
+        has_access = contract.functions.hasAccess(token_id, user_address).call()
+        return has_access
+        try:
+            # Smart contract serves as the ONLY source of truth
+            is_owner = contract.functions.ownerOf(token_id).call() == user_address
+            if is_owner:
+                return True
+            has_access = contract.functions.hasAccess(token_id, user_address).call()
+            return has_access
+        except Exception as e:
+            print("Access check error:", e)
+            return False
+
 
     def log_retention_event(self, token_id: int, event_type: str):
         contract = self.get_contract()
