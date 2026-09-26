@@ -235,27 +235,25 @@ export const LandingPage = () => {
           {/* Left Column: Headline, Description & CTAs */}
           <div className="lg:col-span-5 text-left">
             {/* Pill Badge */}
-            <div className="inline-flex items-center gap-2.5 px-3 py-1.5 rounded-full bg-white dark:bg-[#071120]/90 border border-slate-200 dark:border-slate-800 text-xs font-mono mb-5 shadow-xs">
-              <span className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-bold">
+            <div className="inline-flex items-center p-0.5 rounded-full bg-[#071325]/90 border border-slate-800 text-xs font-mono mb-6 shadow-xs">
+              <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-950/60 border border-cyan-500/30 text-emerald-400 font-bold">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                EVALUATION MODE
-              </span>
-              <span className="text-slate-400 dark:text-slate-600">|</span>
-              <span className="text-slate-600 dark:text-slate-400">LOCAL ANVIL EVM (CHAIN 31337)</span>
+                <span>EVALUATION MODE</span>
+              </div>
+              <span className="px-3 py-1 text-slate-300 font-medium">LOCAL EVM (CHAIN 31337)</span>
             </div>
 
             {/* Main Headline */}
-            <h1 className="text-3xl sm:text-5xl lg:text-[50px] xl:text-[54px] font-black tracking-tight leading-[1.08] text-slate-900 dark:text-white">
-              Tamper-Evident <br className="hidden sm:inline" />
-              <span className="bg-gradient-to-r from-cyan-500 via-sky-400 to-blue-500 dark:from-cyan-400 dark:via-sky-300 dark:to-blue-400 bg-clip-text text-transparent">
-                Digital Evidence
-              </span> <br className="hidden sm:inline" />
-              & Chain of Custody
+            <h1 className="text-4xl sm:text-6xl lg:text-[58px] xl:text-[64px] font-black tracking-tight leading-[1.05] text-slate-900 dark:text-white">
+              Digital Evidence <br />
+              <span className="text-[#00d2ff] dark:text-[#38bdf8]">
+                That Stays True
+              </span>
             </h1>
 
             {/* Subtitle Paragraph */}
-            <p className="mt-5 text-sm sm:text-base text-slate-600 dark:text-slate-400 max-w-lg leading-relaxed font-normal">
-              Securely register, transfer, and verify digital evidence across organizations with cryptographic integrity, complete custody tracking, and auditable ownership.
+            <p className="mt-5 text-base sm:text-lg text-slate-600 dark:text-slate-300 max-w-xl leading-relaxed font-normal">
+              Register, track, and verify digital evidence with cryptographic integrity and a complete chain of custody across organizations.
             </p>
 
             {/* Action Buttons */}
