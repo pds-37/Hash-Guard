@@ -23,7 +23,7 @@ import { useApp } from '../../context/AppContext';
 import { Logo } from '../common/Logo';
 
 export const Sidebar = ({ isMobileOpen, setMobileOpen }) => {
-  const { currentOrg, switchOrg, currentRole, switchRole, isTamperSimulated, walletAddress, did, connectWallet } = useApp();
+  const { currentOrg, switchOrg, organizations, currentRole, switchRole, isTamperSimulated, walletAddress, did, connectWallet } = useApp();
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const navigationGroups = [
@@ -129,11 +129,11 @@ export const Sidebar = ({ isMobileOpen, setMobileOpen }) => {
                   className="w-full bg-ce-surface border border-ce-border text-[11px] text-ce-text-primary rounded px-2 py-1.5 font-mono focus:outline-none focus:border-ce-brand focus:ring-1 focus:ring-ce-brand cursor-pointer"
                   title="Switch Participating Organization Context"
                 >
-                  <option value="ORG_A">Organization A — CERT-Alpha</option>
-                  <option value="ORG_B">Organization B — Cyber Defense Lab</option>
-                  <option value="ORG_C">Organization C — Judicial Court Registry</option>
-                  <option value="ORG_D">Organization D — Cyber Crime Police (LEA)</option>
-                  <option value="ORG_AUDIT">Audit Board — Independent Oversight</option>
+                  {Object.values(organizations || {}).map((org) => (
+                    <option key={org.id} value={org.id}>
+                      {org.name}
+                    </option>
+                  ))}
                 </select>
                 <div className="text-[10px] text-ce-text-muted font-sans mt-0.5 truncate">
                   Scope: {currentOrg?.function || 'Forensic Lab'}
@@ -161,7 +161,7 @@ export const Sidebar = ({ isMobileOpen, setMobileOpen }) => {
                   <option value="EVIDENCE_CUSTODIAN">Evidence Custodian</option>
                   <option value="INVESTIGATOR">Investigator</option>
                   <option value="AUDITOR">Auditor</option>
-                  <option value="ADMINISTRATOR">Administrator</option>
+                  <option value="ADMINISTRATOR">Organization Administrator</option>
                 </select>
               </div>
 

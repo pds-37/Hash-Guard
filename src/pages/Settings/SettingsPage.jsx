@@ -17,7 +17,10 @@ import {
   FileCheck,
   Sun,
   Moon,
-  Palette
+  Palette,
+  Users,
+  UserPlus,
+  ShieldAlert
 } from 'lucide-react';
 
 export const SettingsPage = () => {
@@ -34,13 +37,45 @@ export const SettingsPage = () => {
     connectWallet,
     registeredIdentities, 
     registerDIDIdentity, 
-    assignRoleToAddress 
+    assignRoleToAddress,
+    orgUsers,
+    addOrgUser,
+    updateOrgUserRole,
+    toggleOrgUserStatus,
+    getUsersForOrg
   } = useApp();
 
   const [showAddModal, setShowAddModal] = useState(false);
   const [newUserName, setNewUserName] = useState('');
   const [newUserAddress, setNewUserAddress] = useState('');
   const [newUserRole, setNewUserRole] = useState('FIRST_RESPONDER');
+
+  // Tenant / Organization Scoped User Management State
+  const [showAddOrgUserModal, setShowAddOrgUserModal] = useState(false);
+  const [newOrgUserName, setNewOrgUserName] = useState('');
+  const [newOrgUserEmail, setNewOrgUserEmail] = useState('');
+  const [newOrgUserRole, setNewOrgUserRole] = useState('FORENSIC_ANALYST');
+  const [userActionSuccess, setUserActionSuccess] = useState('');
+
+  const currentOrgUsers = getUsersForOrg ? getUsersForOrg(currentOrg?.id) : [];
+  const isAdmin = currentRole.id === 'ADMINISTRATOR' || currentRole.id === 'ADMIN' || Boolean(currentRole?.permissions?.isAdministrator);
+
+  const handleCreateOrgUser = (e) => {
+    e.preventDefault();
+    if (!newOrgUserName.trim() || !newOrgUserEmail.trim()) return;
+    addOrgUser({
+      name: newOrgUserName.trim(),
+      email: newOrgUserEmail.trim(),
+      role: newOrgUserRole,
+      orgId: currentOrg?.id
+    });
+    setUserActionSuccess(`Successfully provisioned ${newOrgUserName.trim()} in ${currentOrg?.name}`);
+    setTimeout(() => setUserActionSuccess(''), 4500);
+    setNewOrgUserName('');
+    setNewOrgUserEmail('');
+    setNewOrgUserRole('FORENSIC_ANALYST');
+    setShowAddOrgUserModal(false);
+  };
 
   const handleRegisterNewUser = (e) => {
     e.preventDefault();
@@ -381,6 +416,153 @@ export const SettingsPage = () => {
         </div>
       </div>
 
+      {/* Organization Scoped User Management */}
+      <div className="rounded-lg bg-ce-surface border border-ce-border p-6 shadow-sm space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-ce-border gap-3">
+          <div>
+            <div className="flex items-center gap-2">
+              <Users className="w-4 h-4 text-ce-brand" />
+              <h3 className="text-sm font-mono font-bold uppercase tracking-wider text-ce-text-primary">
+                USER MANAGEMENT — {currentOrg?.name || 'Cyber Defense Lab'}
+              </h3>
+            </div>
+            <p className="text-xs text-ce-text-muted mt-1">
+              Personnel directory and RBAC authority strictly scoped to <span className="text-ce-text-primary font-bold">{currentOrg?.name}</span>.
+              Organization is WHERE the user belongs; Role is WHAT operational privileges they hold.
+            </p>
+          </div>
+          
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="text-[10px] font-mono px-2.5 py-1 rounded bg-ce-surface-subtle border border-ce-border text-ce-text-secondary font-semibold">
+              Scope: {currentOrg?.code || currentOrg?.id} ({currentOrgUsers.length} Users)
+            </span>
+            {isAdmin && (
+              <button
+                onClick={() => setShowAddOrgUserModal(true)}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-ce-brand text-ce-bg font-mono text-xs font-bold hover:bg-ce-brand/90 transition-colors cursor-pointer shadow-sm"
+              >
+                <UserPlus className="w-3.5 h-3.5" />
+                <span>Add User to Organization</span>
+              </button>
+            )}
+          </div>
+        </div>
+
+        {!isAdmin && (
+          <div className="p-3 rounded-md bg-amber-500/10 border border-amber-500/30 flex items-center gap-2 text-xs font-mono text-amber-400">
+            <ShieldAlert className="w-4 h-4 shrink-0" />
+            <span>Read-Only Scope: Only <strong>Organization Administrators</strong> can provision, modify roles, or disable users in {currentOrg?.shortName || currentOrg?.name}.</span>
+          </div>
+        )}
+
+        {userActionSuccess && (
+          <div className="p-3 rounded-md bg-ce-success/10 border border-ce-success/30 flex items-center gap-2 text-xs font-mono text-ce-success">
+            <CheckCircle2 className="w-4 h-4 shrink-0" />
+            <span>{userActionSuccess}</span>
+          </div>
+        )}
+
+        <div className="overflow-x-auto">
+          <table className="w-full text-left font-mono text-xs border border-ce-border rounded-md overflow-hidden">
+            <thead className="bg-ce-surface-subtle text-ce-text-muted uppercase text-[10px] tracking-wider border-b border-ce-border">
+              <tr>
+                <th className="p-3">Personnel / Email</th>
+                <th className="p-3">Decentralized Identifier (DID)</th>
+                <th className="p-3">Assigned RBAC Role</th>
+                <th className="p-3">Account Status</th>
+                {isAdmin && <th className="p-3 text-right">Admin Privileges</th>}
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-ce-border bg-ce-bg">
+              {currentOrgUsers.length === 0 ? (
+                <tr>
+                  <td colSpan={isAdmin ? 5 : 4} className="p-6 text-center text-ce-text-muted">
+                    No users provisioned for {currentOrg?.name} yet.
+                  </td>
+                </tr>
+              ) : (
+                currentOrgUsers.map((usr) => (
+                  <tr key={usr.id} className="hover:bg-ce-surface-subtle/50 transition-colors">
+                    <td className="p-3 font-semibold text-ce-text-primary">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-7 h-7 rounded-full bg-ce-brand/10 border border-ce-brand/30 flex items-center justify-center text-[11px] font-bold text-ce-brand shrink-0">
+                          {usr.name.charAt(0)}
+                        </div>
+                        <div>
+                          <div className="font-bold text-xs">{usr.name}</div>
+                          <div className="text-[10px] text-ce-text-muted font-normal">{usr.email}</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="p-3 text-ce-blockchain text-[11px] truncate max-w-[200px]" title={usr.did}>
+                      {usr.did}
+                    </td>
+                    <td className="p-3">
+                      <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold border ${
+                        usr.role === 'ADMINISTRATOR' || usr.role === 'ADMIN'
+                          ? 'text-rose-400 bg-rose-500/10 border-rose-500/30'
+                          : usr.role === 'EVIDENCE_CUSTODIAN' || usr.role === 'MANAGER'
+                          ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30'
+                          : usr.role === 'INVESTIGATOR'
+                          ? 'text-amber-400 bg-amber-500/10 border-amber-500/30'
+                          : usr.role === 'FORENSIC_ANALYST'
+                          ? 'text-purple-400 bg-purple-500/10 border-purple-500/30'
+                          : usr.role === 'AUDITOR'
+                          ? 'text-cyan-400 bg-cyan-500/10 border-cyan-500/30'
+                          : 'text-blue-400 bg-blue-500/10 border-blue-500/30'
+                      }`}>
+                        {roles[usr.role]?.name || usr.role}
+                      </span>
+                    </td>
+                    <td className="p-3">
+                      <span className={`inline-flex items-center gap-1.5 text-[10px] font-semibold px-2 py-0.5 rounded border ${
+                        usr.status === 'ACTIVE' 
+                          ? 'text-ce-success bg-ce-success/10 border-ce-success/20' 
+                          : 'text-ce-danger bg-ce-danger/10 border-ce-danger/20'
+                      }`}>
+                        <span className={`w-1.5 h-1.5 rounded-full ${usr.status === 'ACTIVE' ? 'bg-ce-success' : 'bg-ce-danger'}`} />
+                        {usr.status || 'ACTIVE'}
+                      </span>
+                    </td>
+                    {isAdmin && (
+                      <td className="p-3 text-right">
+                        <div className="flex items-center justify-end gap-2">
+                          <select
+                            value={usr.role}
+                            onChange={(e) => updateOrgUserRole(usr.id, e.target.value)}
+                            className="bg-ce-surface border border-ce-border rounded px-2 py-1 text-[11px] text-ce-text-primary focus:outline-none focus:border-ce-brand cursor-pointer"
+                            title="Update Role"
+                          >
+                            <option value="ADMINISTRATOR">Organization Administrator</option>
+                            <option value="FORENSIC_ANALYST">Forensic Analyst</option>
+                            <option value="EVIDENCE_CUSTODIAN">Evidence Custodian</option>
+                            <option value="INVESTIGATOR">Investigator</option>
+                            <option value="AUDITOR">Auditor</option>
+                            <option value="FIRST_RESPONDER">First Responder</option>
+                          </select>
+
+                          <button
+                            onClick={() => toggleOrgUserStatus(usr.id)}
+                            className={`px-2 py-1 rounded text-[10px] font-bold border transition-colors cursor-pointer ${
+                              usr.status === 'ACTIVE'
+                                ? 'border-ce-danger/30 text-ce-danger hover:bg-ce-danger/10'
+                                : 'border-ce-success/30 text-ce-success hover:bg-ce-success/10'
+                            }`}
+                            title={usr.status === 'ACTIVE' ? 'Disable Account' : 'Enable Account'}
+                          >
+                            {usr.status === 'ACTIVE' ? 'Disable' : 'Enable'}
+                          </button>
+                        </div>
+                      </td>
+                    )}
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
       {/* DID Registry & Smart Contract RBAC Manager */}
       <div className="rounded-lg bg-ce-surface border border-ce-border p-6 shadow-sm space-y-4">
         <div className="flex items-center justify-between pb-3 border-b border-ce-border">
@@ -665,6 +847,106 @@ export const SettingsPage = () => {
                   className="px-4 py-2 rounded bg-ce-brand text-ce-bg font-bold hover:bg-ce-brand/90 shadow-sm"
                 >
                   Anchor DID on Ledger
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Add User to Organization Modal */}
+      {showAddOrgUserModal && (
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-ce-surface border border-ce-border rounded-xl shadow-2xl max-w-md w-full p-6 space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-ce-border">
+              <h4 className="text-sm font-mono font-bold uppercase text-ce-text-primary flex items-center gap-2">
+                <UserPlus className="w-4 h-4 text-ce-brand" />
+                <span>Add Personnel to Organization</span>
+              </h4>
+              <button 
+                onClick={() => setShowAddOrgUserModal(false)}
+                className="text-ce-text-muted hover:text-ce-text-primary font-mono text-sm"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateOrgUser} className="space-y-4 text-xs font-mono">
+              <div>
+                <label className="block text-[11px] text-ce-text-muted uppercase mb-1 font-bold">
+                  Organization Scope:
+                </label>
+                <input
+                  type="text"
+                  disabled
+                  value={`${currentOrg?.name} (${currentOrg?.code || currentOrg?.id})`}
+                  className="w-full bg-ce-surface-subtle border border-ce-border rounded px-3 py-2 text-ce-text-muted cursor-not-allowed"
+                />
+                <span className="text-[10px] text-ce-text-muted mt-1 block">
+                  New users are strictly registered to {currentOrg?.name}.
+                </span>
+              </div>
+
+              <div>
+                <label className="block text-[11px] text-ce-text-muted uppercase mb-1 font-bold">
+                  Full Name:
+                </label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Dr. Jennifer Cruz"
+                  value={newOrgUserName}
+                  onChange={(e) => setNewOrgUserName(e.target.value)}
+                  className="w-full bg-ce-bg border border-ce-border rounded px-3 py-2 text-ce-text-primary focus:outline-none focus:border-ce-brand"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] text-ce-text-muted uppercase mb-1 font-bold">
+                  Work Email:
+                </label>
+                <input
+                  type="email"
+                  required
+                  placeholder="e.g. jcruz@cyberlab.local"
+                  value={newOrgUserEmail}
+                  onChange={(e) => setNewOrgUserEmail(e.target.value)}
+                  className="w-full bg-ce-bg border border-ce-border rounded px-3 py-2 text-ce-text-primary focus:outline-none focus:border-ce-brand"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] text-ce-text-muted uppercase mb-1 font-bold">
+                  Assigned RBAC Role:
+                </label>
+                <select
+                  value={newOrgUserRole}
+                  onChange={(e) => setNewOrgUserRole(e.target.value)}
+                  className="w-full bg-ce-bg border border-ce-border rounded px-3 py-2 text-ce-text-primary focus:outline-none focus:border-ce-brand cursor-pointer"
+                >
+                  <option value="FORENSIC_ANALYST">Forensic Analyst (Evidence analysis, malware sandbox)</option>
+                  <option value="EVIDENCE_CUSTODIAN">Evidence Custodian (Vault governance, sealed custody)</option>
+                  <option value="INVESTIGATOR">Investigator (Raid seizure, FIR logging)</option>
+                  <option value="AUDITOR">Auditor (Independent zero-trust attestation)</option>
+                  <option value="FIRST_RESPONDER">First Responder (Incident triage, intake)</option>
+                  <option value="ADMINISTRATOR">Organization Administrator (Full tenant governance)</option>
+                </select>
+              </div>
+
+              <div className="pt-2 flex justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowAddOrgUserModal(false)}
+                  className="px-4 py-2 rounded bg-ce-surface-subtle border border-ce-border text-ce-text-secondary hover:text-ce-text-primary cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 rounded bg-ce-brand text-ce-bg font-bold hover:bg-ce-brand/90 shadow-sm flex items-center gap-1.5 cursor-pointer"
+                >
+                  <UserPlus className="w-3.5 h-3.5" />
+                  <span>Provision Officer</span>
                 </button>
               </div>
             </form>

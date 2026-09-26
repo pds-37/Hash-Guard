@@ -185,12 +185,12 @@ export const RBAC_ROLES = {
   },
   ADMINISTRATOR: {
     id: 'ADMINISTRATOR',
-    name: 'Administrator',
-    roleName: 'Administrator',
-    description: 'Full governance authority: defines retention policies, assigns RBAC roles, and manages platform configuration.',
+    name: 'Organization Administrator',
+    roleName: 'Organization Administrator',
+    description: 'Full governance authority: defines retention policies, assigns RBAC roles, manages organization users, and configures platform settings.',
     badgeColor: 'text-rose-400 bg-rose-500/10 border-rose-500/30',
     allowedPages: ['dashboard', 'evidence', 'evidence-details', 'transfers', 'custody', 'lineage', 'verification', 'audit', 'retention', 'settings'],
-    actions: ['Define Retention Policies', 'Assign RBAC Roles', 'Delete Evidence (Unprotected)', 'Platform Configuration'],
+    actions: ['Manage Users & Roles', 'Define Retention Policies', 'Assign RBAC Roles', 'Delete Evidence (Unprotected)', 'Organization Configuration'],
     permissions: {
       canCollectEvidence: true,
       canGenerateHash: true,
@@ -274,7 +274,185 @@ const DEFAULT_IDENTITIES = [
   }
 ];
 
+export const DEFAULT_ORG_USERS = [
+  // Organization B — Cyber Defense Lab
+  {
+    id: 'USR-B-01',
+    email: 'admin@cyberlab.local',
+    name: 'Dr. Sarah Chen',
+    orgId: 'ORG_B',
+    role: 'ADMINISTRATOR',
+    status: 'ACTIVE',
+    did: 'did:ethr:0x70997970C51812dc3A010C7d01b50e0d17dc79C8'
+  },
+  {
+    id: 'USR-B-02',
+    email: 'analyst@cyberlab.local',
+    name: 'Lead Forensic Analyst',
+    orgId: 'ORG_B',
+    role: 'FORENSIC_ANALYST',
+    status: 'ACTIVE',
+    did: 'did:ethr:0x70997970C51812dc3A010C7d01b50e0d17dc79B1'
+  },
+  {
+    id: 'USR-B-03',
+    email: 'audit@cyberlab.local',
+    name: 'Forensic Compliance Auditor',
+    orgId: 'ORG_B',
+    role: 'AUDITOR',
+    status: 'ACTIVE',
+    did: 'did:ethr:0x70997970C51812dc3A010C7d01b50e0d17dc79A2'
+  },
+  {
+    id: 'USR-B-04',
+    email: 'custody@cyberlab.local',
+    name: 'Senior Evidence Custodian',
+    orgId: 'ORG_B',
+    role: 'EVIDENCE_CUSTODIAN',
+    status: 'ACTIVE',
+    did: 'did:ethr:0x70997970C51812dc3A010C7d01b50e0d17dc79C3'
+  },
+  {
+    id: 'USR-B-05',
+    email: 'investigator@cyberlab.local',
+    name: 'Lead Case Investigator',
+    orgId: 'ORG_B',
+    role: 'INVESTIGATOR',
+    status: 'ACTIVE',
+    did: 'did:ethr:0x70997970C51812dc3A010C7d01b50e0d17dc79D4'
+  },
+
+  // Organization A — CERT-Alpha
+  {
+    id: 'USR-A-01',
+    email: 'admin@cert-alpha.gov',
+    name: 'Cmdr. Rajesh Kumar',
+    orgId: 'ORG_A',
+    role: 'ADMINISTRATOR',
+    status: 'ACTIVE',
+    did: 'did:ethr:0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'
+  },
+  {
+    id: 'USR-A-02',
+    email: 'responder@cert-alpha.gov',
+    name: 'First Response Officer',
+    orgId: 'ORG_A',
+    role: 'FIRST_RESPONDER',
+    status: 'ACTIVE',
+    did: 'did:ethr:0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92267'
+  },
+  {
+    id: 'USR-A-03',
+    email: 'audit@cert-alpha.gov',
+    name: 'CERT Oversight Auditor',
+    orgId: 'ORG_A',
+    role: 'AUDITOR',
+    status: 'ACTIVE',
+    did: 'did:ethr:0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92268'
+  },
+
+  // Organization C — Judicial Court Registry
+  {
+    id: 'USR-C-01',
+    email: 'admin@court-registry.gov',
+    name: 'Hon. Registrar Joshi',
+    orgId: 'ORG_C',
+    role: 'ADMINISTRATOR',
+    status: 'ACTIVE',
+    did: 'did:ethr:0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC'
+  },
+  {
+    id: 'USR-C-02',
+    email: 'custodian@court-registry.gov',
+    name: 'Court Vault Custodian',
+    orgId: 'ORG_C',
+    role: 'EVIDENCE_CUSTODIAN',
+    status: 'ACTIVE',
+    did: 'did:ethr:0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BD'
+  },
+  {
+    id: 'USR-C-03',
+    email: 'audit@court-registry.gov',
+    name: 'Judicial Process Auditor',
+    orgId: 'ORG_C',
+    role: 'AUDITOR',
+    status: 'ACTIVE',
+    did: 'did:ethr:0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BE'
+  },
+
+  // Organization D — Cyber Crime Police (LEA)
+  {
+    id: 'USR-D-01',
+    email: 'admin@police.gov.in',
+    name: 'ACP Devendra Singhania',
+    orgId: 'ORG_D',
+    role: 'ADMINISTRATOR',
+    status: 'ACTIVE',
+    did: 'did:ethr:0x90F79bf6EB2c4f870365E785982E1f101E93b906'
+  },
+  {
+    id: 'USR-D-02',
+    email: 'investigator@police.gov.in',
+    name: 'Insp. Neha Deshmukh',
+    orgId: 'ORG_D',
+    role: 'INVESTIGATOR',
+    status: 'ACTIVE',
+    did: 'did:ethr:0x90F79bf6EB2c4f870365E785982E1f101E93b907'
+  },
+  {
+    id: 'USR-D-03',
+    email: 'audit@police.gov.in',
+    name: 'LEA Vigilance Auditor',
+    orgId: 'ORG_D',
+    role: 'AUDITOR',
+    status: 'ACTIVE',
+    did: 'did:ethr:0x90F79bf6EB2c4f870365E785982E1f101E93b908'
+  },
+
+  // Audit Board — Independent Oversight
+  {
+    id: 'USR-AUD-01',
+    email: 'admin@auditboard.gov',
+    name: 'Chief Director Thorne',
+    orgId: 'ORG_AUDIT',
+    role: 'ADMINISTRATOR',
+    status: 'ACTIVE',
+    did: 'did:ethr:0x15d34AAf54267DB7D7c367839AAf71A00a2C6A65'
+  },
+  {
+    id: 'USR-AUD-02',
+    email: 'auditor@auditboard.gov',
+    name: 'Lead Independent Auditor',
+    orgId: 'ORG_AUDIT',
+    role: 'AUDITOR',
+    status: 'ACTIVE',
+    did: 'did:ethr:0x15d34AAf54267DB7D7c367839AAf71A00a2C6A66'
+  },
+  {
+    id: 'USR-AUD-03',
+    email: 'investigator@auditboard.gov',
+    name: 'Triage Oversight Officer',
+    orgId: 'ORG_AUDIT',
+    role: 'INVESTIGATOR',
+    status: 'ACTIVE',
+    did: 'did:ethr:0x15d34AAf54267DB7D7c367839AAf71A00a2C6A67'
+  }
+];
+
 export const AppProvider = ({ children }) => {
+  // Organizations state (built-in + user-registered custom organizations)
+  const [organizations, setOrganizations] = useState(() => {
+    const saved = localStorage.getItem('cee_custom_organizations');
+    if (saved) {
+      try {
+        return { ...ORGANIZATIONS, ...JSON.parse(saved) };
+      } catch (e) {
+        return ORGANIZATIONS;
+      }
+    }
+    return ORGANIZATIONS;
+  });
+
   // Separate Organization (WHERE) and Role (WHAT)
   const [currentOrg, setCurrentOrg] = useState(() => {
     const saved = localStorage.getItem('cee_current_org');
@@ -297,6 +475,19 @@ export const AppProvider = ({ children }) => {
   const [registeredIdentities, setRegisteredIdentities] = useState(() => {
     const saved = localStorage.getItem('cee_registered_identities');
     return saved ? JSON.parse(saved) : DEFAULT_IDENTITIES;
+  });
+
+  // Organization Users state (persisted per tenant)
+  const [orgUsers, setOrgUsers] = useState(() => {
+    const saved = localStorage.getItem('cee_org_users');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        return DEFAULT_ORG_USERS;
+      }
+    }
+    return DEFAULT_ORG_USERS;
   });
 
   const [notifications, setNotifications] = useState([
@@ -331,47 +522,159 @@ export const AppProvider = ({ children }) => {
     }
   }, [currentOrg]);
 
-  // Switch Organization Context ONLY (Preserves separate Role concept)
-  const switchOrg = (orgKey) => {
-    if (ORGANIZATIONS[orgKey]) {
-      const org = ORGANIZATIONS[orgKey];
-      setCurrentOrg(org);
-      setWalletAddress(org.walletAddress);
-      setDid(org.did);
-      localStorage.setItem('cee_current_org', orgKey);
+  // Register New Organization Enclave
+  const registerOrganization = ({ name, type, orgId, did: initialDid, adminEmail, adminName }) => {
+    const safeOrgId = (orgId || `ORG_${Date.now().toString().slice(-4)}`).toUpperCase();
+    const newOrg = {
+      id: safeOrgId,
+      code: safeOrgId,
+      name: name.trim(),
+      shortName: name.trim().length > 25 ? name.trim().substring(0, 22) + '...' : name.trim(),
+      function: type || 'Forensic / Cyber Evidence Node',
+      description: `Registered organization: ${name.trim()} (${type})`,
+      defaultRoleId: 'ADMINISTRATOR',
+      did: initialDid || `did:ethr:0x${Array.from({ length: 40 }, () => Math.floor(Math.random() * 16).toString(16)).join('')}`,
+      walletAddress: `0x${Array.from({ length: 40 }, () => Math.floor(Math.random() * 16).toString(16)).join('')}`,
+      badgeColor: 'text-indigo-400 bg-indigo-500/10 border-indigo-500/30'
+    };
 
-      // Default role associated with this organization
-      if (org.defaultRoleId && RBAC_ROLES[org.defaultRoleId]) {
-        const nextRole = RBAC_ROLES[org.defaultRoleId];
-        setCurrentRole(nextRole);
-        localStorage.setItem('cee_current_role', nextRole.id);
-      }
-
-      // Update stored user object
+    setOrganizations((prev) => {
+      const updated = { ...prev, [safeOrgId]: newOrg };
       try {
-        const existing = JSON.parse(localStorage.getItem('cee_user') || '{}');
-        localStorage.setItem('cee_user', JSON.stringify({
-          ...existing,
-          orgName: org.name,
-          organization_id: org.code
-        }));
-      } catch (e) {
-        // ignore
-      }
+        const custom = JSON.parse(localStorage.getItem('cee_custom_organizations') || '{}');
+        custom[safeOrgId] = newOrg;
+        localStorage.setItem('cee_custom_organizations', JSON.stringify(custom));
+      } catch (e) {}
+      return updated;
+    });
 
-      setNotifications((prev) => [
-        {
-          id: `org-switch-${Date.now()}`,
-          title: 'Organization Context Switched',
-          desc: `Active Organization: ${org.name} (${org.function})`,
-          time: 'Just now',
-          type: 'info'
-        },
-        ...prev
-      ]);
+    const adminUser = {
+      id: `USR-${safeOrgId}-01`,
+      email: adminEmail ? adminEmail.trim() : `admin@${safeOrgId.toLowerCase()}.local`,
+      name: adminName || `${name.trim()} Administrator`,
+      orgId: safeOrgId,
+      role: 'ADMINISTRATOR',
+      status: 'ACTIVE',
+      did: newOrg.did
+    };
 
-      triggerRefresh();
-    }
+    setOrgUsers((prev) => {
+      const updated = [adminUser, ...prev];
+      localStorage.setItem('cee_org_users', JSON.stringify(updated));
+      return updated;
+    });
+
+    setNotifications((prev) => [
+      {
+        id: `org-reg-${Date.now()}`,
+        title: 'New Organization Registered',
+        desc: `${newOrg.name} (${newOrg.code}) registered with Initial Admin: ${adminUser.email}`,
+        time: 'Just now',
+        type: 'success'
+      },
+      ...prev
+    ]);
+
+    triggerRefresh();
+    return { newOrg, adminUser };
+  };
+
+  // Add User to Organization
+  const addOrgUser = ({ name, email, role, orgId }) => {
+    const targetOrgId = orgId || currentOrg?.id || 'ORG_B';
+    const newUser = {
+      id: `USR-${targetOrgId}-${Date.now().toString().slice(-4)}`,
+      name: name.trim(),
+      email: email.trim(),
+      orgId: targetOrgId,
+      role: role || 'FORENSIC_ANALYST',
+      status: 'ACTIVE',
+      did: `did:ethr:0x${Array.from({ length: 40 }, () => Math.floor(Math.random() * 16).toString(16)).join('')}`
+    };
+
+    setOrgUsers((prev) => {
+      const updated = [...prev, newUser];
+      localStorage.setItem('cee_org_users', JSON.stringify(updated));
+      return updated;
+    });
+
+    setNotifications((prev) => [
+      {
+        id: `user-add-${Date.now()}`,
+        title: 'Organization User Added',
+        desc: `Added ${newUser.name} (${newUser.email}) as ${RBAC_ROLES[newUser.role]?.name || newUser.role}`,
+        time: 'Just now',
+        type: 'success'
+      },
+      ...prev
+    ]);
+
+    triggerRefresh();
+    return newUser;
+  };
+
+  const updateOrgUserRole = (userId, newRole) => {
+    setOrgUsers((prev) => {
+      const updated = prev.map((u) => u.id === userId ? { ...u, role: newRole } : u);
+      localStorage.setItem('cee_org_users', JSON.stringify(updated));
+      return updated;
+    });
+    triggerRefresh();
+  };
+
+  const toggleOrgUserStatus = (userId) => {
+    setOrgUsers((prev) => {
+      const updated = prev.map((u) => u.id === userId ? { ...u, status: u.status === 'ACTIVE' ? 'DISABLED' : 'ACTIVE' } : u);
+      localStorage.setItem('cee_org_users', JSON.stringify(updated));
+      return updated;
+    });
+    triggerRefresh();
+  };
+
+  const getUsersForOrg = (orgId) => {
+    return orgUsers.filter((u) => u.orgId === orgId || u.orgCode === orgId);
+  };
+
+  // Unified Session Login Method (Binds User + Organization + Role)
+  const loginSession = ({ user, organizationId, roleId, token, isSandbox = false }) => {
+    const targetOrg = organizations[organizationId] || ORGANIZATIONS[organizationId] || ORGANIZATIONS.ORG_B;
+    const targetRole = RBAC_ROLES[roleId] || RBAC_ROLES.FORENSIC_ANALYST;
+
+    setCurrentOrg(targetOrg);
+    setCurrentRole(targetRole);
+    setWalletAddress(user?.walletAddress || targetOrg.walletAddress);
+    setDid(user?.did || targetOrg.did);
+    setIsSandboxMode(isSandbox);
+
+    localStorage.setItem('cee_auth_token', token || ('jwt_session_' + Date.now()));
+    localStorage.setItem('cee_is_sandbox', isSandbox ? 'true' : 'false');
+    localStorage.setItem('cee_current_org', targetOrg.id);
+    localStorage.setItem('cee_current_role', targetRole.id);
+
+    const sessionUser = {
+      id: user?.id || `USR-${Math.floor(1000 + Math.random() * 9000)}`,
+      name: user?.name || (targetRole.id === 'ADMINISTRATOR' ? `${targetOrg.shortName} Admin` : targetRole.name),
+      email: user?.email || (targetRole.id === 'ADMINISTRATOR' ? 'admin@cyberlab.local' : 'analyst@cyberlab.local'),
+      organization_id: targetOrg.code || targetOrg.id,
+      orgName: targetOrg.name,
+      role: targetRole.id,
+      roleName: targetRole.name
+    };
+    localStorage.setItem('cee_user', JSON.stringify(sessionUser));
+
+    setNotifications((prev) => [
+      {
+        id: `auth-session-${Date.now()}`,
+        title: 'Secure Session Initialized',
+        desc: `Authenticated as ${sessionUser.name} (${targetRole.name}) in ${targetOrg.shortName}`,
+        time: 'Just now',
+        type: 'success'
+      },
+      ...prev
+    ]);
+
+    triggerRefresh();
+    return sessionUser;
   };
 
   // Switch RBAC Role ONLY (Independent from Organization)
@@ -570,7 +873,14 @@ export const AppProvider = ({ children }) => {
       value={{
         currentOrg,
         switchOrg,
-        organizations: ORGANIZATIONS,
+        organizations,
+        registerOrganization,
+        orgUsers,
+        addOrgUser,
+        updateOrgUserRole,
+        toggleOrgUserStatus,
+        getUsersForOrg,
+        loginSession,
         currentRole: roleWithContext,
         switchRole,
         roles: RBAC_ROLES,
