@@ -43,9 +43,9 @@ export const Topbar = ({ setMobileOpen }) => {
 
       <div className="flex items-center gap-2 sm:gap-3">
         {isSandboxMode && (
-          <div className="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded bg-amber-500/10 border border-amber-500/30 text-amber-600 dark:text-amber-300 font-mono text-[11px] font-semibold">
-            <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
-            <span>SANDBOX EVALUATION ENCLAVE</span>
+          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-amber-500/10 border border-amber-500/30 text-amber-500 dark:text-amber-400 font-mono text-[11px] font-bold shadow-sm">
+            <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+            <span>SANDBOX — EVALUATION MODE</span>
           </div>
         )}
 

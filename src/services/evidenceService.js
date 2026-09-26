@@ -147,6 +147,9 @@ export const evidenceService = {
     }
 
     if (isSandboxModeActive()) {
+      if (['EV-001', 'EV-002', 'EV-003', 'EV-004', 'EV-005', 'EV-006', 'EV-009'].includes(cleanId)) {
+        throw new Error(`Sandbox Safety: Pre-loaded forensic evaluation exhibit ${cleanId} is protected from deletion in Sandbox Evaluation Mode.`);
+      }
       sandboxEvidenceState = sandboxEvidenceState.filter((item) => (item.id || '').toUpperCase() !== cleanId);
     } else {
       const current = getGenuineEvidence().filter((item) => (item.id || '').toUpperCase() !== cleanId);
@@ -177,7 +180,7 @@ export const evidenceService = {
     }
 
     if (isSandboxModeActive()) {
-      sandboxEvidenceState = [];
+      sandboxEvidenceState = [...mockEvidenceList];
     } else {
       localStorage.removeItem('cee_genuine_evidence');
       localStorage.removeItem('cee_genuine_custody');

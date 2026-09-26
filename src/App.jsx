@@ -31,24 +31,27 @@ const ProtectedRoute = ({ element, pathId }) => {
   return element;
 };
 
-// Automatic sandbox activation route for PPT reviewers
+// Automatic sandbox activation route for PPT reviewers & evaluation
 const SandboxRoute = () => {
-  const { switchRole, setSandbox } = useApp();
+  const { loginSession } = useApp();
   const navigate = useNavigate();
 
   useEffect(() => {
-    switchRole('ORG_B');
-    setSandbox(true);
     const mockUser = {
-      id: 'USR-001',
-      email: 'analyst-lead@cyberlab.local',
-      name: 'Lead Forensics Investigator',
+      id: 'USR-B-02',
+      email: 'analyst@cyberlab.local',
+      name: 'Lead Forensic Analyst',
       organization_id: 'ORG_B',
-      role: 'ADMIN'
+      orgId: 'ORG_B',
+      role: 'FORENSIC_ANALYST'
     };
-    localStorage.setItem('cee_auth_token', 'mock_jwt_session_' + Date.now());
-    localStorage.setItem('cee_is_sandbox', 'true');
-    localStorage.setItem('cee_user', JSON.stringify(mockUser));
+    loginSession({
+      user: mockUser,
+      organizationId: 'ORG_B',
+      roleId: 'FORENSIC_ANALYST',
+      token: 'demo_sandbox_jwt_' + Date.now(),
+      isSandbox: true
+    });
     navigate('/dashboard', { replace: true });
   }, []);
 

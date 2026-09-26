@@ -58,7 +58,19 @@ export const SettingsPage = () => {
   const [userActionSuccess, setUserActionSuccess] = useState('');
 
   const currentOrgUsers = getUsersForOrg ? getUsersForOrg(currentOrg?.id) : [];
-  const isAdmin = currentRole.id === 'ADMINISTRATOR' || currentRole.id === 'ADMIN' || Boolean(currentRole?.permissions?.isAdministrator);
+
+  const sessionUser = React.useMemo(() => {
+    try {
+      return JSON.parse(localStorage.getItem('cee_user') || '{}');
+    } catch {
+      return {};
+    }
+  }, [currentOrg, currentRole]);
+
+  // Being an Admin in one organization does not automatically make the user an Admin in another organization
+  const isOrgAdmin = (currentRole.id === 'ADMINISTRATOR' || currentRole.id === 'ADMIN' || Boolean(currentRole?.permissions?.isAdministrator)) &&
+                     (!sessionUser.orgId || sessionUser.orgId === currentOrg?.id || sessionUser.organization_id === currentOrg?.code || sessionUser.organization_id === currentOrg?.id);
+  const isAdmin = isOrgAdmin;
 
   const handleCreateOrgUser = (e) => {
     e.preventDefault();

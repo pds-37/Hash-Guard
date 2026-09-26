@@ -48,9 +48,9 @@ export const mockLineageGraph = {
       type: "lineageNode",
       position: { x: -50, y: 550 },
       data: {
-        id: "RPT-001",
-        label: "Reverse Engineering Technical Report",
-        artifactType: "Derived Artifact (Report)",
+        id: "EV-006",
+        label: "EV-006: Reverse Engineering Technical Report",
+        artifactType: "Derived Artifact (Malware Report)",
         hash: "b5e4a3c2d1e0f9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d3e2f1a0b9c8d7e6f5a4",
         creator: "Organization B (Cyber Lab)",
         timestamp: "2026-08-16 12:00:00 UTC",
@@ -69,8 +69,8 @@ export const mockLineageGraph = {
       type: "lineageNode",
       position: { x: 750, y: 550 },
       data: {
-        id: "IOC-001",
-        label: "Extracted YARA & Sigma Telemetry",
+        id: "EV-005",
+        label: "EV-005: Extracted YARA & Sigma IOC Set",
         artifactType: "Derived Artifact (IOC Set)",
         hash: "18f92a4019283019283019283019284019283019283019283019283019283019",
         creator: "Organization B (Cyber Lab)",

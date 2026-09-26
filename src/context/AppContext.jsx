@@ -522,6 +522,43 @@ export const AppProvider = ({ children }) => {
     }
   }, [currentOrg]);
 
+  // Switch Active Organization Context (WHERE the user belongs / tenant scope)
+  // Changing organization does NOT arbitrarily change the user's role unless explicitly requested
+  const switchOrg = (orgKey, explicitRoleId = null) => {
+    let targetOrg = organizations[orgKey] || ORGANIZATIONS[orgKey];
+    if (!targetOrg) {
+      const match = Object.values(organizations || {}).find(
+        (o) => o.id?.toUpperCase() === orgKey?.toUpperCase() || o.code?.toUpperCase() === orgKey?.toUpperCase()
+      );
+      if (match) targetOrg = match;
+    }
+
+    if (targetOrg) {
+      setCurrentOrg(targetOrg);
+      localStorage.setItem('cee_current_org', targetOrg.id);
+      setWalletAddress(targetOrg.walletAddress);
+      setDid(targetOrg.did);
+
+      if (explicitRoleId && RBAC_ROLES[explicitRoleId]) {
+        setCurrentRole(RBAC_ROLES[explicitRoleId]);
+        localStorage.setItem('cee_current_role', explicitRoleId);
+      }
+
+      setNotifications((prev) => [
+        {
+          id: `org-switch-${Date.now()}`,
+          title: 'Organization Switched',
+          desc: `Active Node: ${targetOrg.name} (${targetOrg.code})`,
+          time: 'Just now',
+          type: 'info'
+        },
+        ...prev
+      ]);
+
+      triggerRefresh();
+    }
+  };
+
   // Register New Organization Enclave
   const registerOrganization = ({ name, type, orgId, did: initialDid, adminEmail, adminName }) => {
     const safeOrgId = (orgId || `ORG_${Date.now().toString().slice(-4)}`).toUpperCase();
@@ -655,6 +692,7 @@ export const AppProvider = ({ children }) => {
       id: user?.id || `USR-${Math.floor(1000 + Math.random() * 9000)}`,
       name: user?.name || (targetRole.id === 'ADMINISTRATOR' ? `${targetOrg.shortName} Admin` : targetRole.name),
       email: user?.email || (targetRole.id === 'ADMINISTRATOR' ? 'admin@cyberlab.local' : 'analyst@cyberlab.local'),
+      orgId: targetOrg.id,
       organization_id: targetOrg.code || targetOrg.id,
       orgName: targetOrg.name,
       role: targetRole.id,
