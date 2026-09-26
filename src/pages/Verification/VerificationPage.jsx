@@ -20,7 +20,7 @@ export const VerificationPage = () => {
         badge={
           <span className="text-xs font-mono font-bold px-2.5 py-1 rounded-md bg-ce-brand/10 text-ce-brand border border-ce-brand/30 flex items-center gap-1.5 uppercase tracking-wider">
             <ShieldCheck className="w-3.5 h-3.5" />
-            <span>ZERO-KNOWLEDGE AUDIT INTERFACE</span>
+            <span>INDEPENDENT AUDIT INTERFACE</span>
           </span>
         }
       />

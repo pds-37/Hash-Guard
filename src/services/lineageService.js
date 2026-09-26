@@ -161,7 +161,7 @@ export const lineageService = {
           id: newArtifactId,
           label: newArtifact.title || 'Derived Forensic Artifact',
           artifactType: newArtifact.type || 'Derived Artifact',
-          hash: newArtifact.hash || 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
+          hash: newArtifact.hash || '4d7c81a2e3f5b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4',
           creator: newArtifact.creator || 'Organization B (Cyber Lab)',
           timestamp: new Date().toISOString().replace('T', ' ').substring(0, 19) + ' UTC',
           verificationState: 'VERIFIED',
@@ -198,7 +198,7 @@ export const lineageService = {
       parentEvidenceId: parentArtifactId,
       sourceOrg: newArtifact.creator || 'Forensics Unit',
       currentCustodian: newArtifact.creator || 'Forensics Unit',
-      hash: newArtifact.hash || 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
+      hash: newArtifact.hash || '4d7c81a2e3f5b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4',
       status: 'VERIFIED',
       fileSize: newArtifact.size || '1.2 MB'
     };

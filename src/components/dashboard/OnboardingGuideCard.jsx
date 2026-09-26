@@ -66,7 +66,7 @@ export const OnboardingGuideCard = ({ evidenceCount = 0, onRegister }) => {
     },
     {
       id: 4,
-      title: 'Zero-Knowledge Independent Verification',
+      title: 'Independent Cryptographic Verification',
       status: evidenceCount > 0 ? 'READY' : 'LOCKED',
       badge: evidenceCount > 0 ? 'Ready to Verify' : 'Requires Exhibit',
       desc: 'Verify cryptographic root and chain of custody without exposing raw evidence content.',
@@ -97,13 +97,13 @@ export const OnboardingGuideCard = ({ evidenceCount = 0, onRegister }) => {
             <h3 className="text-sm font-bold font-mono text-white tracking-wide flex items-center gap-2">
               <span>AGENCY NODE ACTIVATION RUNBOOK</span>
               {!isSandboxMode && (
-                <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-semibold">
-                  GENUINE PRODUCTION MODE
+                <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 font-semibold">
+                  LIVE PROTOTYPE EVALUATION
                 </span>
               )}
             </h3>
             <p className="text-xs text-slate-400 mt-0.5">
-              Follow the 4-step cryptographic pipeline to initialize custody sealing and zero-knowledge verification.
+              Follow the 4-step cryptographic pipeline to initialize custody sealing and independent verification.
             </p>
           </div>
         </div>

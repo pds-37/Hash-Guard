@@ -33,7 +33,7 @@ export const SystemArchitectureSection = ({ onLaunchSandbox }) => {
       name: 'Client & Presentation Tier',
       badge: 'React 19 • Web3 UI',
       accent: 'cyan',
-      description: 'Single-page forensic SOC interface providing real-time evidence management, multi-role access control, and zero-knowledge verification.',
+      description: 'Single-page forensic SOC interface providing real-time evidence management, multi-role access control, and independent cryptographic verification.',
       components: ['React 19.2 + Vite 8.2', 'Tailwind CSS (Forensic SOC Theme)', '@xyflow/react Lineage DAG', 'Ethers.js v6 Web3 Client', 'Lucide Forensics Iconography'],
       protocols: ['HTTPS / WSS (WebSocket Feeds)', 'Web3 JSON-RPC Provider', 'mTLS Cross-Node Handshakes'],
       security: 'Browser WebCrypto API for client-side deterministic hashing. Strict client-side route guards mapped to smart contract role hierarchies.',
@@ -56,26 +56,26 @@ export const SystemArchitectureSection = ({ onLaunchSandbox }) => {
     {
       id: 'tier3',
       number: 'TIER 03',
-      name: 'Core Services & AI Threat Intelligence',
-      badge: 'FastAPI • Google Gemini AI',
+      name: 'Core Services & Threat Intelligence',
+      badge: 'FastAPI • Automated Threat Triage',
       accent: 'purple',
-      description: 'Asynchronous microservice layer coordinating cross-organization evidence transfers, automated AI threat triage, and lifecycle retention.',
-      components: ['FastAPI (Python 3.11+ ASGI)', 'Google Gemini AI Threat Triage Engine', 'PostgreSQL 15 (Relational State)', 'APScheduler Retention Policy Daemon'],
+      description: 'Asynchronous microservice layer coordinating cross-organization evidence transfers, automated threat triage, and lifecycle retention.',
+      components: ['FastAPI (Python 3.11+ ASGI)', 'Automated Forensic Threat Triage Engine', 'PostgreSQL 15 (Relational State)', 'APScheduler Retention Policy Daemon'],
       protocols: ['RESTful API v1 (OpenAPI 3.0)', 'mTLS Mutual Node Authentication', 'JWT Bearer Authorization'],
       security: 'Strict API key segregation, automated Shannon entropy evaluation, and MITRE ATT&CK extraction from raw forensic samples.',
       ports: 'Port 8000 / 8001 (FastAPI Core) / Port 5432 (PostgreSQL)',
-      compliance: 'Cryptographically Verifiable Report Compliance Engine'
+      compliance: 'Independent Forensic Verification Framework'
     },
     {
       id: 'tier4',
       number: 'TIER 04',
-      name: 'Permissioned EVM Consensus & ERC-721 Asset Ownership',
-      badge: 'Solidity ^0.8.20 • ERC-721',
+      name: 'Permissioned EVM Consensus & Evidence Ownership Records',
+      badge: 'Solidity ^0.8.20 • ERC-721 / AccessControl',
       accent: 'emerald',
-      description: 'Immutable distributed ledger anchoring verifiable Decentralized Identifiers (DIDs), NFT-backed evidence custody, and bytecode-level RBAC.',
-      components: ['Solidity ^0.8.20 (HASHGUARD.sol)', 'OpenZeppelin ERC-721 & AccessControl', 'Foundry Anvil / Hyperledger Besu', 'Ethereum-linked decentralized identity representation Registry (did:ethr)'],
+      description: 'Tamper-evident distributed ledger anchoring verifiable Decentralized Identifiers (DIDs), on-chain evidence custody records, and bytecode-level RBAC.',
+      components: ['Solidity ^0.8.20 (HASHGUARD.sol)', 'OpenZeppelin ERC-721 & AccessControl', 'Local Anvil EVM (Chain ID 31337)', 'Ethereum Sepolia Testnet Ready', 'Target Architecture: Hyperledger Besu'],
       protocols: ['EVM Bytecode Execution', 'JSON-RPC over HTTP/IPC', 'EIP-712 Typed Structured Data'],
-      security: 'Non-fungible token reverse lookup (assetIdToTokenId). Modifiers onlyRole(ROLE_ADMIN) and onlyRole(ROLE_MANAGER) prevent privilege escalation.',
+      security: 'Non-fungible token reverse lookup (assetIdToTokenId). Modifiers onlyRole(ROLE_ADMIN) and onlyRole(ROLE_MANAGER) prevent privilege escalation. Clear environment separation: Prototype (Local Anvil) vs Production Architecture (Hyperledger Besu).',
       ports: 'Port 8545 (EVM RPC Endpoint)',
       compliance: 'Ethereum-linked decentralized identity representation v1.0 • ERC-721 Standard • FRE Rule 902(13)/(14)'
     }
@@ -84,16 +84,16 @@ export const SystemArchitectureSection = ({ onLaunchSandbox }) => {
   // Specimen Data for Segregation Simulation
   const specimenData = {
     lockbit: {
-      name: 'LockBit 3.0 Ransomware Specimen',
-      type: 'Raw Memory Dump (.vmem)',
-      size: '8.4 GB',
-      offChainPath: 'vault://s3-enclave/org-a/seized/EV-2026-0891.vmem',
-      encryption: 'AES-256-GCM (HSM Key ID: 0x8F9C21A)',
-      sha256: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
-      tokenId: '#10891',
-      contract: '0x3b91B0dF8A7D938C26532454a8e09e1B9c008f12',
-      txHash: '0x9d2a4f61e8c7b39a2d10e5f4c8b7a6e9d2f1c8b3a7e5d9c2a4f61e8c7b39a2d1',
-      blockNumber: '#483,192',
+      name: 'LockBit 3.0 Ransomware Encryptor Payload',
+      type: 'Malware Binary (.bin)',
+      size: '4.8 MB',
+      offChainPath: 's3-vault://org-b-forensics/vault/ev-001.bin.enc',
+      encryption: 'AES-256-GCM (Enclave Wrapped Key)',
+      sha256: '8f3a91bc72f4cd2a4e9b671a5c28e930f1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6',
+      tokenId: '#10001',
+      contract: '0x3592925Cf64E7C3c68d4911b2ebC722c2Ea67052',
+      txHash: '0x7c81f3d8a94b2e619c054f281e7d9a3b04c81f2e5a6d7c8b9a0e1f2a3b4c5d6e',
+      blockNumber: '#482,910',
       state: 'VERIFIED_SEALED'
     },
     cobalt: {
@@ -104,7 +104,7 @@ export const SystemArchitectureSection = ({ onLaunchSandbox }) => {
       encryption: 'AES-256-GCM (HSM Key ID: 0x3C421B8)',
       sha256: '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',
       tokenId: '#10442',
-      contract: '0x3b91B0dF8A7D938C26532454a8e09e1B9c008f12',
+      contract: '0x3592925Cf64E7C3c68d4911b2ebC722c2Ea67052',
       txHash: '0x4f61e8c7b39a2d10e5f4c8b7a6e9d2f1c8b3a7e5d9c2a4f61e8c7b39a2d10e5f',
       blockNumber: '#483,040',
       state: 'VERIFIED_SEALED'
@@ -117,7 +117,7 @@ export const SystemArchitectureSection = ({ onLaunchSandbox }) => {
       encryption: 'AES-256-GCM (Hardware TPM Wrapped)',
       sha256: '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8',
       tokenId: '#10105',
-      contract: '0x3b91B0dF8A7D938C26532454a8e09e1B9c008f12',
+      contract: '0x3592925Cf64E7C3c68d4911b2ebC722c2Ea67052',
       txHash: '0x1c8b3a7e5d9c2a4f61e8c7b39a2d10e5f4c8b7a6e9d2f1c8b3a7e5d9c2a4f61e',
       blockNumber: '#482,881',
       state: 'TRANSFERRED_INTACT'
@@ -169,7 +169,7 @@ export const SystemArchitectureSection = ({ onLaunchSandbox }) => {
       action: 'Dynamic detonation in sandbox. Volatile cluster carving and memory string extraction.',
       onChainEvent: 'ActivityLogged',
       solidityCall: 'logForensicAnalysis(tokenId, sandboxId, toolsetHash)',
-      guarantee: 'Forensic toolchain versions and examiner notes recorded immutably.'
+      guarantee: 'Forensic toolchain versions and examiner notes recorded on-chain.'
     },
     {
       stage: 'DERIVE',
@@ -178,7 +178,7 @@ export const SystemArchitectureSection = ({ onLaunchSandbox }) => {
       action: 'Derived artifacts (decompiled source, YARA rules, IOC CSVs) link cryptographically to parent.',
       onChainEvent: 'AssetNFTMinted',
       solidityCall: 'mintDerivedAssetNFT(childId, parentTokenId, childHash)',
-      guarantee: 'Mathematical parent-child lineage DAG proof verified via @xyflow.'
+      guarantee: 'Mathematical parent-child lineage DAG proof verified.'
     },
     {
       stage: 'ARCHIVE',
@@ -187,7 +187,7 @@ export const SystemArchitectureSection = ({ onLaunchSandbox }) => {
       action: 'Case finalized. Statutory legal hold applied or NIST SP 800-88 cryptographic shredding scheduled.',
       onChainEvent: 'RetentionEvent',
       solidityCall: 'applyRetentionPolicy(tokenId, retentionYears, isLegalHold)',
-      guarantee: 'Court-admissible certificate generated under Cryptographically Verifiable Report.'
+      guarantee: 'Court-admissible certificate generated with complete cryptographic verification proofs.'
     }
   ];
 
@@ -205,48 +205,97 @@ export const SystemArchitectureSection = ({ onLaunchSandbox }) => {
           <span className="w-1.5 h-1.5 rounded-full bg-cyan-500 animate-ping ml-1" />
         </div>
         <h2 className="text-2xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-          End-to-End Digital Asset Trust Architecture
+          End-to-End Digital Evidence Trust Architecture
         </h2>
         <p className="mt-3 text-sm sm:text-base text-slate-600 dark:text-slate-400 font-normal leading-relaxed">
           Engineered as a decoupled 4-tier stack separating user interfaces, encrypted off-chain storage vaults, asynchronous microservices, and permissioned EVM consensus smart contracts.
         </p>
 
+        {/* Compact High-Level Architecture Overview Flow */}
+        <div className="mt-7 mb-8 p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-900/70 border border-slate-200 dark:border-slate-800 shadow-sm max-w-4xl mx-auto">
+          <div className="text-[10px] font-mono uppercase tracking-widest text-slate-500 dark:text-slate-400 font-bold mb-3 text-center sm:text-left">
+            Core Architecture Data Flow
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-left">
+            <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-950/80 border border-slate-200 dark:border-slate-800/80 relative">
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="text-[10px] font-mono font-bold text-blue-500 uppercase">LAYER 1</span>
+                <Database className="w-3.5 h-3.5 text-blue-500" />
+              </div>
+              <h4 className="text-xs font-bold text-slate-900 dark:text-white font-mono">1. Evidence Ingestion</h4>
+              <p className="text-[11px] text-slate-600 dark:text-slate-400 mt-1 leading-snug">
+                Raw payloads stored in off-chain AES-256-GCM encrypted vaults (MinIO/S3).
+              </p>
+            </div>
+            <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-950/80 border border-slate-200 dark:border-slate-800/80 relative">
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="text-[10px] font-mono font-bold text-cyan-500 uppercase">LAYER 2</span>
+                <Fingerprint className="w-3.5 h-3.5 text-cyan-500" />
+              </div>
+              <h4 className="text-xs font-bold text-slate-900 dark:text-white font-mono">2. Cryptographic Proof</h4>
+              <p className="text-[11px] text-slate-600 dark:text-slate-400 mt-1 leading-snug">
+                Client-side SHA-256 bit digests & ECDSA secp256k1 signatures computed.
+              </p>
+            </div>
+            <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-950/80 border border-slate-200 dark:border-slate-800/80 relative">
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="text-[10px] font-mono font-bold text-emerald-500 uppercase">LAYER 3</span>
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
+              </div>
+              <h4 className="text-xs font-bold text-slate-900 dark:text-white font-mono">3. Blockchain / Identity</h4>
+              <p className="text-[11px] text-slate-600 dark:text-slate-400 mt-1 leading-snug">
+                Tamper-evident EVM anchoring & W3C DID identity verification.
+              </p>
+            </div>
+            <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-950/80 border border-slate-200 dark:border-slate-800/80 relative">
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="text-[10px] font-mono font-bold text-purple-500 uppercase">LAYER 4</span>
+                <Lock className="w-3.5 h-3.5 text-purple-500" />
+              </div>
+              <h4 className="text-xs font-bold text-slate-900 dark:text-white font-mono">4. Multi-Agency Governance</h4>
+              <p className="text-[11px] text-slate-600 dark:text-slate-400 mt-1 leading-snug">
+                Scoped RBAC, legal holds, Section 65B exports & retention policies.
+              </p>
+            </div>
+          </div>
+        </div>
+
         {/* 3 Navigation Mode Tabs */}
-        <div className="mt-8 inline-flex p-1.5 rounded-xl bg-slate-100 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 shadow-sm max-w-full overflow-x-auto">
+        <div className="mt-2 inline-flex p-1.5 rounded-xl bg-slate-100 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 shadow-sm max-w-full overflow-x-auto">
           <button
             onClick={() => setActiveArchTab('layers')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-mono font-semibold transition-all whitespace-nowrap cursor-pointer ${
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-xs font-mono font-bold transition-all whitespace-nowrap cursor-pointer ${
               activeArchTab === 'layers'
                 ? 'bg-white dark:bg-cyan-500/20 text-cyan-600 dark:text-cyan-300 border border-slate-200 dark:border-cyan-500/40 shadow-sm'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
             <Boxes className="w-3.5 h-3.5" />
-            <span>4-Tier Architecture Blueprint</span>
+            <span>1. 4-Tier Blueprint</span>
           </button>
 
           <button
             onClick={() => setActiveArchTab('segregation')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-mono font-semibold transition-all whitespace-nowrap cursor-pointer ${
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-xs font-mono font-bold transition-all whitespace-nowrap cursor-pointer ${
               activeArchTab === 'segregation'
                 ? 'bg-white dark:bg-cyan-500/20 text-cyan-600 dark:text-cyan-300 border border-slate-200 dark:border-cyan-500/40 shadow-sm'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
             <Database className="w-3.5 h-3.5" />
-            <span>Off-Chain vs. On-Chain Data Segregation</span>
+            <span>2. Off-Chain vs On-Chain Segregation</span>
           </button>
 
           <button
             onClick={() => setActiveArchTab('lifecycle')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-mono font-semibold transition-all whitespace-nowrap cursor-pointer ${
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-xs font-mono font-bold transition-all whitespace-nowrap cursor-pointer ${
               activeArchTab === 'lifecycle'
                 ? 'bg-white dark:bg-cyan-500/20 text-cyan-600 dark:text-cyan-300 border border-slate-200 dark:border-cyan-500/40 shadow-sm'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
             <GitFork className="w-3.5 h-3.5" />
-            <span>Custody State Machine Lifecycle</span>
+            <span>3. Custody State Lifecycle</span>
           </button>
         </div>
       </div>
@@ -433,7 +482,7 @@ export const SystemArchitectureSection = ({ onLaunchSandbox }) => {
                 className="w-full py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-mono font-bold text-xs shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 <Zap className="w-3.5 h-3.5 fill-slate-950" />
-                <span>Test Tier in Live SOC Sandbox</span>
+                <span>Launch Evaluation Sandbox (Test This Tier)</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </div>
@@ -463,7 +512,7 @@ export const SystemArchitectureSection = ({ onLaunchSandbox }) => {
                     : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-slate-700'
                 }`}
               >
-                Memory Dump (.vmem)
+                Malware Binary (EV-001)
               </button>
               <button
                 onClick={() => setSelectedSpecimen('cobalt')}
@@ -564,12 +613,12 @@ export const SystemArchitectureSection = ({ onLaunchSandbox }) => {
                     </div>
                   </div>
                   <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 font-bold">
-                    IMMUTABLE
+                    TAMPER-EVIDENT
                   </span>
                 </div>
 
                 <p className="text-xs text-slate-600 dark:text-slate-400 mt-3 leading-relaxed">
-                  Only the deterministic 32-byte SHA-256 bit digest, custodian DID, and ERC-721 token state transitions are committed to Ethereum/Anvil EVM bytecode.
+                  Only the deterministic 32-byte SHA-256 bit digest, custodian DID, and evidence token state transitions are committed to EVM bytecode (Local Anvil for prototype execution; Hyperledger Besu for production architecture).
                 </p>
 
                 <div className="mt-4 p-4 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 font-mono text-xs space-y-2">
@@ -594,7 +643,7 @@ export const SystemArchitectureSection = ({ onLaunchSandbox }) => {
 
               <div className="p-3 rounded-lg bg-emerald-500/5 dark:bg-emerald-950/20 border border-emerald-500/20 text-[11px] font-mono text-slate-600 dark:text-slate-300 flex items-center gap-2">
                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                <span>Independently Verifiable • Section 65B Certified</span>
+                <span>Independently Verifiable • Designed for Section 65B Admissibility</span>
               </div>
             </div>
           </div>
@@ -606,6 +655,38 @@ export const SystemArchitectureSection = ({ onLaunchSandbox }) => {
       {/* ========================================================================= */}
       {activeArchTab === 'lifecycle' && (
         <div className="space-y-6">
+          {/* Compact 7-Stage Visual Flow Overview */}
+          <div className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-900/70 border border-slate-200 dark:border-slate-800 shadow-sm">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+              <span className="text-[10px] font-mono uppercase tracking-widest text-slate-500 dark:text-slate-400 font-bold">
+                7-Stage Custody Lifecycle Overview
+              </span>
+              <span className="text-[11px] font-mono text-cyan-600 dark:text-cyan-400">
+                Click any stage below to inspect authorized roles & contract events
+              </span>
+            </div>
+            <div className="flex items-center justify-between overflow-x-auto gap-1 sm:gap-2 pb-1 text-center font-mono">
+              {lifecycleSteps.map((stgItem, i, arr) => (
+                <React.Fragment key={stgItem.stage}>
+                  <button
+                    onClick={() => setActiveLifecycleStep(i)}
+                    className={`px-3 py-2 rounded-lg text-xs font-bold cursor-pointer transition-all whitespace-nowrap flex flex-col items-center gap-0.5 ${
+                      activeLifecycleStep === i
+                        ? 'bg-cyan-500 text-slate-950 shadow-md ring-1 ring-cyan-400 scale-105'
+                        : 'bg-slate-50 dark:bg-slate-950 text-slate-700 dark:text-slate-300 hover:text-cyan-500 dark:hover:text-cyan-400 border border-slate-200 dark:border-slate-800'
+                    }`}
+                  >
+                    <span className="text-[9px] opacity-75">0{i + 1}</span>
+                    <span>{stgItem.stage}</span>
+                  </button>
+                  {i < arr.length - 1 && (
+                    <ArrowRight className="w-3.5 h-3.5 text-slate-400 dark:text-slate-600 shrink-0" />
+                  )}
+                </React.Fragment>
+              ))}
+            </div>
+          </div>
+
           {/* Step Selector Ribbon */}
           <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2">
             {lifecycleSteps.map((step, idx) => {

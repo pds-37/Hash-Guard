@@ -123,7 +123,7 @@ export const VerificationReportModal = ({ isOpen, onClose, result }) => {
              <div class="absolute bottom-16 right-16 transform -rotate-12">
                <div class="border-4 ${stampColor} rounded-lg px-6 py-4 text-center bg-white/90 shadow-sm opacity-80">
                  <div class="text-3xl font-bold tracking-widest uppercase ${stampColor}">${stampText}</div>
-                 <div class="text-xs font-mono font-bold mt-1 ${stampColor}">ZERO-KNOWLEDGE ATTESTATION</div>
+                 <div class="text-xs font-mono font-bold mt-1 ${stampColor}">INDEPENDENT CRYPTOGRAPHIC ATTESTATION</div>
                </div>
              </div>
 
@@ -238,3 +238,4 @@ export const VerificationReportModal = ({ isOpen, onClose, result }) => {
     </Modal>
   );
 };
+

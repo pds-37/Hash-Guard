@@ -22,7 +22,7 @@ const TypewriterText = ({ text, delay = 30 }) => {
 const generateHeuristicReport = (ev) => {
   const type = (ev?.type || '').toUpperCase();
   const title = ev?.title || 'Unknown Exhibit';
-  const hash = ev?.hash || 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855';
+  const hash = ev?.hash || '8f3a91bc72f4cd2a4e9b671a5c28e930f1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6';
 
   if (type.includes('MALWARE') || type.includes('BINARY') || title.toLowerCase().includes('payload') || title.toLowerCase().includes('trojan')) {
     return {

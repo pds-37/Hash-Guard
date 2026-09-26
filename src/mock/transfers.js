@@ -79,10 +79,10 @@ export const mockTransfers = [
     toActor: "analyst@org-b.lab",
     status: "REQUESTED",
     transferProtocol: "Hardware Escrow Courier + Pre-signed Manifest",
-    manifestHash: "e4d9b231804f9812736184910283019283019284019283019283019283019283",
+    manifestHash: "dff87f31917864f60fc10d7854cfffee24113dd68f0d3d69b22944bf69ed5f64",
     initiatedAt: "2026-08-16 12:10:00 UTC",
     completedAt: null,
-    blockchainTx: "0x9812736184910283019283019284019283019283019283019283019283019283",
+    blockchainTx: "0x7a3e81f9b0c24d65891a2bc4e5f67a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f",
     steps: [
       { step: "MANIFEST_SIGN", org: "Organization A", timestamp: "12:10:00", status: "COMPLETED" },
       { step: "SECURE_DISPATCH", org: "Organization A", timestamp: null, status: "PENDING" },
@@ -128,7 +128,7 @@ export const mockTransfers = [
     manifestHash: "8f3a91bc72f4cd2a4e9b671a5c28e930f1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6",
     initiatedAt: "2026-08-16 09:35:00 UTC",
     completedAt: "2026-08-16 09:40:11 UTC",
-    blockchainTx: "0x9918230491820491820394810293840192830192830192840192830192830192",
+    blockchainTx: "0xc04f6c55b0fa6ffd8c98cfdbb8a199a149887e935fde2d3370846588d5076d3b",
     steps: [
       { step: "MANIFEST_SIGN", org: "Organization D", timestamp: "09:35:00", status: "COMPLETED" },
       { step: "SECURE_DISPATCH", org: "Organization D", timestamp: "09:37:00", status: "COMPLETED" },

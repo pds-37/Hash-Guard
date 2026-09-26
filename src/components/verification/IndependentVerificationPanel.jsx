@@ -120,7 +120,7 @@ export const IndependentVerificationPanel = ({ defaultId = '', autoVerify = fals
             No Evidence Recorded in Ledger
           </h3>
           <p className="text-xs text-ce-text-secondary mt-2 max-w-lg mx-auto leading-relaxed font-sans">
-            There are currently no evidence exhibits present in the cryptographic audit ledger. Independent zero-knowledge verification requires an existing evidence exhibit sealed with an immutable SHA-256 digest and ECDSA manifest.
+            There are currently no evidence exhibits present in the cryptographic audit ledger. Independent cryptographic verification requires an existing evidence exhibit sealed with a deterministic SHA-256 digest and ECDSA manifest.
           </p>
           <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
             <button
@@ -263,7 +263,7 @@ export const IndependentVerificationPanel = ({ defaultId = '', autoVerify = fals
               No digital evidence exhibit matching identifier <strong className="font-mono text-amber-300 bg-amber-950/40 px-1.5 py-0.5 rounded border border-amber-500/30">"{notFoundId}"</strong> exists in the cryptographic audit ledger.
             </p>
             <p className="text-[11px] font-mono text-ce-text-muted pt-1">
-              Check the identifier spelling or ingest the exhibit from the evidence repository before performing independent zero-knowledge verification.
+              Check the identifier spelling or ingest the exhibit from the evidence repository before performing independent cryptographic verification.
             </p>
           </div>
         </div>

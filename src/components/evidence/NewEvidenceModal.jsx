@@ -106,7 +106,7 @@ export const NewEvidenceModal = ({ isOpen, onClose, onCreated }) => {
               `SHA-256 Digest: ${computedHash}\n` +
               `Evidence Title: ${formData.title || 'Digital Forensic Exhibit'}\n` +
               `Sealing Timestamp: ${new Date().toISOString()}\n\n` +
-              `Attestation: I certify this bitstream digest under ISO/IEC 27037 and Cryptographically Verifiable Report.`
+              `Attestation: I certify this bitstream digest under ISO/IEC 27037 and Cryptographic Verification Standards.`
             );
             signatureData = {
               status: 'VALID',
@@ -428,3 +428,4 @@ export const NewEvidenceModal = ({ isOpen, onClose, onCreated }) => {
     </Modal>
   );
 };
+
