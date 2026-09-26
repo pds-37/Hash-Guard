@@ -26,7 +26,8 @@ import { useApp, ROLES } from '../../context/AppContext';
 import { Logo, LogoIcon } from '../../components/common/Logo';
 import { ThemeToggle } from '../../components/common/ThemeToggle';
 import { SystemArchitectureSection } from '../../components/landing/SystemArchitectureSection';
-import { HeroEvidenceDiagram } from '../../components/landing/HeroEvidenceDiagram';
+import { NativeHeroDiagram } from '../../components/landing/NativeHeroDiagram';
+import { NativeProcessSteps } from '../../components/landing/NativeProcessSteps';
 import { OnChainProofModal } from '../../components/landing/OnChainProofModal';
 import { TamperBreachModal } from '../../components/landing/TamperBreachModal';
 import { DemoWalkthroughModal } from '../../components/landing/DemoWalkthroughModal';
@@ -279,9 +280,9 @@ export const LandingPage = () => {
             </div>
           </div>
 
-          {/* Right Column: 3D Visual Diagram with Interactive Hotspots */}
-          <div className="lg:col-span-7 flex justify-center">
-            <HeroEvidenceDiagram 
+          {/* Right Column: Native Interactive Evidence Flow Diagram */}
+          <div className="lg:col-span-7 flex justify-center w-full">
+            <NativeHeroDiagram 
               onOpenOnChainProof={() => setOnChainModalOpen(true)}
               onOpenTamperBreach={() => setTamperModalOpen(true)}
               onLaunchSandbox={launchConsole}
@@ -292,131 +293,7 @@ export const LandingPage = () => {
 
       {/* 4 PROCESS STEP CARDS (Section #evidence-flow matching Image 2 bottom row) */}
       <section id="evidence-flow" className="relative z-10 py-6 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-center">
-          {/* CARD 01: Register Evidence */}
-          <div 
-            onClick={() => launchConsole('ORG_A', '/evidence', true)}
-            className="p-4 rounded-xl border border-slate-200 dark:border-slate-800/80 bg-white/80 dark:bg-[#070e1c]/80 hover:bg-white dark:hover:bg-[#0c162c] hover:border-cyan-500/50 hover:shadow-[0_0_25px_rgba(6,182,212,0.15)] transition-all cursor-pointer group flex flex-col justify-between h-full"
-          >
-            <div>
-              <div className="flex items-center gap-2.5">
-                <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20">
-                  01
-                </span>
-                <h4 className="text-sm font-bold text-slate-900 dark:text-white font-sans group-hover:text-cyan-400 transition-colors">
-                  Register Evidence
-                </h4>
-              </div>
-
-              {/* 3D Pedestal Graphic */}
-              <div className="my-3 flex items-center justify-center">
-                <img 
-                  src="/assets/step-01-register.png" 
-                  alt="Register Evidence Pedestal" 
-                  className="w-full h-24 object-contain filter drop-shadow-[0_0_12px_rgba(6,182,212,0.25)] group-hover:scale-105 transition-transform"
-                />
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between text-xs text-slate-600 dark:text-slate-400 pt-2 border-t border-slate-100 dark:border-slate-800/60">
-              <span className="leading-snug">Upload & cryptographically seal forensic exhibits</span>
-              <ChevronRight className="w-4 h-4 text-cyan-400 opacity-0 group-hover:opacity-100 transition-opacity shrink-0 ml-1" />
-            </div>
-          </div>
-
-          {/* CARD 02: Track Custody */}
-          <div 
-            onClick={() => launchConsole('ORG_B', '/transfers', true)}
-            className="p-4 rounded-xl border border-slate-200 dark:border-slate-800/80 bg-white/80 dark:bg-[#070e1c]/80 hover:bg-white dark:hover:bg-[#0c162c] hover:border-cyan-500/50 hover:shadow-[0_0_25px_rgba(6,182,212,0.15)] transition-all cursor-pointer group flex flex-col justify-between h-full"
-          >
-            <div>
-              <div className="flex items-center gap-2.5">
-                <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20">
-                  02
-                </span>
-                <h4 className="text-sm font-bold text-slate-900 dark:text-white font-sans group-hover:text-cyan-400 transition-colors">
-                  Track Custody
-                </h4>
-              </div>
-
-              {/* 3D Pedestal Graphic */}
-              <div className="my-3 flex items-center justify-center">
-                <img 
-                  src="/assets/step-02-custody.png" 
-                  alt="Track Custody Pedestal" 
-                  className="w-full h-24 object-contain filter drop-shadow-[0_0_12px_rgba(6,182,212,0.25)] group-hover:scale-105 transition-transform"
-                />
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between text-xs text-slate-600 dark:text-slate-400 pt-2 border-t border-slate-100 dark:border-slate-800/60">
-              <span className="leading-snug">Monitor inter-agency transfers in real time</span>
-              <ChevronRight className="w-4 h-4 text-cyan-400 opacity-0 group-hover:opacity-100 transition-opacity shrink-0 ml-1" />
-            </div>
-          </div>
-
-          {/* CARD 03: Verify Integrity */}
-          <div 
-            onClick={() => launchConsole('AUDITOR', '/verification', true)}
-            className="p-4 rounded-xl border border-slate-200 dark:border-slate-800/80 bg-white/80 dark:bg-[#070e1c]/80 hover:bg-white dark:hover:bg-[#0c162c] hover:border-cyan-500/50 hover:shadow-[0_0_25px_rgba(6,182,212,0.15)] transition-all cursor-pointer group flex flex-col justify-between h-full"
-          >
-            <div>
-              <div className="flex items-center gap-2.5">
-                <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20">
-                  03
-                </span>
-                <h4 className="text-sm font-bold text-slate-900 dark:text-white font-sans group-hover:text-cyan-400 transition-colors">
-                  Verify Integrity
-                </h4>
-              </div>
-
-              {/* 3D Pedestal Graphic */}
-              <div className="my-3 flex items-center justify-center">
-                <img 
-                  src="/assets/step-03-integrity.png" 
-                  alt="Verify Integrity Pedestal" 
-                  className="w-full h-24 object-contain filter drop-shadow-[0_0_12px_rgba(6,182,212,0.25)] group-hover:scale-105 transition-transform"
-                />
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between text-xs text-slate-600 dark:text-slate-400 pt-2 border-t border-slate-100 dark:border-slate-800/60">
-              <span className="leading-snug">Detect tampering with cryptographic proofs</span>
-              <ChevronRight className="w-4 h-4 text-cyan-400 opacity-0 group-hover:opacity-100 transition-opacity shrink-0 ml-1" />
-            </div>
-          </div>
-
-          {/* CARD 04: Maintain Trust */}
-          <div 
-            onClick={() => launchConsole('AUDITOR', '/audit', true)}
-            className="p-4 rounded-xl border border-slate-200 dark:border-slate-800/80 bg-white/80 dark:bg-[#070e1c]/80 hover:bg-white dark:hover:bg-[#0c162c] hover:border-cyan-500/50 hover:shadow-[0_0_25px_rgba(6,182,212,0.15)] transition-all cursor-pointer group flex flex-col justify-between h-full"
-          >
-            <div>
-              <div className="flex items-center gap-2.5">
-                <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20">
-                  04
-                </span>
-                <h4 className="text-sm font-bold text-slate-900 dark:text-white font-sans group-hover:text-cyan-400 transition-colors">
-                  Maintain Trust
-                </h4>
-              </div>
-
-              {/* 3D Pedestal Graphic */}
-              <div className="my-3 flex items-center justify-center">
-                <img 
-                  src="/assets/step-04-trust.png" 
-                  alt="Maintain Trust Pedestal" 
-                  className="w-full h-24 object-contain filter drop-shadow-[0_0_12px_rgba(6,182,212,0.25)] group-hover:scale-105 transition-transform"
-                />
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between text-xs text-slate-600 dark:text-slate-400 pt-2 border-t border-slate-100 dark:border-slate-800/60">
-              <span className="leading-snug">Support legal, audit, and judicial oversight</span>
-              <ChevronRight className="w-4 h-4 text-cyan-400 opacity-0 group-hover:opacity-100 transition-opacity shrink-0 ml-1" />
-            </div>
-          </div>
-        </div>
+        <NativeProcessSteps onLaunchRole={launchConsole} />
       </section>
 
       {/* SYSTEM ARCHITECTURE BLUEPRINT SECTION */}
