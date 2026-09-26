@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Integer, DateTime, ForeignKey, Text, Enum
+from sqlalchemy import Column, String, Integer, DateTime, ForeignKey, Text, Enum, Boolean
 from sqlalchemy.orm import relationship
 import uuid
 import datetime
@@ -12,6 +12,8 @@ class RetentionPolicy(Base):
     retention_period_days = Column(Integer, nullable=False)
     trigger_event = Column(String, nullable=False) # e.g. 'case_closed', 'evidence_sealed', 'manual'
     action_on_expiry = Column(String, nullable=False) # 'archive' or 'delete'
+    allow_legal_hold = Column(Boolean, default=True) # Legal Hold Override enabled
+    is_active = Column(Boolean, default=True) # Active or Disabled
     created_by = Column(String, nullable=True) # User ID (Admin)
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
 

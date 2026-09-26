@@ -53,3 +53,10 @@ class EvidenceResponse(BaseModel):
     derivedCount: int
     description: Optional[str]
     forensicNotes: Optional[str] = None
+    retentionPolicyId: Optional[str] = None
+    retentionPolicyName: Optional[str] = None
+    retentionStatus: Optional[str] = "ACTIVE"
+    retentionExpiresAt: Optional[str] = None
+    legalHold: Optional[bool] = False
+    legalHoldReason: Optional[str] = None
+

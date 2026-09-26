@@ -2,13 +2,13 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Badge } from '../common/Badge';
 import { truncateHash, getEventColor } from '../../utils/formatters';
-import { ExternalLink, Copy, Check, Trash2, ShieldCheck } from 'lucide-react';
+import { ExternalLink, Copy, Check, Trash2, ShieldCheck, Lock } from 'lucide-react';
 import { evidenceService } from '../../services/evidenceService';
 import { useApp } from '../../context/AppContext';
 
 export const EvidenceTable = ({ evidenceList = [] }) => {
   const [copiedHash, setCopiedHash] = useState(null);
-  const { triggerRefresh } = useApp();
+  const { currentRole, triggerRefresh } = useApp();
 
   const handleCopy = (hash, e) => {
     e.stopPropagation();
@@ -18,15 +18,28 @@ export const EvidenceTable = ({ evidenceList = [] }) => {
     setTimeout(() => setCopiedHash(null), 2000);
   };
 
-  const handleDelete = async (id, e) => {
+  const handleDelete = async (item, e) => {
     e.stopPropagation();
     e.preventDefault();
-    if (window.confirm(`Permanently remove evidence exhibit ${id}?`)) {
+
+    // 1. RBAC Check
+    if (!currentRole?.permissions?.canDeleteEvidence && currentRole?.id !== 'ADMINISTRATOR') {
+      alert(`❌ ACCESS DENIED: Role '${currentRole?.name || 'Operator'}' does not have permission to delete evidence exhibits. Administrator privileges required.`);
+      return;
+    }
+
+    // 2. Legal Hold Override Check
+    if (item.legalHold || item.retentionStatus === 'LEGAL HOLD') {
+      alert(`❌ DELETION BLOCKED: Evidence exhibit ${item.id} is protected under an active Legal Hold preservation order and cannot be deleted.`);
+      return;
+    }
+
+    if (window.confirm(`Permanently remove evidence exhibit ${item.id}?`)) {
       try {
-        await evidenceService.deleteEvidence(id);
+        await evidenceService.deleteEvidence(item.id);
         triggerRefresh();
       } catch (err) {
-        alert(`Failed to delete evidence: ${err.message}`);
+        alert(err.message || 'Failed to delete evidence.');
       }
     }
   };
@@ -70,6 +83,12 @@ export const EvidenceTable = ({ evidenceList = [] }) => {
                     {item.isDerived && (
                       <span className="text-[9px] px-1.5 py-0.5 rounded bg-ce-brand/10 text-ce-brand border border-ce-brand/30">
                         DERIVED
+                      </span>
+                    )}
+                    {(item.legalHold || item.retentionStatus === 'LEGAL HOLD') && (
+                      <span className="text-[9px] px-1.5 py-0.5 rounded bg-purple-500/10 text-purple-400 border border-purple-500/30 flex items-center gap-1 font-mono font-bold">
+                        <Lock className="w-2.5 h-2.5" />
+                        HOLD
                       </span>
                     )}
                   </Link>
@@ -147,11 +166,23 @@ export const EvidenceTable = ({ evidenceList = [] }) => {
                       <ShieldCheck className="w-3.5 h-3.5 text-ce-brand" />
                     </Link>
                     <button
-                      onClick={(e) => handleDelete(item.id, e)}
-                      className="p-1.5 rounded-md bg-ce-bg border border-ce-border text-xs text-ce-text-muted hover:text-ce-danger hover:border-ce-danger/40 transition-all"
-                      title="Delete exhibit"
+                      onClick={(e) => handleDelete(item, e)}
+                      className={`p-1.5 rounded-md bg-ce-bg border text-xs transition-all ${
+                        item.legalHold || item.retentionStatus === 'LEGAL HOLD'
+                          ? 'border-purple-500/30 text-purple-400 hover:border-purple-500/60'
+                          : 'border-ce-border text-ce-text-muted hover:text-ce-danger hover:border-ce-danger/40'
+                      }`}
+                      title={
+                        item.legalHold || item.retentionStatus === 'LEGAL HOLD'
+                          ? 'Protected under Legal Hold'
+                          : 'Delete exhibit'
+                      }
                     >
-                      <Trash2 className="w-3.5 h-3.5" />
+                      {item.legalHold || item.retentionStatus === 'LEGAL HOLD' ? (
+                        <Lock className="w-3.5 h-3.5 text-purple-400" />
+                      ) : (
+                        <Trash2 className="w-3.5 h-3.5" />
+                      )}
                     </button>
                   </div>
                 </td>

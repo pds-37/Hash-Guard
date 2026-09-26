@@ -50,6 +50,16 @@ export function getStatusBadgeVariant(status) {
         iconText: 'ARCHIVED',
         label: 'ARCHIVED'
       };
+    case 'LEGAL HOLD':
+    case 'LEGAL_HOLD':
+    case 'ON HOLD':
+    case 'SUSPENDED':
+      return {
+        bg: 'bg-amber-500/15 text-amber-400 border-amber-500/40 shadow-[0_0_8px_rgba(245,158,11,0.2)] font-bold',
+        dot: 'bg-amber-400 animate-pulse',
+        iconText: 'LEGAL HOLD',
+        label: status === 'SUSPENDED' ? 'SUSPENDED' : 'LEGAL HOLD'
+      };
     default:
       return {
         bg: 'bg-ce-surface-subtle text-ce-text-secondary border-ce-border',
@@ -73,7 +83,20 @@ export function getEventColor(event) {
     case 'DERIVE':
       return 'text-ce-brand bg-ce-brand/10 border-ce-brand/30';
     case 'ARCHIVE':
-      return 'text-ce-text-muted bg-ce-surface-subtle border-ce-border';
+    case 'EVIDENCE_ARCHIVED':
+      return 'text-indigo-400 bg-indigo-500/10 border-indigo-500/30';
+    case 'LEGAL_HOLD_APPLIED':
+      return 'text-amber-400 bg-amber-500/10 border-amber-500/30';
+    case 'LEGAL_HOLD_RELEASED':
+      return 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30';
+    case 'RETENTION_POLICY_CREATED':
+    case 'RETENTION_POLICY_UPDATED':
+      return 'text-blue-400 bg-blue-500/10 border-blue-500/30';
+    case 'RETENTION_STARTED':
+    case 'RETENTION_EXPIRED':
+      return 'text-purple-400 bg-purple-500/10 border-purple-500/30';
+    case 'EVIDENCE_DELETION_APPROVED':
+      return 'text-rose-400 bg-rose-500/10 border-rose-500/30';
     default:
       return 'text-ce-text-secondary bg-ce-surface-subtle border-ce-border';
   }

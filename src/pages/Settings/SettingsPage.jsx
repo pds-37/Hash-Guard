@@ -23,6 +23,9 @@ import {
 export const SettingsPage = () => {
   const { theme, isDark, setTheme } = useTheme();
   const { 
+    currentOrg,
+    switchOrg,
+    organizations,
     currentRole, 
     switchRole, 
     roles, 
@@ -37,7 +40,7 @@ export const SettingsPage = () => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [newUserName, setNewUserName] = useState('');
   const [newUserAddress, setNewUserAddress] = useState('');
-  const [newUserRole, setNewUserRole] = useState('USER');
+  const [newUserRole, setNewUserRole] = useState('FIRST_RESPONDER');
 
   const handleRegisterNewUser = (e) => {
     e.preventDefault();
@@ -55,68 +58,124 @@ export const SettingsPage = () => {
 
   const rbacMatrix = [
     {
-      action: 'Mint Digital Asset NFTs',
-      description: 'Create unique ERC-721 tokens with SHA-256 digests anchored on-chain',
+      action: 'Collect & Ingest Evidence',
+      description: 'Initial seizure, bitstream acquisition, and cryptographic hashing',
       ADMIN: true,
-      MANAGER: true,
-      AUDITOR: false,
-      USER: false
+      CUSTODIAN: false,
+      INVESTIGATOR: true,
+      FORENSIC: false,
+      RESPONDER: true,
+      AUDITOR: false
     },
     {
-      action: 'Assign & Revoke RBAC Roles',
-      description: 'Define roles, assign permissions to DIDs via AccessControl',
+      action: 'Generate SHA-256 Digest',
+      description: 'Compute verifiable cryptographic bitstream hash over exhibit files',
       ADMIN: true,
-      MANAGER: false,
-      AUDITOR: false,
-      USER: false
+      CUSTODIAN: true,
+      INVESTIGATOR: true,
+      FORENSIC: true,
+      RESPONDER: true,
+      AUDITOR: true
     },
     {
-      action: 'Allocate Assets to User Identities',
-      description: 'Directly assign or re-assign asset ownership to specific DIDs',
+      action: 'Seal Evidence Manifest',
+      description: 'Sign and seal evidence metadata with HSM/mTLS cryptographic signature',
       ADMIN: true,
-      MANAGER: true,
-      AUDITOR: false,
-      USER: false
-    },
-    {
-      action: 'Cryptographic Credential Verification',
-      description: 'Execute zero-trust auditor proof check via verifyCredential',
-      ADMIN: false,
-      MANAGER: false,
-      AUDITOR: true,
-      USER: false
-    },
-    {
-      action: 'Zero-Trust Bitstream Hash Audit',
-      description: 'Cryptographically verify observed hash vs on-chain root',
-      ADMIN: true,
-      MANAGER: true,
-      AUDITOR: true,
-      USER: false
+      CUSTODIAN: true,
+      INVESTIGATOR: true,
+      FORENSIC: false,
+      RESPONDER: true,
+      AUDITOR: false
     },
     {
       action: 'Transfer Custody',
-      description: 'Sign and execute monotonic custody transfer between parties',
+      description: 'Sign and execute monotonic custody transfer between agencies',
       ADMIN: true,
-      MANAGER: true,
-      AUDITOR: false,
-      USER: true
+      CUSTODIAN: true,
+      INVESTIGATOR: true,
+      FORENSIC: true,
+      RESPONDER: true,
+      AUDITOR: false
     },
     {
-      action: 'Enforce Retention & Auto-Expiry',
-      description: 'Mark asset lifecycle status (archived, extended, purged)',
+      action: 'Sandbox Malware Analysis',
+      description: 'Perform reverse engineering and analysis in isolated environments',
       ADMIN: true,
-      MANAGER: true,
-      AUDITOR: false,
-      USER: false
+      CUSTODIAN: false,
+      INVESTIGATOR: false,
+      FORENSIC: true,
+      RESPONDER: false,
+      AUDITOR: false
+    },
+    {
+      action: 'Derive Child Artifacts',
+      description: 'Create child evidence exhibits (e.g. memory dump extracts, PCAP slices)',
+      ADMIN: true,
+      CUSTODIAN: false,
+      INVESTIGATOR: false,
+      FORENSIC: true,
+      RESPONDER: false,
+      AUDITOR: false
+    },
+    {
+      action: 'Zero-Trust Root Verification',
+      description: 'Cryptographically verify observed SHA-256 hash vs on-chain root',
+      ADMIN: true,
+      CUSTODIAN: true,
+      INVESTIGATOR: true,
+      FORENSIC: true,
+      RESPONDER: true,
+      AUDITOR: true
+    },
+    {
+      action: 'Manage Retention Policies',
+      description: 'Define, update, and toggle retention schedules and expiry actions',
+      ADMIN: true,
+      CUSTODIAN: true,
+      INVESTIGATOR: false,
+      FORENSIC: false,
+      RESPONDER: false,
+      AUDITOR: false
+    },
+    {
+      action: 'Apply Legal Hold',
+      description: 'Impose legal hold preservation orders, pausing countdown and blocking deletion',
+      ADMIN: true,
+      CUSTODIAN: true,
+      INVESTIGATOR: true,
+      FORENSIC: false,
+      RESPONDER: false,
+      AUDITOR: false
+    },
+    {
+      action: 'Release Legal Hold',
+      description: 'Lift preservation orders upon official court/custodian decree',
+      ADMIN: true,
+      CUSTODIAN: true,
+      INVESTIGATOR: false,
+      FORENSIC: false,
+      RESPONDER: false,
+      AUDITOR: false
+    },
+    {
+      action: 'Delete Evidence Exhibit',
+      description: 'Permanently remove expired or unauthorized exhibits (BLOCKED on Legal Hold)',
+      ADMIN: true,
+      CUSTODIAN: false,
+      INVESTIGATOR: false,
+      FORENSIC: false,
+      RESPONDER: false,
+      AUDITOR: false
     },
     {
       action: 'Read Ledger & Lineage DAG',
-      description: 'Inspect immutable blockchain event streams and derivation provenance',
+      description: 'Inspect immutable blockchain event streams, lineage DAG, and custody records',
       ADMIN: true,
-      MANAGER: true,
-      AUDITOR: true,
-      USER: true
+      CUSTODIAN: true,
+      INVESTIGATOR: true,
+      FORENSIC: true,
+      RESPONDER: true,
+      AUDITOR: true
     }
   ];
 
@@ -124,17 +183,17 @@ export const SettingsPage = () => {
     <div className="space-y-6">
       <PageHeader
         title="Settings & RBAC Governance"
-        subtitle="Manage Decentralized Identifiers (DIDs), Role-Based Access Control, and Smart Contract Permissions."
+        subtitle="Manage Decentralized Identifiers (DIDs), Separate Organizations from Role-Based Access Control, and Smart Contract Permissions."
         breadcrumbs={['Dashboard', 'Settings & Governance']}
       />
 
       {/* Active Identity & Perspective Switcher */}
-      <div className="rounded-lg bg-ce-surface border border-ce-border p-6 shadow-sm space-y-4">
+      <div className="rounded-lg bg-ce-surface border border-ce-border p-6 shadow-sm space-y-5">
         <div className="flex items-center justify-between pb-3 border-b border-ce-border">
           <div className="flex items-center gap-2">
             <Building2 className="w-4 h-4 text-ce-brand" />
             <h3 className="text-sm font-mono font-bold uppercase tracking-wider text-ce-text-primary">
-              Active Decentralized Identity & Perspective
+              Active Decentralized Identity & Context
             </h3>
           </div>
           <span className="text-[11px] font-mono px-2.5 py-0.5 rounded bg-ce-brand/10 border border-ce-brand/30 text-ce-brand font-semibold">
@@ -145,19 +204,25 @@ export const SettingsPage = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 font-mono text-xs">
           <div className="p-4 rounded-md bg-ce-bg border border-ce-border shadow-sm">
             <span className="text-[10px] uppercase text-ce-text-muted block font-bold tracking-wider">
-              Active Organization:
+              Active Organization (WHERE):
             </span>
             <span className="text-ce-text-primary font-bold text-sm mt-1.5 block">
-              {currentRole.orgName}
+              {currentOrg?.name || currentRole.orgName}
+            </span>
+            <span className="text-[10px] text-ce-text-muted mt-1 block">
+              Jurisdiction: {currentOrg?.function || 'Cyber Evidence Exchange'}
             </span>
           </div>
 
           <div className="p-4 rounded-md bg-ce-bg border border-ce-border shadow-sm">
             <span className="text-[10px] uppercase text-ce-text-muted block font-bold tracking-wider">
-              Assigned Role (RBAC):
+              Assigned Role (WHAT):
             </span>
             <span className="text-ce-brand font-bold text-sm mt-1.5 block">
-              {currentRole.roleName}
+              {currentRole.name || currentRole.roleName}
+            </span>
+            <span className="text-[10px] text-ce-text-muted mt-1 block">
+              Authority: {currentRole.id === 'ADMINISTRATOR' ? 'Platform Administrator' : currentRole.id === 'AUDITOR' ? 'Independent Verifier' : 'Agency Operator'}
             </span>
           </div>
 
@@ -180,27 +245,52 @@ export const SettingsPage = () => {
           </div>
         </div>
 
-        <div className="p-4 rounded-md bg-ce-surface-subtle border border-ce-border/60">
-          <label className="text-[10px] uppercase font-mono text-ce-text-muted block mb-2 font-bold tracking-wider">
-            Switch Perspective Role (Role-Based Access Simulation):
+        {/* 1. Organization Switcher */}
+        <div className="p-4 rounded-md bg-ce-surface-subtle border border-ce-border/60 space-y-2">
+          <label className="text-[10px] uppercase font-mono text-ce-text-muted block font-bold tracking-wider">
+            1. Switch Active Organization (Data Scope / Agency Jurisdiction):
           </label>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            {['ADMIN', 'MANAGER', 'AUDITOR', 'USER'].map((key) => {
-              const r = roles[key];
-              if (!r) return null;
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2">
+            {Object.values(organizations || {}).map((org) => {
+              const isCurrent = currentOrg?.id === org.id;
+              return (
+                <button
+                  key={org.id}
+                  onClick={() => switchOrg(org.id)}
+                  className={`p-2.5 rounded-md border text-left text-xs font-mono transition-all shadow-sm ${
+                    isCurrent
+                      ? 'bg-ce-brand/10 border-ce-brand text-ce-brand font-bold ring-1 ring-ce-brand/30'
+                      : 'bg-ce-bg border-ce-border text-ce-text-secondary hover:text-ce-text-primary hover:border-ce-brand/50'
+                  }`}
+                >
+                  <div className="text-[11px] font-bold truncate">{org.shortName}</div>
+                  <div className="text-[9px] opacity-75 mt-0.5 truncate">{org.code}</div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* 2. RBAC Role Switcher */}
+        <div className="p-4 rounded-md bg-ce-surface-subtle border border-ce-border/60 space-y-2">
+          <label className="text-[10px] uppercase font-mono text-ce-text-muted block font-bold tracking-wider">
+            2. Switch RBAC Role (Operational Permissions & Privileges):
+          </label>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
+            {Object.values(roles || {}).map((r) => {
               const isCurrent = currentRole.id === r.id;
               return (
                 <button
                   key={r.id}
                   onClick={() => switchRole(r.id)}
-                  className={`p-3 rounded-md border text-left text-xs font-mono transition-colors shadow-sm ${
+                  className={`p-2.5 rounded-md border text-left text-xs font-mono transition-all shadow-sm ${
                     isCurrent
-                      ? 'bg-ce-brand/10 border-ce-brand text-ce-brand font-bold'
+                      ? 'bg-ce-brand/10 border-ce-brand text-ce-brand font-bold ring-1 ring-ce-brand/30'
                       : 'bg-ce-bg border-ce-border text-ce-text-secondary hover:text-ce-text-primary hover:border-ce-brand/50'
                   }`}
                 >
-                  <div className="text-[11px] font-bold truncate">{r.roleName.split('(')[0]}</div>
-                  <div className="text-[10px] opacity-75 mt-1">{r.id}</div>
+                  <div className="text-[11px] font-bold truncate">{r.name}</div>
+                  <div className="text-[9px] opacity-75 mt-0.5 truncate">{r.id}</div>
                 </button>
               );
             })}
@@ -300,7 +390,7 @@ export const SettingsPage = () => {
               Decentralized Identity (DID) & Smart Contract RBAC Registry
             </h3>
           </div>
-          {currentRole.id === 'ADMIN' && (
+          {(currentRole.id === 'ADMIN' || currentRole.id === 'ADMINISTRATOR' || currentRole?.permissions?.isAdministrator) && (
             <button
               onClick={() => setShowAddModal(true)}
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-ce-brand text-ce-bg font-mono text-xs font-bold hover:bg-ce-brand/90 transition-colors"
@@ -325,7 +415,9 @@ export const SettingsPage = () => {
                 <th className="p-3">EVM Wallet Address</th>
                 <th className="p-3">Smart Contract Role</th>
                 <th className="p-3">On-Chain Status</th>
-                {currentRole.id === 'ADMIN' && <th className="p-3 text-right">Admin Role Control</th>}
+                {(currentRole.id === 'ADMIN' || currentRole.id === 'ADMINISTRATOR' || currentRole?.permissions?.isAdministrator) && (
+                  <th className="p-3 text-right">Admin Role Control</th>
+                )}
               </tr>
             </thead>
             <tbody className="divide-y divide-ce-border bg-ce-bg">
@@ -345,13 +437,17 @@ export const SettingsPage = () => {
                   </td>
                   <td className="p-3">
                     <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold border ${
-                      item.role === 'ADMIN'
+                      item.role === 'ADMIN' || item.role === 'ADMINISTRATOR'
                         ? 'text-rose-400 bg-rose-500/10 border-rose-500/30'
-                        : item.role === 'MANAGER'
+                        : item.role === 'MANAGER' || item.role === 'EVIDENCE_CUSTODIAN'
+                        ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30'
+                        : item.role === 'INVESTIGATOR'
                         ? 'text-amber-400 bg-amber-500/10 border-amber-500/30'
+                        : item.role === 'FORENSIC_ANALYST'
+                        ? 'text-purple-400 bg-purple-500/10 border-purple-500/30'
                         : item.role === 'AUDITOR'
                         ? 'text-cyan-400 bg-cyan-500/10 border-cyan-500/30'
-                        : 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30'
+                        : 'text-blue-400 bg-blue-500/10 border-blue-500/30'
                     }`}>
                       {item.role}
                     </span>
@@ -362,17 +458,19 @@ export const SettingsPage = () => {
                       <span>VERIFIED</span>
                     </span>
                   </td>
-                  {currentRole.id === 'ADMIN' && (
+                  {(currentRole.id === 'ADMIN' || currentRole.id === 'ADMINISTRATOR' || currentRole?.permissions?.isAdministrator) && (
                     <td className="p-3 text-right">
                       <select
                         value={item.role}
                         onChange={(e) => assignRoleToAddress(item.address, e.target.value)}
                         className="bg-ce-surface border border-ce-border rounded px-2 py-1 text-[11px] text-ce-text-primary focus:outline-none focus:border-ce-brand"
                       >
-                        <option value="ADMIN">ADMIN</option>
-                        <option value="MANAGER">MANAGER</option>
-                        <option value="AUDITOR">AUDITOR</option>
-                        <option value="USER">USER</option>
+                        <option value="FIRST_RESPONDER">First Responder</option>
+                        <option value="FORENSIC_ANALYST">Forensic Analyst</option>
+                        <option value="EVIDENCE_CUSTODIAN">Evidence Custodian</option>
+                        <option value="INVESTIGATOR">Investigator</option>
+                        <option value="AUDITOR">Auditor</option>
+                        <option value="ADMINISTRATOR">Administrator</option>
                       </select>
                     </td>
                   )}
@@ -402,11 +500,13 @@ export const SettingsPage = () => {
             <thead className="bg-ce-surface-subtle text-ce-text-muted uppercase text-[10px] tracking-wider border-b border-ce-border">
               <tr>
                 <th className="p-3">Operation / Capability</th>
-                <th className="p-3">Smart Contract Governance Rule</th>
+                <th className="p-3">Security Governance Rule</th>
                 <th className="p-3 text-center text-rose-400 font-bold">Admin</th>
-                <th className="p-3 text-center text-amber-400 font-bold">Manager</th>
+                <th className="p-3 text-center text-emerald-400 font-bold">Custodian</th>
+                <th className="p-3 text-center text-amber-400 font-bold">Investigator</th>
+                <th className="p-3 text-center text-purple-400 font-bold">Forensic</th>
+                <th className="p-3 text-center text-blue-400 font-bold">Responder</th>
                 <th className="p-3 text-center text-cyan-400 font-bold">Auditor</th>
-                <th className="p-3 text-center text-emerald-400 font-bold">User</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-ce-border bg-ce-bg">
@@ -418,13 +518,19 @@ export const SettingsPage = () => {
                     {m.ADMIN ? <span className="text-ce-success font-bold">✓ ALLOWED</span> : <span className="text-ce-text-muted opacity-40">✕ DENIED</span>}
                   </td>
                   <td className="p-3 text-center">
-                    {m.MANAGER ? <span className="text-ce-success font-bold">✓ ALLOWED</span> : <span className="text-ce-text-muted opacity-40">✕ DENIED</span>}
+                    {m.CUSTODIAN ? <span className="text-ce-success font-bold">✓ ALLOWED</span> : <span className="text-ce-text-muted opacity-40">✕ DENIED</span>}
+                  </td>
+                  <td className="p-3 text-center">
+                    {m.INVESTIGATOR ? <span className="text-ce-success font-bold">✓ ALLOWED</span> : <span className="text-ce-text-muted opacity-40">✕ DENIED</span>}
+                  </td>
+                  <td className="p-3 text-center">
+                    {m.FORENSIC ? <span className="text-ce-success font-bold">✓ ALLOWED</span> : <span className="text-ce-text-muted opacity-40">✕ DENIED</span>}
+                  </td>
+                  <td className="p-3 text-center">
+                    {m.RESPONDER ? <span className="text-ce-success font-bold">✓ ALLOWED</span> : <span className="text-ce-text-muted opacity-40">✕ DENIED</span>}
                   </td>
                   <td className="p-3 text-center">
                     {m.AUDITOR ? <span className="text-ce-success font-bold">✓ ALLOWED</span> : <span className="text-ce-text-muted opacity-40">✕ DENIED</span>}
-                  </td>
-                  <td className="p-3 text-center">
-                    {m.USER ? <span className="text-ce-success font-bold">✓ ALLOWED</span> : <span className="text-ce-text-muted opacity-40">✕ DENIED</span>}
                   </td>
                 </tr>
               ))}
@@ -537,10 +643,12 @@ export const SettingsPage = () => {
                   onChange={(e) => setNewUserRole(e.target.value)}
                   className="w-full bg-ce-bg border border-ce-border rounded px-3 py-2 text-ce-text-primary focus:outline-none focus:border-ce-brand"
                 >
-                  <option value="USER">USER (General Custodian)</option>
-                  <option value="AUDITOR">AUDITOR (Independent Verifier)</option>
-                  <option value="MANAGER">MANAGER (Operations Manager)</option>
-                  <option value="ADMIN">ADMIN (System Administrator)</option>
+                  <option value="FIRST_RESPONDER">First Responder (CERT / Incident Intake)</option>
+                  <option value="FORENSIC_ANALYST">Forensic Analyst (Lab / Reverse Engineering)</option>
+                  <option value="EVIDENCE_CUSTODIAN">Evidence Custodian (Court / Vault Governance)</option>
+                  <option value="INVESTIGATOR">Investigator (Cyber Police LEA / FIR)</option>
+                  <option value="AUDITOR">Auditor (Independent Oversight)</option>
+                  <option value="ADMINISTRATOR">Administrator (Platform Governance)</option>
                 </select>
               </div>
 

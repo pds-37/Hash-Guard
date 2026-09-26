@@ -23,7 +23,7 @@ import { useApp } from '../../context/AppContext';
 import { Logo } from '../common/Logo';
 
 export const Sidebar = ({ isMobileOpen, setMobileOpen }) => {
-  const { currentRole, switchRole, isTamperSimulated, walletAddress, did, connectWallet } = useApp();
+  const { currentOrg, switchOrg, currentRole, switchRole, isTamperSimulated, walletAddress, did, connectWallet } = useApp();
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const navigationGroups = [
@@ -106,37 +106,74 @@ export const Sidebar = ({ isMobileOpen, setMobileOpen }) => {
         {/* Organization / Role Info */}
         <div className={`p-3 border-b border-ce-border ${isCollapsed ? 'px-2' : ''}`}>
           {!isCollapsed ? (
-            <div className="bg-ce-surface-subtle rounded-md p-3 border border-ce-border-strong">
-              <div className="flex items-center justify-between text-[10px] font-mono text-ce-text-muted mb-1.5 uppercase tracking-wider">
-                <span className="flex items-center gap-1.5">
-                  <Building2 className="w-3 h-3 text-ce-brand" />
+            <div className="bg-ce-surface-subtle rounded-md p-3 border border-ce-border-strong space-y-3">
+              <div className="flex items-center justify-between text-[10px] font-mono text-ce-text-muted uppercase tracking-wider">
+                <span className="flex items-center gap-1.5 font-bold text-ce-brand">
+                  <Building2 className="w-3.5 h-3.5" />
                   Active Context
                 </span>
-                <span className="w-2 h-2 rounded-full bg-ce-success animate-pulse" title="Network Connected" />
+                <span className="flex items-center gap-1">
+                  <span className="w-2 h-2 rounded-full bg-ce-success animate-pulse" title="Network Connected" />
+                  <span className="text-[9px] text-ce-success font-semibold">SYNCED</span>
+                </span>
               </div>
-              <div className="text-xs font-semibold text-ce-text-primary truncate" title={currentRole.orgName}>
-                {currentRole.orgName}
+
+              {/* Organization Selector (WHERE the user belongs) */}
+              <div>
+                <label className="block text-[10px] font-mono font-bold text-ce-text-muted uppercase tracking-wider mb-1">
+                  Organization
+                </label>
+                <select
+                  value={currentOrg?.id || 'ORG_B'}
+                  onChange={(e) => switchOrg(e.target.value)}
+                  className="w-full bg-ce-surface border border-ce-border text-[11px] text-ce-text-primary rounded px-2 py-1.5 font-mono focus:outline-none focus:border-ce-brand focus:ring-1 focus:ring-ce-brand cursor-pointer"
+                  title="Switch Participating Organization Context"
+                >
+                  <option value="ORG_A">Organization A — CERT-Alpha</option>
+                  <option value="ORG_B">Organization B — Cyber Defense Lab</option>
+                  <option value="ORG_C">Organization C — Judicial Court Registry</option>
+                  <option value="ORG_D">Organization D — Cyber Crime Police (LEA)</option>
+                  <option value="ORG_AUDIT">Audit Board — Independent Oversight</option>
+                </select>
+                <div className="text-[10px] text-ce-text-muted font-sans mt-0.5 truncate">
+                  Scope: {currentOrg?.function || 'Forensic Lab'}
+                </div>
               </div>
-              
-              <div className="mt-3 pt-3 border-t border-ce-border">
+
+              {/* RBAC Role Selector (WHAT the user is allowed to do) */}
+              <div className="pt-2 border-t border-ce-border/60">
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-[10px] font-mono font-bold text-ce-text-muted uppercase tracking-wider">
+                    Role
+                  </label>
+                  <span className={`text-[9px] font-mono font-bold px-1.5 py-0.2 rounded border ${currentRole.badgeColor}`}>
+                    RBAC
+                  </span>
+                </div>
                 <select
                   value={currentRole.id}
                   onChange={(e) => switchRole(e.target.value)}
                   className="w-full bg-ce-surface border border-ce-border text-[11px] text-ce-text-primary rounded px-2 py-1.5 font-mono focus:outline-none focus:border-ce-brand focus:ring-1 focus:ring-ce-brand cursor-pointer"
+                  title="Switch Role-Based Access Control Role"
                 >
-                  <option value="ORG_B">Org B: Cyber Defense Lab (Analyst)</option>
-                  <option value="ORG_A">Org A: CERT-Alpha (First Responder)</option>
-                  <option value="ORG_C">Org C: Judicial Court Registry</option>
-                  <option value="ORG_D">Org D: Cyber Crime Police (LEA)</option>
-                  <option value="AUDITOR">Audit Board (Independent Oversight)</option>
+                  <option value="FIRST_RESPONDER">First Responder</option>
+                  <option value="FORENSIC_ANALYST">Forensic Analyst</option>
+                  <option value="EVIDENCE_CUSTODIAN">Evidence Custodian</option>
+                  <option value="INVESTIGATOR">Investigator</option>
+                  <option value="AUDITOR">Auditor</option>
+                  <option value="ADMINISTRATOR">Administrator</option>
                 </select>
               </div>
 
-              <div className="mt-2">
+              {/* Decentralized Identifier (DID) */}
+              <div className="pt-2 border-t border-ce-border/60">
+                <span className="block text-[10px] font-mono font-bold text-ce-text-muted uppercase tracking-wider mb-1">
+                  DID
+                </span>
                 {walletAddress ? (
                   <div className="text-[10px] font-mono text-ce-blockchain bg-ce-blockchain/10 border border-ce-blockchain/20 rounded p-1.5 truncate flex items-center gap-1.5" title={did}>
-                    <Wallet className="w-3 h-3" />
-                    {did}
+                    <Wallet className="w-3 h-3 shrink-0" />
+                    <span className="truncate">{did}</span>
                   </div>
                 ) : (
                   <button 
@@ -151,7 +188,7 @@ export const Sidebar = ({ isMobileOpen, setMobileOpen }) => {
             </div>
           ) : (
             <div className="flex flex-col items-center gap-2 py-2">
-              <div className="w-8 h-8 rounded-md bg-ce-surface-subtle border border-ce-border-strong flex items-center justify-center relative">
+              <div className="w-8 h-8 rounded-md bg-ce-surface-subtle border border-ce-border-strong flex items-center justify-center relative" title={`${currentOrg?.shortName || 'Org'} • ${currentRole?.name || 'Role'}`}>
                 <Building2 className="w-4 h-4 text-ce-brand" />
                 <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-ce-success border-2 border-ce-surface" />
               </div>

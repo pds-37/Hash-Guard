@@ -45,6 +45,14 @@
   - [Cross-Organization Transfer Protocol](#cross-organization-transfer-protocol)
 - [Platform Showcase & Route Directory](#-platform-showcase--route-directory)
 - [Technology Stack](#-technology-stack)
+- [Retention Management & Legal Hold Preservation](#-retention-management--legal-hold-preservation)
+  - [Retention Policy Architecture & Presets](#retention-policy-architecture--presets)
+  - [Legal Hold Preservation Orders & Deletion Guards](#legal-hold-preservation-orders--deletion-guards)
+  - [Immutable Audit Ledger Retention Events](#immutable-audit-ledger-retention-events)
+- [Organization vs. RBAC Role Separation Architecture](#-organization-vs-rbac-role-separation-architecture)
+  - [The 5 Participating Organizations (WHERE)](#the-5-participating-organizations-where)
+  - [The 6 Distinct RBAC Roles (WHAT)](#the-6-distinct-rbac-roles-what)
+  - [Granular RBAC Permissions Matrix](#granular-rbac-permissions-matrix)
 - [Smart Contract Deep Dive (`HASHGUARD.sol`)](#-smart-contract-deep-dive)
   - [Decentralized Identifiers (W3C DID v1.0)](#1-decentralized-identifiers-w3c-did-v10)
   - [NFT-Based Asset Ownership (ERC-721)](#2-nft-based-asset-ownership-erc-721)
@@ -56,6 +64,7 @@
   - [Method 1: Instant Evaluation (Frontend + Zero-Config Offline Sandbox)](#method-1-instant-evaluation-frontend--zero-config-offline-sandbox)
   - [Method 2: Standalone Node.js Microservice Backend](#method-2-standalone-nodejs-microservice-backend)
   - [Method 3: Production Docker Compose Enterprise Stack](#method-3-production-docker-compose-enterprise-stack)
+- [Step-by-Step Verification & Testing Guide (TEST 1 – TEST 7)](#-step-by-step-verification--testing-guide-test-1--test-7)
 - [Interactive Tamper Simulation & Verification](#-interactive-tamper-simulation--verification)
 - [AI Threat Triage Integration](#-ai-threat-triage-integration)
 - [Legal, Regulatory & Standards Admissibility](#-legal-regulatory--standards-admissibility)
@@ -296,6 +305,157 @@ The platform provides a responsive, single-page application built on React 19, m
 
 ---
 
+## ⚖️ Retention Management & Legal Hold Preservation
+
+In forensic incident response and judicial prosecution, evidence lifecycle governance is governed by strict legal rules (NIST SP 800-88 Rev. 1, ISO/IEC 27037:2012, and criminal procedural discovery mandates). Evidence cannot simply be retained indefinitely or deleted arbitrarily. HASHGUARD implements an automated, cryptographically audited **Retention Management & Legal Hold Engine**.
+
+### Retention Policy Architecture & Presets
+
+Administrators and Evidence Custodians configure granular retention policies through **Admin → Retention** (`/retention`). Every policy governs how long evidence remains active, what events initiate its lifecycle countdown, and what action occurs upon expiry.
+
+| Preset Policy Name | Retention Period | Trigger Event | Action on Expiry | Legal Hold Override |
+|---|---|---|---|---|
+| **Active Investigation Evidence** | 365 Days (1 Year) | `Evidence Sealed (Creation)` | `Notify Custodian for Review` | Enabled (`true`) |
+| **Closed Case Evidence** | 180 Days (6 Months) | `Case Closed` | `Archive to Cold Storage` | Enabled (`true`) |
+| **Forensic / Malware Evidence** | 1825 Days (5 Years) | `Evidence Sealed (Creation)` | `Archive to Cold Storage` | Enabled (`true`) |
+| **Temporary / Unverified Evidence** | 30 Days (1 Month) | `Evidence Uploaded` | `Purge / Secure Delete (NIST SP 800-88)` | Enabled (`true`) |
+
+#### Policy Configuration Parameters:
+- **Policy Name**: Pre-configured or custom case classification.
+- **Retention Period (Days)**: Integer duration of active lifecycle.
+- **Trigger Event**:
+  - `Evidence Uploaded`: Countdown commences immediately upon initial ingest.
+  - `Evidence Sealed (Creation)`: Countdown commences upon cryptographic bitstream hashing & sealing.
+  - `Case Closed`: Countdown commences once the investigating agency closes the case docket.
+  - `Transfer Completed`: Countdown begins upon verified receipt by the destination agency.
+  - `Court Admissibility Granted`: Countdown begins when judicial court registry admits the exhibit into evidence.
+- **Action on Expiry**:
+  - `Archive to Cold Storage`: Encrypted payload moved to deep cold storage, metadata and hashes preserved on-chain.
+  - `Purge / Secure Delete (NIST SP 800-88)`: Verifiable cryptographic media sanitization.
+  - `Notify Custodian for Review`: Automated notification dispatched to custodian for lifecycle re-evaluation.
+  - `Require Multi-Party Approval`: Deletion blocked until multi-agency cryptographic consensus is reached.
+- **`[x] Allow Legal Hold Override`**: When checked, authorized legal officers can place evidence under a preservation order that suspends the retention timer and prevents automatic expiry actions.
+
+---
+
+### Legal Hold Preservation Orders & Deletion Guards
+
+A **Legal Hold** (also known as a litigation preservation order) is an urgent legal mandate issued by a judicial body, regulatory authority, or legal counsel requiring an organization to preserve all forms of relevant digital evidence.
+
+```
+       +-------------------------------------------------------+
+       |             RETENTION COUNTDOWN ACTIVE                |
+       |  Expires in: 342 days (Policy: Active Investigation)  |
+       +-------------------------------------------------------+
+                                  │
+                   [ APPLY LEGAL HOLD ORDER ]
+                                  │
+                                  ▼
+       +=======================================================+
+       |              ⚖️ LEGAL HOLD ACTIVE                     |
+       |   Status: LEGAL HOLD   •   Countdown: SUSPENDED       |
+       |   Reason: "Court Preservation Order - Case 2026-9012" |
+       |   Protected: Hard Deletion Block Enforced (HTTP 403)  |
+       +=======================================================+
+                                  │
+                  [ RELEASE LEGAL HOLD ORDER ]
+                                  │
+                                  ▼
+       +-------------------------------------------------------+
+       |             RETENTION COUNTDOWN RESUMED               |
+       |  Expires in: 342 days (Countdown unpaused)            |
+       +-------------------------------------------------------+
+```
+
+#### Dual-Layer Deletion Protection Hierarchy:
+1. **RBAC Guard**: Only users with the `ADMINISTRATOR` role are permitted to execute evidence deletions. All other roles receive an immediate access denial.
+2. **Legal Hold Immunity Guard**: If an evidence exhibit is marked with `legalHold: true` or `retentionStatus: 'LEGAL HOLD'`, **it is completely immune to deletion**. Even an Administrator attempting deletion will be blocked by both the client UI and the backend API (HTTP 403 Forbidden: *"DELETION BLOCKED: Evidence exhibit is protected under an active Legal Hold preservation order"*).
+3. **Visual Indicators**: Exhibits under hold display a distinct purple `HOLD` badge in the Evidence Repository, a lock icon in place of the delete button, and a dedicated **LEGAL HOLDS (ACTIVE PRESERVATION ORDERS)** monitoring panel on the Retention Dashboard.
+
+---
+
+### Immutable Audit Ledger Retention Events
+
+Every retention configuration, state change, and legal hold intervention is recorded into the immutable audit ledger with actor DID, timestamp, and transaction proof:
+
+- `RETENTION_POLICY_CREATED`: Emitted when a new lifecycle policy is published.
+- `RETENTION_POLICY_UPDATED`: Emitted when retention duration or expiry actions are updated.
+- `RETENTION_STARTED`: Emitted when an exhibit is bound to a policy and the retention countdown starts.
+- `RETENTION_EXPIRED`: Emitted when retention countdown expires.
+- `EVIDENCE_ARCHIVED`: Emitted when an exhibit is transitioned to long-term cold storage.
+- `LEGAL_HOLD_APPLIED`: Emitted when a preservation order freezes an evidence exhibit.
+- `LEGAL_HOLD_RELEASED`: Emitted when an authorized officer dissolves a preservation order.
+- `EVIDENCE_DELETION_APPROVED`: Emitted when multi-party consensus authorizes the deletion of an expired, unprotected exhibit.
+
+---
+
+## 🏛️ Organization vs. RBAC Role Separation Architecture
+
+A core architectural principle of HASHGUARD is the strict separation between **Organization** (WHERE the user belongs / data scope & jurisdiction) and **RBAC Role** (WHAT the user is authorized to perform / operational privileges).
+
+```
+   ┌──────────────────────────────────────────────────────────────┐
+   │               WHERE: Participating Organization              │
+   │      (Agency Data Scope, Geographic Node, mTLS Endpoint)     │
+   ├───────────────────┬───────────────────┬──────────────────────┤
+   │   Organization A  │   Organization B  │    Organization C    │
+   │    (CERT-Alpha)   │  (Cyber Defense)  │   (Judicial Court)   │
+   ├───────────────────┼───────────────────┼──────────────────────┤
+   │   Organization D  │    Audit Board    │   (Extensible...)    │
+   │  (Cyber Police)   │   (Independent)   │                      │
+   └───────────────────┴───────────────────┴──────────────────────┘
+                                  ▲
+                                  │ Independent Binding
+                                  ▼
+   ┌──────────────────────────────────────────────────────────────┐
+   │                 WHAT: Role-Based Access Control              │
+   │              (Operational Permissions & Authority)           │
+   ├───────────────────┬───────────────────┬──────────────────────┤
+   │  First Responder  │ Forensic Analyst  │  Evidence Custodian  │
+   ├───────────────────┼───────────────────┼──────────────────────┤
+   │   Investigator    │      Auditor      │    Administrator     │
+   └───────────────────┴───────────────────┴──────────────────────┘
+```
+
+### The 5 Participating Organizations (WHERE)
+
+1. **Organization A — CERT-Alpha**: Computer Emergency Response Team node. Specializes in initial incident triage, live triage memory acquisition, bitstream disk imaging, and mTLS dispatch.
+2. **Organization B — Cyber Defense Lab**: State forensic defense laboratory. Specializes in dynamic sandboxing, malware reverse engineering, derived sub-artifact generation, and cryptographic hash verification.
+3. **Organization C — Judicial Court Registry**: Judicial registry and forensic vault. Governs legal court exhibits, Section 65B forensic certificates, and legal hold preservation orders.
+4. **Organization D — Cyber Crime Police (LEA)**: Law enforcement agency. Governs crime scene raids, First Information Report (FIR) exhibits, and cross-agency chain of custody handoffs.
+5. **Audit Board — Independent Oversight**: Independent oversight authority. Maintains an air-gapped, zero-trust observation node to audit hash roots, custody continuity, and retention compliance across all agencies.
+
+### The 6 Distinct RBAC Roles (WHAT)
+
+- **First Responder**: Ingests primary evidence, computes SHA-256 digests, seals evidence manifests, and initiates cross-agency dispatch.
+- **Forensic Analyst**: Conducts isolated sandbox analysis, derives child artifacts (L2 lineage), and verifies bit-level integrity.
+- **Evidence Custodian**: Accepts inbound custody, administers vault storage, applies/releases legal holds, and issues Section 65B certificates.
+- **Investigator**: Logs crime scene exhibits, attaches FIR references, and submits legal hold preservation requests.
+- **Auditor**: Executes independent zero-trust cryptographic verifications, inspects raw transaction ledgers, and generates court certificates without receiving administrative or modification privileges.
+- **Administrator**: Governs platform retention policies, configures RBAC role bindings, manages smart contract settings, and oversees system health.
+
+### Granular RBAC Permissions Matrix
+
+| Capability / Action | Administrator | Evidence Custodian | Investigator | Forensic Analyst | First Responder | Auditor |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|
+| **Collect & Ingest Evidence** | ✓ | ✕ | ✓ | ✕ | ✓ | ✕ |
+| **Generate SHA-256 Bitstream Digest** | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **Seal Evidence Manifest** | ✓ | ✓ | ✓ | ✕ | ✓ | ✕ |
+| **Dispatch Custody Transfer** | ✓ | ✓ | ✓ | ✓ | ✓ | ✕ |
+| **Accept Inbound Transfer** | ✓ | ✓ | ✓ | ✓ | ✕ | ✕ |
+| **Sandbox Malware Analysis** | ✓ | ✕ | ✕ | ✓ | ✕ | ✕ |
+| **Derive Forensic Artifacts (Lineage DAG)** | ✓ | ✕ | ✕ | ✓ | ✕ | ✕ |
+| **Zero-Trust Root Verification** | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **Manage Retention Policies** | ✓ | ✓ | ✕ | ✕ | ✕ | ✕ |
+| **Apply Legal Hold Preservation Order** | ✓ | ✓ | ✓ | ✕ | ✕ | ✕ |
+| **Release Legal Hold Order** | ✓ | ✓ | ✕ | ✕ | ✕ | ✕ |
+| **Delete Exhibit (Unprotected Only)** | ✓ | ✕ | ✕ | ✕ | ✕ | ✕ |
+| **Inspect Ledger, Custody & Lineage** | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+
+> **Key Security Guarantee**: An officer from the `Audit Board — Independent Oversight` with the `Auditor` role has full inspection and zero-trust verification privileges across all agency records, but **cannot modify, delete, or transfer evidence**, maintaining pristine separation of powers.
+
+---
+
 ## 📜 Smart Contract Deep Dive
 
 The contract [`contracts/HASHGUARD.sol`](contracts/HASHGUARD.sol) is written in Solidity `^0.8.20` and extends OpenZeppelin's `ERC721` and `AccessControl`.
@@ -445,6 +605,129 @@ docker-compose ps
 # In .env: set VITE_API_BASE_URL=http://localhost:8001/api/v1 and VITE_ENABLE_MOCK_FALLBACK=false
 npm run dev
 ```
+
+---
+
+## 🧪 Step-by-Step Verification & Testing Guide (TEST 1 – TEST 7)
+
+Follow this rigorous verification protocol to evaluate the Retention Management, Legal Hold Preservation, Organization vs. Role RBAC Separation, and Cryptographic Ledger Integrity.
+
+---
+
+### TEST 1: Retention Policy Creation
+**Objective**: Verify that custom or preset retention policies can be configured with trigger events, expiry actions, and legal hold override options, and that the creation event is permanently anchored in the audit ledger.
+
+1. In the sidebar, under **ADMIN**, click **Retention** (`/retention`). *(Ensure your active role is `Administrator` or `Evidence Custodian`)*.
+2. In the **Create Retention Policy** form:
+   - **Policy Name**: Select `"Active Investigation Evidence"` (or type a custom policy name).
+   - **Retention Period (Days)**: Enter `365`.
+   - **Trigger Event**: Select `"Evidence Uploaded"` (or `"Evidence Sealed (Creation)"`).
+   - **Action on Expiry**: Select `"Archive to Cold Storage"`.
+   - **Allow Legal Hold Override**: Ensure the checkbox `[x] Allow Legal Hold Override` is checked.
+3. Click **"Deploy Retention Policy"**.
+4. **Expected Results**:
+   - The policy immediately appears in the **Active Retention Policies** table with status badge `ACTIVE` and `Override: ENABLED`.
+   - Navigate to **Audit Ledger** (`/audit`). Verify a new immutable event log entry with event type **`RETENTION_POLICY_CREATED`**, containing the policy name, trigger, and actor DID.
+
+---
+
+### TEST 2: Evidence Under Legal Hold & Deletion Guards
+**Objective**: Verify that digital exhibits protected by an active Legal Hold preserve their status, suspend their retention countdown, and block deletion attempts across the platform.
+
+1. Navigate to **Evidence Repository** (`/evidence`).
+2. Locate exhibit **`EV-009`** (e.g. *LockBit 3.0 Ransomware Primary Ingress Payload*).
+3. **Observe the indicators**:
+   - Next to the Evidence ID, a purple **`HOLD`** badge is prominently displayed.
+   - The exhibit row action displays a **Lock** icon instead of the normal trash can.
+4. Click **Inspect** to open **Evidence Dossier** (`/evidence/EV-009`).
+5. In the **RETENTION & LEGAL HOLD LIFECYCLE** card:
+   - **Legal Hold Status**: Displays `ACTIVE (ORDER FROZEN)` with a purple glowing shield.
+   - **Retention Expiry**: Displays **`SUSPENDED`** (countdown frozen, protected against automatic archival or purge).
+   - **Preservation Order**: Shows the recorded legal justification (e.g. *High Court Writ Petition 4092/2026 - Preservation of Ransomware Artifacts*).
+   - **Deletion Guard**: Displays `BLOCKED BY LEGAL HOLD`.
+6. Attempt to delete the exhibit:
+   - Even if you switch your role to **`Administrator`** in the sidebar, clicking the delete action displays an immediate security modal:
+     > `❌ DELETION BLOCKED: Evidence exhibit EV-009 is protected under an active Legal Hold preservation order and cannot be deleted.`
+
+---
+
+### TEST 3: Apply Legal Hold to Active Evidence
+**Objective**: Verify that an authorized officer can apply a legal hold preservation order to an unprotected evidence exhibit, instantly halting its countdown and protecting it from deletion.
+
+1. Navigate to **Evidence Repository** (`/evidence`) and click **Inspect** on an exhibit without a hold (e.g. **`EV-001`**).
+2. Note the initial state: Retention Status is `ACTIVE` and countdown shows the remaining days.
+3. Scroll to the **RETENTION & LEGAL HOLD LIFECYCLE** card and click **"Apply Legal Hold"** (or use the **"Apply Legal Hold"** button on `/retention`).
+4. In the modal:
+   - **Preservation Order / Legal Reason**: Enter `"Court Preservation Order - Case 2026-9012"`.
+   - **Case Docket Reference**: Enter `"CR-2026-SEC65B-9012"`.
+5. Click **"Freeze Under Legal Hold"**.
+6. **Expected Results**:
+   - The exhibit status immediately switches to **`LEGAL HOLD`**.
+   - The retention countdown displays **`SUSPENDED`**.
+   - Navigate to **Audit Ledger** (`/audit`). Verify an immutable entry with event type **`LEGAL_HOLD_APPLIED`** signed by your active DID.
+
+---
+
+### TEST 4: Release Legal Hold
+**Objective**: Verify that an authorized custodian can lift a preservation order, resuming the retention countdown and normal lifecycle governance.
+
+1. On the dossier page for the exhibit placed under hold in TEST 3 (or on `/retention` under **LEGAL HOLDS**), click **"Release Legal Hold"**.
+2. In the release authorization modal:
+   - **Release Authorization / Court Order**: Enter `"Judicial Court Registry Clearance Order JCR-8821 - Formal Dismissal"`.
+3. Click **"Dissolve Hold Order"**.
+4. **Expected Results**:
+   - The exhibit status reverts to **`ACTIVE`** (or `IN VAULT`).
+   - The retention countdown is restored and resumes ticking down.
+   - In **Audit Ledger** (`/audit`), verify a new immutable log entry with event type **`LEGAL_HOLD_RELEASED`**.
+
+---
+
+### TEST 5: Retention Expiry Action
+**Objective**: Verify that when evidence exceeds its designated retention duration, the configured lifecycle action (e.g. `ARCHIVED`) is triggered and registered.
+
+1. Navigate to **Evidence Repository** (`/evidence`).
+2. Identify an exhibit with expired retention lifecycle (e.g. exhibits tagged with `ARCHIVED` or `EXPIRED`).
+3. Observe that the exhibit is flagged with status badge `ARCHIVED` and its payload access is secured in cold storage.
+4. Filter **Audit Ledger** (`/audit`) by Event: **`RETENTION_EXPIRED`** or **`EVIDENCE_ARCHIVED`**.
+5. Verify that the automated lifecycle transition was recorded with verified block timestamp and audit hash.
+
+---
+
+### TEST 6: Organization vs. Role Separation
+**Objective**: Verify that Organization (WHERE) and Role (WHAT) operate independently with strict RBAC enforcement.
+
+1. In the sidebar's **Active Context** panel:
+   - **Organization Selector**: Set to **`Organization A — CERT-Alpha`**.
+   - **Role Selector**: Set to **`First Responder`**.
+   - Click **"+ Collect & Seal Evidence"** at the top: The evidence collection modal opens normally.
+   - Try navigating to **Retention** (`/retention`): Notice a read-only RBAC banner appears explaining that First Responders have read-only inspection access; policy deployment controls are disabled.
+2. In the sidebar:
+   - Switch **Organization** to **`Audit Board — Independent Oversight`**.
+   - Switch **Role** to **`Auditor`**.
+   - Navigate to **Zero-Trust Verification** (`/verification`): Full verification algorithms, root hash audit, and Section 65B certificate generation are accessible.
+   - Try to delete an exhibit or collect new evidence: All modification and deletion actions are strictly denied.
+3. In the sidebar:
+   - Switch **Organization** to **`Organization B — Cyber Defense Lab`**.
+   - Switch **Role** to **`Forensic Analyst`**.
+   - Open any evidence dossier and inspect the **Forensic Actions**: Sandbox analysis and child artifact derivation (Lineage DAG) are enabled, while platform administration remains locked.
+
+---
+
+### TEST 7: Audit Ledger Verification
+**Objective**: Verify that all retention, legal hold, and custody activities generate tamper-proof audit records that can be filtered and cryptographically validated.
+
+1. In the sidebar, click **Audit Logs** (`/audit`).
+2. In the **Event Filter** dropdown, test filtering by:
+   - `RETENTION_POLICY_CREATED`
+   - `LEGAL_HOLD_APPLIED`
+   - `LEGAL_HOLD_RELEASED`
+   - `RETENTION_EXPIRED`
+3. In the **Organization Filter** dropdown, select **`Audit Board (Independent Oversight)`** and **`Organization A (CERT-Alpha)`**.
+4. Click **Inspect** on any log row to review the cryptographic details:
+   - **Log Hash**: SHA-256 digest of the audit record.
+   - **Actor DID**: Verifiable decentralized identifier (`did:ethr:0x...`).
+   - **Timestamp**: RFC-3339 / UTC timestamp.
+   - **Transaction Hash / Block Reference**: EVM consensus proof.
 
 ---
 

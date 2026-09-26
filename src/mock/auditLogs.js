@@ -1,5 +1,29 @@
 export const mockAuditLogs = [
   {
+    id: "LOG-10955",
+    timestamp: "2026-08-16 09:45:00 UTC",
+    event: "LEGAL_HOLD_APPLIED",
+    actor: "magistrate-court@org-c.gov",
+    organization: "Organization C — Judicial Court Registry",
+    evidenceId: "EV-009",
+    eventId: "EVT-9150",
+    verification: "VERIFIED",
+    reference: "Docket #JD-2026-881 (0x991823...)",
+    details: "Legal Hold preservation order applied to evidence EV-009. Reason: Court-ordered evidence hold pending Section 65B forensic verification. Retention countdown SUSPENDED, deletion BLOCKED."
+  },
+  {
+    id: "LOG-10950",
+    timestamp: "2026-08-15 08:00:00 UTC",
+    event: "RETENTION_POLICY_CREATED",
+    actor: "admin@hashguard.gov",
+    organization: "Platform Governance Authority",
+    evidenceId: "POL-001",
+    eventId: "EVT-8901",
+    verification: "VERIFIED",
+    reference: "Governance Policy Enclave",
+    details: "Retention policy 'Active Investigation Evidence' created (365 Days, Trigger: Evidence Sealed, Expiry Action: Archive to Cold Storage, Legal Hold: Enabled)."
+  },
+  {
     id: "LOG-10948",
     timestamp: "2026-08-16 13:20:00 UTC",
     event: "LINEAGE_VERIFICATION",

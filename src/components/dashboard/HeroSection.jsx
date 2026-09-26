@@ -3,7 +3,7 @@ import { ShieldCheck, Activity, Building2, AlertTriangle, RefreshCw } from 'luci
 import { useApp } from '../../context/AppContext';
 
 export const HeroSection = ({ criticalAlertsCount = 0 }) => {
-  const { currentRole, isTamperSimulated } = useApp();
+  const { currentOrg, currentRole, isTamperSimulated } = useApp();
   const user = React.useMemo(() => {
     try {
       return JSON.parse(localStorage.getItem('cee_user') || '{}');
@@ -12,8 +12,9 @@ export const HeroSection = ({ criticalAlertsCount = 0 }) => {
     }
   }, []);
 
-  const displayOrgName = user.orgName || currentRole.orgName;
-  const displayName = user.name ? `${user.name} • ${currentRole.roleName.split('/')[0]}` : currentRole.roleName.split('/')[0];
+  const displayOrgName = currentOrg?.name || user.orgName || currentRole.orgName;
+  const roleTitle = currentRole?.name || currentRole?.roleName || 'Operator';
+  const displayName = user.name ? `${user.name} • ${roleTitle}` : roleTitle;
 
   return (
     <div className="bg-ce-surface border border-ce-border rounded-lg p-4 md:p-6 mb-6">

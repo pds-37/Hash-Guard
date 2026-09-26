@@ -11,6 +11,7 @@ import { Badge } from '../../components/common/Badge';
 import { LoadingState, ErrorState } from '../../components/common/StateViews';
 import { evidenceService } from '../../services/evidenceService';
 import { custodyService } from '../../services/custodyService';
+import { retentionService } from '../../services/retentionService';
 import { useApp } from '../../context/AppContext';
 import { API_BASE_URL } from '../../services/api';
 import {
@@ -19,12 +20,18 @@ import {
   ShieldCheck,
   Zap,
   Trash2,
+  Clock,
+  Lock,
+  Unlock,
+  AlertTriangle,
+  CheckCircle2,
+  FileText
 } from 'lucide-react';
 
 export const EvidenceDetailsPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { isTamperSimulated, toggleTamperSimulation, refreshTrigger, isSandboxMode } = useApp();
+  const { currentOrg, currentRole, isTamperSimulated, toggleTamperSimulation, refreshTrigger, triggerRefresh, isSandboxMode } = useApp();
 
   const [evidence, setEvidence] = useState(null);
   const [custodyEvents, setCustodyEvents] = useState([]);
@@ -85,13 +92,66 @@ export const EvidenceDetailsPage = () => {
   }
 
   const handleDelete = async () => {
+    // 1. RBAC Permission Check
+    if (!currentRole.permissions?.canDeleteEvidence && currentRole.id !== 'ADMINISTRATOR') {
+      alert(`❌ ACCESS DENIED: Role '${currentRole.name}' does not have permission to delete evidence exhibits. Administrator privileges required.`);
+      return;
+    }
+
+    // 2. Legal Hold Override Check
+    if (evidence.legalHold || evidence.retentionStatus === 'LEGAL HOLD') {
+      alert(`❌ DELETION BLOCKED: Evidence exhibit ${id} is protected under an active Legal Hold preservation order and cannot be deleted.`);
+      return;
+    }
+
     if (window.confirm(`Are you sure you want to permanently delete Evidence ${id}?`)) {
       try {
         await evidenceService.deleteEvidence(id);
+        triggerRefresh();
         navigate('/evidence');
       } catch (err) {
         alert(`Failed to delete evidence: ${err.message}`);
       }
+    }
+  };
+
+  const handleApplyLegalHold = async () => {
+    const reason = window.prompt(
+      `Enter reason for applying Legal Hold to Evidence ${id}:`,
+      'Court-ordered preservation order pending forensic proceedings.'
+    );
+    if (!reason) return;
+
+    try {
+      await retentionService.applyLegalHold(
+        id,
+        reason,
+        `${currentRole.name} (${currentOrg.shortName})`,
+        currentOrg.name
+      );
+      triggerRefresh();
+    } catch (err) {
+      alert(`Failed to apply Legal Hold: ${err.message}`);
+    }
+  };
+
+  const handleReleaseLegalHold = async () => {
+    const reason = window.prompt(
+      `Enter reason for releasing Legal Hold on Evidence ${id}:`,
+      'Judicial proceedings concluded. Evidence restored to standard retention countdown.'
+    );
+    if (!reason) return;
+
+    try {
+      await retentionService.releaseLegalHold(
+        id,
+        reason,
+        `${currentRole.name} (${currentOrg.shortName})`,
+        currentOrg.name
+      );
+      triggerRefresh();
+    } catch (err) {
+      alert(`Failed to release Legal Hold: ${err.message}`);
     }
   };
 
@@ -143,14 +203,18 @@ export const EvidenceDetailsPage = () => {
             <span>Independent Verification</span>
           </Link>
 
-          {/* Delete Exhibit Button */}
+          {/* Delete Exhibit Button (Protected by Legal Hold & RBAC) */}
           <button
             onClick={handleDelete}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-ce-danger/10 hover:bg-ce-danger/20 text-ce-danger border border-ce-danger/30 text-xs font-mono font-bold transition-colors shadow-sm"
-            title="Permanently remove evidence"
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border text-xs font-mono font-bold transition-colors shadow-sm ${
+              evidence.legalHold
+                ? 'bg-ce-surface-subtle text-ce-text-muted border-ce-border cursor-not-allowed opacity-60'
+                : 'bg-ce-danger/10 hover:bg-ce-danger/20 text-ce-danger border-ce-danger/30'
+            }`}
+            title={evidence.legalHold ? 'Deletion blocked: Evidence is protected under Legal Hold' : 'Delete Exhibit'}
           >
-            <Trash2 className="w-3.5 h-3.5" />
-            <span>Delete Exhibit</span>
+            {evidence.legalHold ? <Lock className="w-3.5 h-3.5 text-amber-500" /> : <Trash2 className="w-3.5 h-3.5" />}
+            <span>{evidence.legalHold ? 'Deletion Blocked' : 'Delete Exhibit'}</span>
           </button>
         </div>
       </div>
@@ -196,6 +260,106 @@ export const EvidenceDetailsPage = () => {
               >
                 <Zap className="w-3.5 h-3.5" />
                 <span>{isTamperSimulated ? 'Restore Clean Hash Root' : 'Inject Bit-Tamper Drill'}</span>
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Retention & Legal Hold Lifecycle Card */}
+      <div className="rounded-lg bg-ce-surface border border-ce-border p-5 shadow-sm">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-ce-border mb-4">
+          <div className="flex items-center gap-2">
+            <Clock className="w-4 h-4 text-ce-brand" />
+            <h3 className="text-xs font-mono font-bold tracking-wider uppercase text-ce-text-primary">
+              RETENTION & LEGAL HOLD LIFECYCLE
+            </h3>
+          </div>
+          <div className="flex items-center gap-2">
+            {evidence.legalHold ? (
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-400 border border-amber-500/40 text-[10px] font-mono font-bold animate-pulse">
+                <Lock className="w-3 h-3" />
+                <span>LEGAL HOLD ACTIVE</span>
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-ce-success/10 text-ce-success border border-ce-success/30 text-[10px] font-mono font-bold">
+                <CheckCircle2 className="w-3 h-3" />
+                <span>RETENTION COUNTDOWN ACTIVE</span>
+              </span>
+            )}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 font-mono text-xs">
+          <div className="p-3 rounded-md bg-ce-bg border border-ce-border">
+            <span className="text-[10px] uppercase text-ce-text-muted font-bold block">Policy:</span>
+            <span className="text-ce-text-primary font-bold text-xs mt-1 block">
+              {evidence.retentionPolicyName || 'Active Investigation Evidence'}
+            </span>
+          </div>
+
+          <div className="p-3 rounded-md bg-ce-bg border border-ce-border">
+            <span className="text-[10px] uppercase text-ce-text-muted font-bold block">Expires:</span>
+            <span className={`font-bold text-xs mt-1 block ${evidence.legalHold ? 'text-amber-400 font-bold' : 'text-ce-text-primary'}`}>
+              {evidence.legalHold ? 'SUSPENDED' : (evidence.retentionExpiresAt || '26 Sep 2027')}
+            </span>
+          </div>
+
+          <div className="p-3 rounded-md bg-ce-bg border border-ce-border">
+            <span className="text-[10px] uppercase text-ce-text-muted font-bold block">Status:</span>
+            <span className={`font-bold text-xs mt-1 block ${evidence.legalHold ? 'text-amber-400' : 'text-ce-success'}`}>
+              {evidence.legalHold ? 'LEGAL HOLD' : 'ACTIVE'}
+            </span>
+          </div>
+
+          <div className="p-3 rounded-md bg-ce-bg border border-ce-border">
+            <span className="text-[10px] uppercase text-ce-text-muted font-bold block">Legal Hold:</span>
+            <span className={`font-bold text-xs mt-1 block ${evidence.legalHold ? 'text-amber-400' : 'text-ce-text-muted'}`}>
+              {evidence.legalHold ? 'ACTIVE' : 'NO'}
+            </span>
+          </div>
+        </div>
+
+        {evidence.legalHold && (
+          <div className="mt-3 p-3 rounded-md bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-mono flex items-start gap-2.5">
+            <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+            <div className="space-y-1">
+              <div>
+                <strong>Deletion:</strong> <span className="bg-rose-500/20 text-rose-400 px-1.5 py-0.2 rounded border border-rose-500/30 font-bold">BLOCKED</span> — Automated purging and manual deletion are strictly prohibited by active court preservation order.
+              </div>
+              {evidence.legalHoldReason && (
+                <div className="text-[11px] text-amber-300/90 font-sans">
+                  <strong>Justification:</strong> {evidence.legalHoldReason}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Legal Hold Controls */}
+        <div className="mt-4 pt-3 border-t border-ce-border flex flex-wrap items-center justify-between gap-3">
+          <div className="text-[11px] font-mono text-ce-text-muted">
+            Retention Lifecycle: Evidence Upload → Sealed → Policy Assigned → Countdown → Expiry/Archive
+          </div>
+
+          <div className="flex items-center gap-2">
+            {evidence.legalHold ? (
+              <button
+                type="button"
+                onClick={handleReleaseLegalHold}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-400 border border-emerald-500/30 text-xs font-mono font-bold transition-colors shadow-sm cursor-pointer"
+              >
+                <Unlock className="w-3.5 h-3.5" />
+                <span>Release Legal Hold</span>
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={handleApplyLegalHold}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-amber-500/15 hover:bg-amber-500/25 text-amber-400 border border-amber-500/30 text-xs font-mono font-bold transition-colors shadow-sm cursor-pointer"
+              >
+                <Lock className="w-3.5 h-3.5" />
+                <span>Apply Legal Hold</span>
               </button>
             )}
           </div>

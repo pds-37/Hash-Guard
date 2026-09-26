@@ -40,6 +40,14 @@ export const AuditFilterBar = ({
             <option value="ANALYZE">ANALYZE</option>
             <option value="DERIVE">DERIVE</option>
             <option value="LINEAGE_VERIFICATION">LINEAGE_VERIFICATION</option>
+            <option value="RETENTION_POLICY_CREATED">RETENTION_POLICY_CREATED</option>
+            <option value="RETENTION_POLICY_UPDATED">RETENTION_POLICY_UPDATED</option>
+            <option value="RETENTION_STARTED">RETENTION_STARTED</option>
+            <option value="RETENTION_EXPIRED">RETENTION_EXPIRED</option>
+            <option value="EVIDENCE_ARCHIVED">EVIDENCE_ARCHIVED</option>
+            <option value="LEGAL_HOLD_APPLIED">LEGAL_HOLD_APPLIED</option>
+            <option value="LEGAL_HOLD_RELEASED">LEGAL_HOLD_RELEASED</option>
+            <option value="EVIDENCE_DELETION_APPROVED">EVIDENCE_DELETION_APPROVED</option>
           </select>
         </div>
 
@@ -55,6 +63,7 @@ export const AuditFilterBar = ({
             <option value="Organization B">Organization B (Cyber Lab)</option>
             <option value="Organization C">Organization C (Judicial Court)</option>
             <option value="Organization D">Organization D (Cyber Police LEA)</option>
+            <option value="Audit Board">Audit Board (Independent Oversight)</option>
             <option value="Independent Auditor">Independent Auditor</option>
           </select>
 

@@ -10,28 +10,110 @@ def init_db():
     db = SessionLocal()
     try:
         # Seed Organizations
-        org_b = db.query(Organization).filter(Organization.id == "ORG-B").first()
-        if not org_b:
-            org_b = Organization(
-                id="ORG-B",
-                organization_code="ORG-B",
-                name="Cyber Defense & Forensics Lab B",
-                description="Forensic analysis laboratory node",
-                status="ACTIVE"
-            )
-            db.add(org_b)
-
         org_a = db.query(Organization).filter(Organization.id == "ORG-A").first()
         if not org_a:
             org_a = Organization(
                 id="ORG-A",
                 organization_code="ORG-A",
-                name="CERT-Alpha",
+                name="Organization A — CERT-Alpha",
                 description="Evidence originator and national response node",
                 status="ACTIVE"
             )
             db.add(org_a)
+
+        org_b = db.query(Organization).filter(Organization.id == "ORG-B").first()
+        if not org_b:
+            org_b = Organization(
+                id="ORG-B",
+                organization_code="ORG-B",
+                name="Organization B — Cyber Defense Lab",
+                description="Forensic analysis laboratory node",
+                status="ACTIVE"
+            )
+            db.add(org_b)
+
+        org_c = db.query(Organization).filter(Organization.id == "ORG-C").first()
+        if not org_c:
+            org_c = Organization(
+                id="ORG-C",
+                organization_code="ORG-C",
+                name="Organization C — Judicial Court Registry",
+                description="Legal prosecution and court evidence vault node",
+                status="ACTIVE"
+            )
+            db.add(org_c)
+
+        org_d = db.query(Organization).filter(Organization.id == "ORG-D").first()
+        if not org_d:
+            org_d = Organization(
+                id="ORG-D",
+                organization_code="ORG-D",
+                name="Organization D — Cyber Crime Police (LEA)",
+                description="Law enforcement agency and raid seizure node",
+                status="ACTIVE"
+            )
+            db.add(org_d)
+
+        org_audit = db.query(Organization).filter(Organization.id == "ORG-AUDIT").first()
+        if not org_audit:
+            org_audit = Organization(
+                id="ORG-AUDIT",
+                organization_code="ORG-AUDIT",
+                name="Audit Board — Independent Oversight",
+                description="Independent cryptographic auditing and oversight authority",
+                status="ACTIVE"
+            )
+            db.add(org_audit)
         db.commit()
+
+        # Seed Retention Policies if empty
+        from app.models.retention import RetentionPolicy
+        if db.query(RetentionPolicy).count() == 0:
+            default_policies = [
+                RetentionPolicy(
+                    id="POL-001",
+                    name="Active Investigation Evidence",
+                    retention_period_days=365,
+                    trigger_event="evidence_sealed",
+                    action_on_expiry="ARCHIVE_COLD",
+                    allow_legal_hold=True,
+                    is_active=True,
+                    created_by="System Administrator"
+                ),
+                RetentionPolicy(
+                    id="POL-002",
+                    name="Closed Case Evidence",
+                    retention_period_days=180,
+                    trigger_event="case_closed",
+                    action_on_expiry="ARCHIVE_COLD",
+                    allow_legal_hold=True,
+                    is_active=True,
+                    created_by="System Administrator"
+                ),
+                RetentionPolicy(
+                    id="POL-003",
+                    name="Forensic / Malware Evidence",
+                    retention_period_days=1825,
+                    trigger_event="evidence_sealed",
+                    action_on_expiry="LONG_TERM_ARCHIVE",
+                    allow_legal_hold=True,
+                    is_active=True,
+                    created_by="System Administrator"
+                ),
+                RetentionPolicy(
+                    id="POL-004",
+                    name="Temporary / Unverified Evidence",
+                    retention_period_days=30,
+                    trigger_event="evidence_uploaded",
+                    action_on_expiry="MARK_FOR_REVIEW",
+                    allow_legal_hold=False,
+                    is_active=True,
+                    created_by="System Administrator"
+                )
+            ]
+            for p in default_policies:
+                db.add(p)
+            db.commit()
 
         # Seed Admin User
         user = db.query(User).filter(User.email == "admin@cyberlab.local").first()

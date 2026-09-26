@@ -12,6 +12,8 @@ export const EvidenceMetadataCard = ({ evidence }) => {
     { label: 'Current Custodian', value: evidence.currentCustodian, icon: Building2 },
     { label: 'File Size', value: evidence.fileSize, icon: HardDrive, mono: true },
     { label: 'Hash Algorithm', value: evidence.hashAlgorithm || 'SHA-256', icon: Database, mono: true },
+    { label: 'Retention Policy', value: evidence.retentionPolicyName || 'Active Investigation Evidence', icon: FileText, mono: true },
+    { label: 'Legal Hold Status', value: evidence.legalHold ? 'ON HOLD (BLOCKED)' : 'NO HOLD (ACTIVE)', icon: Shield, mono: true, highlight: evidence.legalHold },
   ];
 
   return (

@@ -8,7 +8,7 @@ import HashGuardABI from '../../contracts/HashGuard.json';
 import { useApp } from '../../context/AppContext';
 
 export const NewEvidenceModal = ({ isOpen, onClose, onCreated }) => {
-  const { currentRole } = useApp();
+  const { currentOrg, currentRole } = useApp();
   const [formData, setFormData] = useState({
     title: '',
     caseId: 'CASE-2026-9012',
@@ -16,21 +16,23 @@ export const NewEvidenceModal = ({ isOpen, onClose, onCreated }) => {
     fileSize: '',
     collector: 'lead-investigator@consortium.gov',
     description: '',
-    sourceOrg: currentRole?.orgName || 'Organization A (CERT-Alpha)',
-    currentCustodian: currentRole?.orgName || 'Organization A (CERT-Alpha)',
+    sourceOrg: currentOrg?.name || 'Organization B — Cyber Defense Lab',
+    currentCustodian: currentOrg?.name || 'Organization B — Cyber Defense Lab',
+    retentionPolicyName: 'Active Investigation Evidence',
+    retentionPeriodDays: 365,
     parentEvidenceId: ''
   });
 
   useEffect(() => {
-    if (currentRole?.orgName) {
+    if (currentOrg?.name) {
       setFormData(prev => ({
         ...prev,
-        sourceOrg: currentRole.orgName,
-        currentCustodian: currentRole.orgName,
-        collector: `${currentRole.id.toLowerCase()}-officer@consortium.gov`
+        sourceOrg: currentOrg.name,
+        currentCustodian: currentOrg.name,
+        collector: `${(currentRole?.id || 'officer').toLowerCase()}@${(currentOrg?.shortName || 'consortium').toLowerCase().replace(/\s+/g, '')}.gov`
       }));
     }
-  }, [currentRole, isOpen]);
+  }, [currentOrg, currentRole, isOpen]);
   const [computingHash, setComputingHash] = useState(false);
   const [computedHash, setComputedHash] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
@@ -295,12 +297,37 @@ export const NewEvidenceModal = ({ isOpen, onClose, onCreated }) => {
               onChange={(e) => setFormData({ ...formData, sourceOrg: e.target.value, currentCustodian: e.target.value })}
               className="w-full bg-ce-bg border border-ce-border rounded-md px-3 py-2 text-ce-text-primary focus:outline-none focus:border-ce-brand focus:ring-1 focus:ring-ce-brand cursor-pointer font-mono text-xs transition-colors"
             >
-              <option value="Organization A (CERT-Alpha)">Organization A (CERT-Alpha)</option>
-              <option value="Organization B (Cyber Lab)">Organization B (Cyber Lab)</option>
-              <option value="Organization C (Judicial Court Registry)">Organization C (Judicial Court Registry)</option>
-              <option value="Organization D (Cyber Crime Police LEA)">Organization D (Cyber Crime Police LEA)</option>
+              <option value="Organization A — CERT-Alpha">Organization A — CERT-Alpha</option>
+              <option value="Organization B — Cyber Defense Lab">Organization B — Cyber Defense Lab</option>
+              <option value="Organization C — Judicial Court Registry">Organization C — Judicial Court Registry</option>
+              <option value="Organization D — Cyber Crime Police (LEA)">Organization D — Cyber Crime Police (LEA)</option>
+              <option value="Audit Board — Independent Oversight">Audit Board — Independent Oversight</option>
             </select>
           </div>
+        </div>
+
+        {/* Retention Policy Selection */}
+        <div>
+          <label className="block text-ce-text-primary text-xs font-semibold uppercase tracking-wider mb-1.5">
+            Initial Retention Lifecycle Policy:
+          </label>
+          <select
+            value={formData.retentionPolicyName}
+            onChange={(e) => {
+              const name = e.target.value;
+              let days = 365;
+              if (name === 'Closed Case Evidence') days = 180;
+              if (name === 'Forensic / Malware Evidence') days = 1825;
+              if (name === 'Temporary / Unverified Evidence') days = 30;
+              setFormData({ ...formData, retentionPolicyName: name, retentionPeriodDays: days });
+            }}
+            className="w-full bg-ce-bg border border-ce-border rounded-md px-3 py-2 text-ce-text-primary focus:outline-none focus:border-ce-brand focus:ring-1 focus:ring-ce-brand cursor-pointer font-mono text-xs transition-colors"
+          >
+            <option value="Active Investigation Evidence">Active Investigation Evidence (365 Days • Cold Storage Archive)</option>
+            <option value="Closed Case Evidence">Closed Case Evidence (180 Days • Cold Storage Archive)</option>
+            <option value="Forensic / Malware Evidence">Forensic / Malware Evidence (1825 Days • Long-Term Archive)</option>
+            <option value="Temporary / Unverified Evidence">Temporary / Unverified Evidence (30 Days • Review Required)</option>
+          </select>
         </div>
 
         {/* SHA-256 Computation Box */}

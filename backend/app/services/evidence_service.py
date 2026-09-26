@@ -154,6 +154,12 @@ class EvidenceService:
         if not evidence:
             return False
             
+        if getattr(evidence, 'legal_hold', False):
+            raise HTTPException(
+                status_code=403,
+                detail=f"Evidence {evidence_id} is protected under active Legal Hold and cannot be deleted."
+            )
+
         try:
             db.query(CustodyEvent).filter(CustodyEvent.evidence_id == evidence_id).delete()
             db.query(Transfer).filter(Transfer.evidence_id == evidence_id).delete()
@@ -220,5 +226,11 @@ class EvidenceService:
             isDerived=e.is_derived,
             derivedCount=e.derived_count,
             description=e.description,
-            forensicNotes=e.forensic_notes
+            forensicNotes=e.forensic_notes,
+            retentionPolicyId=getattr(e, 'retention_policy_id', None),
+            retentionPolicyName=getattr(e, 'retention_policy_name', None),
+            retentionStatus=getattr(e, 'retention_status', 'ACTIVE'),
+            retentionExpiresAt=e.retention_expires_at.strftime('%Y-%m-%d %H:%M:%S UTC') if getattr(e, 'retention_expires_at', None) else ("SUSPENDED" if getattr(e, 'legal_hold', False) else None),
+            legalHold=getattr(e, 'legal_hold', False),
+            legalHoldReason=getattr(e, 'legal_hold_reason', None)
         )

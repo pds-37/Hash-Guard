@@ -32,7 +32,13 @@ export const mockEvidenceList = [
     parentEvidenceId: null,
     isDerived: false,
     derivedCount: 2,
-    description: "Packed Windows x64 binary recovered from compromised domain controller during initial intrusion phase. Demonstrates anti-VM techniques and volume shadow deletion routines."
+    description: "Packed Windows x64 binary recovered from compromised domain controller during initial intrusion phase. Demonstrates anti-VM techniques and volume shadow deletion routines.",
+    retentionPolicyId: "POL-001",
+    retentionPolicyName: "Active Investigation Evidence",
+    retentionPeriodDays: 365,
+    retentionStatus: "ACTIVE",
+    retentionExpiresAt: "2027-08-16 08:30:14 UTC",
+    legalHold: false
   },
   {
     id: "EV-002",
@@ -242,7 +248,16 @@ export const mockEvidenceList = [
     parentEvidenceId: null,
     isDerived: false,
     derivedCount: 0,
-    description: "CRITICAL ALERT: File bits modified post-custody seal. Off-chain binary hash fails validation against immutable on-chain signed manifest anchor."
+    description: "CRITICAL ALERT: File bits modified post-custody seal. Off-chain binary hash fails validation against immutable on-chain signed manifest anchor.",
+    retentionPolicyId: "POL-001",
+    retentionPolicyName: "Active Investigation Evidence",
+    retentionPeriodDays: 365,
+    retentionStatus: "LEGAL HOLD",
+    retentionExpiresAt: "SUSPENDED",
+    legalHold: true,
+    legalHoldReason: "Court-ordered evidence preservation order pending Section 65B forensic verification.",
+    legalHoldAppliedBy: "magistrate-court@org-c.gov",
+    legalHoldAppliedAt: "2026-08-16 09:45:00 UTC"
   },
   {
     id: "EV-010",

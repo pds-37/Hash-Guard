@@ -121,12 +121,28 @@ export const evidenceService = {
 
   async deleteEvidence(id) {
     const cleanId = (id || '').trim().toUpperCase();
+
+    // Check if evidence is protected under Legal Hold
+    try {
+      const target = await this.getEvidenceById(cleanId);
+      if (target && target.legalHold) {
+        throw new Error(`Deletion Blocked: Evidence exhibit ${cleanId} is protected under an active Legal Hold preservation order and cannot be deleted.`);
+      }
+    } catch (err) {
+      if (err.message && err.message.includes('Deletion Blocked')) {
+        throw err;
+      }
+    }
+
     try {
       if (!IS_MOCK_FALLBACK) {
         const response = await apiClient.delete(`/evidence/${cleanId}`);
         return response.data;
       }
     } catch (err) {
+      if (err.response?.status === 403) {
+        throw new Error(err.response.data?.detail || 'Deletion blocked: Evidence is under active Legal Hold.');
+      }
       console.warn('[EvidenceService] API request failed, using local ledger state:', err);
     }
 

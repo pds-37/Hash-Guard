@@ -9,6 +9,7 @@ import { ThemeToggle } from '../common/ThemeToggle';
 
 export const Topbar = ({ setMobileOpen }) => {
   const {
+    currentOrg,
     currentRole,
     searchQuery,
     setSearchQuery,
@@ -96,14 +97,14 @@ export const Topbar = ({ setMobileOpen }) => {
 
         <div className="flex items-center gap-2.5 pl-2 sm:pl-3 border-l border-ce-border">
           <div className="w-8 h-8 rounded-md bg-ce-brand/10 border border-ce-brand/20 flex items-center justify-center font-bold text-xs text-ce-brand">
-            {currentRole.id.charAt(0)}
+            {(currentRole.name || currentRole.id).charAt(0)}
           </div>
           <div className="hidden lg:block text-left">
-            <div className="text-xs font-semibold text-ce-text-primary truncate max-w-[140px]">
-              {currentRole.roleName.split('/')[0]}
+            <div className="text-xs font-semibold text-ce-text-primary truncate max-w-[150px]">
+              {currentRole.name || currentRole.roleName}
             </div>
-            <div className="text-[10px] text-ce-text-muted font-mono">
-              Auth: Multi-Sig
+            <div className="text-[10px] text-ce-text-muted font-mono truncate max-w-[150px]">
+              {currentOrg?.shortName || 'Consortium'}
             </div>
           </div>
         </div>

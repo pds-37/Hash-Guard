@@ -41,7 +41,12 @@ class Evidence(Base):
 
     # Retention fields
     retention_policy_id = Column(String, ForeignKey("retention_policies.id"), nullable=True)
+    retention_policy_name = Column(String, nullable=True)
     retention_start_at = Column(DateTime, nullable=True)
     retention_expires_at = Column(DateTime, nullable=True)
-    retention_status = Column(String, default="active") # 'active', 'expiring_soon', 'archived', 'deleted'
+    retention_status = Column(String, default="ACTIVE") # 'ACTIVE', 'LEGAL_HOLD', 'SUSPENDED', 'ARCHIVED', 'DELETED'
+    legal_hold = Column(Boolean, default=False)
+    legal_hold_reason = Column(String, nullable=True)
+    legal_hold_applied_by = Column(String, nullable=True)
+    legal_hold_applied_at = Column(DateTime, nullable=True)
 
