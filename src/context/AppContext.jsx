@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { evidenceService } from '../services/evidenceService';
+import { auditService } from '../services/auditService';
 
 const AppContext = createContext();
 
@@ -534,6 +535,7 @@ export const AppProvider = ({ children }) => {
     }
 
     if (targetOrg) {
+      const prevOrg = currentOrg;
       setCurrentOrg(targetOrg);
       localStorage.setItem('cee_current_org', targetOrg.id);
       setWalletAddress(targetOrg.walletAddress);
@@ -554,6 +556,16 @@ export const AppProvider = ({ children }) => {
         },
         ...prev
       ]);
+
+      // Cryptographic Audit Log for Tenant Context Switch
+      auditService.logEvent({
+        event: 'ORG_CONTEXT_SWITCH',
+        actor: targetOrg.did,
+        organization: targetOrg.shortName || targetOrg.name,
+        details: `Active tenant switched from ${prevOrg?.shortName || prevOrg?.code || 'None'} to ${targetOrg.name} (${targetOrg.code}). Active DID re-bound to ${targetOrg.walletAddress.substring(0, 10)}...`,
+        evidenceId: 'SYSTEM',
+        verification: 'VERIFIED'
+      }).catch((err) => console.warn('Context switch audit failed:', err));
 
       triggerRefresh();
     }
@@ -612,6 +624,15 @@ export const AppProvider = ({ children }) => {
       ...prev
     ]);
 
+    auditService.logEvent({
+      event: 'ORG_REGISTERED',
+      actor: newOrg.did,
+      organization: newOrg.name,
+      details: `Consortium node enclave ${newOrg.name} (${newOrg.code}) registered with root DID ${newOrg.did.substring(0, 18)}...`,
+      evidenceId: 'SYSTEM',
+      verification: 'VERIFIED'
+    }).catch(() => {});
+
     triggerRefresh();
     return { newOrg, adminUser };
   };
@@ -645,6 +666,15 @@ export const AppProvider = ({ children }) => {
       },
       ...prev
     ]);
+
+    auditService.logEvent({
+      event: 'USER_PROVISIONED',
+      actor: newUser.did,
+      organization: currentOrg?.name || targetOrgId,
+      details: `Identity ${newUser.name} (${newUser.email}) provisioned with role ${newUser.role}`,
+      evidenceId: 'SYSTEM',
+      verification: 'VERIFIED'
+    }).catch(() => {});
 
     triggerRefresh();
     return newUser;
@@ -711,6 +741,15 @@ export const AppProvider = ({ children }) => {
       ...prev
     ]);
 
+    auditService.logEvent({
+      event: 'USER_LOGIN',
+      actor: user?.did || targetOrg.did,
+      organization: targetOrg.name,
+      details: `User ${sessionUser.name} authenticated into ${targetOrg.shortName} as ${targetRole.name}`,
+      evidenceId: 'SYSTEM',
+      verification: 'VERIFIED'
+    }).catch(() => {});
+
     triggerRefresh();
     return sessionUser;
   };
@@ -728,6 +767,7 @@ export const AppProvider = ({ children }) => {
     if (roleKey === 'USER') roleKey = 'FIRST_RESPONDER';
 
     if (RBAC_ROLES[roleKey]) {
+      const prevRole = currentRole;
       const nextRole = RBAC_ROLES[roleKey];
       setCurrentRole(nextRole);
       localStorage.setItem('cee_current_role', roleKey);
@@ -742,6 +782,16 @@ export const AppProvider = ({ children }) => {
         },
         ...prev
       ]);
+
+      // Cryptographic Audit Log for RBAC Privilege Switch
+      auditService.logEvent({
+        event: 'RBAC_ROLE_SWITCH',
+        actor: did || currentOrg?.did || 'system',
+        organization: currentOrg?.shortName || currentOrg?.name || 'Local Node',
+        details: `Role privileges transitioned from ${prevRole?.name || 'Unknown'} to ${nextRole.name}. Active permissions recalculated.`,
+        evidenceId: 'SYSTEM',
+        verification: 'VERIFIED'
+      }).catch((err) => console.warn('Role switch audit failed:', err));
 
       triggerRefresh();
     }
