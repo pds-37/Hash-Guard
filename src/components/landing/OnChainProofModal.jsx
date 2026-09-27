@@ -6,6 +6,7 @@ import {
   Check, 
   ArrowRight
 } from 'lucide-react';
+import { formatISTTimestamp } from '../../utils/formatters';
 
 export const OnChainProofModal = ({ isOpen, onClose, onLaunchSandbox }) => {
   const [copiedField, setCopiedField] = useState(null);
@@ -86,7 +87,7 @@ export const OnChainProofModal = ({ isOpen, onClose, onLaunchSandbox }) => {
           </div>
 
           {/* Key Metrics Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             <div className="p-3 rounded-xl bg-slate-950/80 border border-slate-800">
               <span className="text-slate-500 text-[10px] uppercase block">BLOCK HEIGHT</span>
               <span className="text-white font-bold text-sm">#{proofData.blockNumber}</span>
@@ -103,6 +104,17 @@ export const OnChainProofModal = ({ isOpen, onClose, onLaunchSandbox }) => {
               <span className="text-slate-500 text-[10px] uppercase block">GAS CONSUMED</span>
               <span className="text-white font-bold text-sm">42,109 Units</span>
               <span className="text-[10px] text-cyan-400 block mt-0.5">0.00084 ETH</span>
+            </div>
+
+            <div className="p-3 rounded-xl bg-slate-950/80 border border-slate-800">
+              <span className="text-slate-500 text-[10px] uppercase block">BLOCK TIMESTAMP (IST)</span>
+              <span 
+                className="text-white font-bold text-xs truncate block mt-1"
+                title={`Source timestamp: UTC (${proofData.timestamp})`}
+              >
+                {formatISTTimestamp(proofData.timestamp)}
+              </span>
+              <span className="text-[10px] text-cyan-400 block mt-0.5">RFC 3161 Certified</span>
             </div>
           </div>
 

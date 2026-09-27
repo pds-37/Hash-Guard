@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Loader2, CheckCircle2 } from 'lucide-react';
+import { formatISTTime } from '../../utils/formatters';
 
 export const BlockchainTerminalOverlay = ({ isOpen, title, steps = [], onComplete }) => {
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
@@ -63,7 +64,7 @@ export const BlockchainTerminalOverlay = ({ isOpen, title, steps = [], onComplet
           <div className="relative z-10 flex flex-col gap-3">
             {logs.map((log, i) => (
               <div key={i} className="flex gap-3">
-                <span className="text-ce-brand/50">[{new Date().toISOString().split('T')[1].substring(0,8)}]</span>
+                <span className="text-ce-brand/50" title="Timezone: Asia/Kolkata (IST)">[{formatISTTime(new Date())}]</span>
                 <span className={i === steps.length - 1 && currentStepIndex === steps.length ? 'text-ce-success font-bold' : 'text-ce-text-secondary'}>
                   {log}
                 </span>
@@ -74,7 +75,7 @@ export const BlockchainTerminalOverlay = ({ isOpen, title, steps = [], onComplet
             ))}
             {currentStepIndex < steps.length && (
               <div className="flex gap-3 animate-pulse">
-                <span className="text-ce-brand/50">[{new Date().toISOString().split('T')[1].substring(0,8)}]</span>
+                <span className="text-ce-brand/50" title="Timezone: Asia/Kolkata (IST)">[{formatISTTime(new Date())}]</span>
                 <span className="text-ce-brand/80">Processing...</span>
                 <div className="w-2 h-4 bg-ce-brand ml-1 mt-0.5" />
               </div>

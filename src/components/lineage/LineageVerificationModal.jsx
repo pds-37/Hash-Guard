@@ -1,7 +1,7 @@
 import React from 'react';
 import { Modal } from '../common/Modal';
 import { CheckCircle2, XCircle, ShieldCheck, ShieldAlert, FileCheck, Blocks, KeyRound } from 'lucide-react';
-import { Badge } from '../common/Badge';
+import { formatISTTimestamp } from '../../utils/formatters';
 
 export const LineageVerificationModal = ({ isOpen, onClose, verificationResult }) => {
   if (!verificationResult) return null;
@@ -118,7 +118,9 @@ export const LineageVerificationModal = ({ isOpen, onClose, verificationResult }
         {/* Footer info */}
         <div className="p-3 rounded-md bg-ce-bg border border-ce-border text-[11px] font-mono text-ce-text-muted flex items-center justify-between">
           <span>Auditor: <strong className="text-ce-text-secondary">National Cyber Board</strong></span>
-          <span>Anchored: {verificationResult.verifiedAt || '2026-08-16 13:20:00 UTC'}</span>
+          <span title={`Source timestamp: UTC (${verificationResult.verifiedAt || '2026-08-16 13:20:00 UTC'})`}>
+            Anchored (IST): {formatISTTimestamp(verificationResult.verifiedAt || '2026-08-16 13:20:00 UTC')}
+          </span>
         </div>
 
         <div className="pt-4 border-t border-ce-border flex justify-end">

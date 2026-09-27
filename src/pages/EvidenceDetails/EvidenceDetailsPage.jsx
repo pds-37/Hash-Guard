@@ -14,6 +14,7 @@ import { custodyService } from '../../services/custodyService';
 import { retentionService } from '../../services/retentionService';
 import { useApp } from '../../context/AppContext';
 import { API_BASE_URL } from '../../services/api';
+import { formatISTDate, formatISTTimestamp } from '../../utils/formatters';
 import {
   ArrowLeft,
   GitFork,
@@ -299,9 +300,12 @@ export const EvidenceDetailsPage = () => {
           </div>
 
           <div className="p-3 rounded-md bg-ce-bg border border-ce-border">
-            <span className="text-[10px] uppercase text-ce-text-muted font-bold block">Expires:</span>
-            <span className={`font-bold text-xs mt-1 block ${evidence.legalHold ? 'text-amber-400 font-bold' : 'text-ce-text-primary'}`}>
-              {evidence.legalHold ? 'SUSPENDED' : (evidence.retentionExpiresAt || '26 Sep 2027')}
+            <span className="text-[10px] uppercase text-ce-text-muted font-bold block">Expires (IST):</span>
+            <span 
+              className={`font-bold text-xs mt-1 block ${evidence.legalHold ? 'text-amber-400 font-bold' : 'text-ce-text-primary'}`}
+              title={evidence.retentionExpiresAt ? `Source timestamp: UTC (${evidence.retentionExpiresAt})` : undefined}
+            >
+              {evidence.legalHold ? 'SUSPENDED' : (evidence.retentionExpiresAt ? formatISTDate(evidence.retentionExpiresAt) : '26 Sep 2027')}
             </span>
           </div>
 

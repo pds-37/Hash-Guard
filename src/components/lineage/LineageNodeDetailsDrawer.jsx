@@ -61,9 +61,14 @@ export const LineageNodeDetailsDrawer = ({ node, onClose, onDeriveFromNode }) =>
 
             <div>
               <span className="text-[10px] uppercase tracking-wider text-ce-text-muted block font-bold mb-0.5">
-                Anchor Timestamp:
+                Anchor Timestamp (IST):
               </span>
-              <span className="text-ce-text-secondary text-[11px] font-medium">{data.timestamp}</span>
+              <span 
+                className="text-ce-text-secondary text-[11px] font-medium"
+                title={data.timestamp ? `Source timestamp: UTC (${data.timestamp})` : undefined}
+              >
+                {formatISTTimestamp(data.timestamp)}
+              </span>
             </div>
 
             <div>
