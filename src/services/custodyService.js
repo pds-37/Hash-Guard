@@ -31,16 +31,34 @@ const saveGenuineCustodyEvents = (list) => {
 
 export const custodyService = {
   async getEvents(filters = {}) {
+    let apiData = [];
     try {
       if (!IS_MOCK_FALLBACK) {
         const response = await apiClient.get('/custody/events', { params: filters });
-        return response.data;
+        if (Array.isArray(response?.data)) {
+          apiData = response.data;
+        }
       }
     } catch (err) {
       console.warn('[CustodyService] API request failed, using local custody events store:', err);
     }
 
-    const sourceList = (isSandboxModeActive() ? sandboxCustodyEventsState : getGenuineCustodyEvents()).map(ev => ({
+    const localList = isSandboxModeActive() ? sandboxCustodyEventsState : getGenuineCustodyEvents();
+
+    const seenEventIds = new Set();
+    const mergedList = [];
+    for (const ev of [...localList, ...apiData]) {
+      const key = ev.eventId || ev.id || `${ev.evidenceId}-${ev.timestamp}-${ev.event}`;
+      if (!seenEventIds.has(key)) {
+        seenEventIds.add(key);
+        mergedList.push({
+          ...ev,
+          timestamp: formatToIST(ev.timestamp)
+        });
+      }
+    }
+
+    const sourceList = mergedList.length > 0 ? mergedList : (isSandboxModeActive() ? sandboxCustodyEventsState : mockCustodyEvents).map(ev => ({
       ...ev,
       timestamp: formatToIST(ev.timestamp)
     }));
@@ -73,27 +91,34 @@ export const custodyService = {
     try {
       if (!IS_MOCK_FALLBACK) {
         const response = await apiClient.get(`/custody/events/${evidenceId}`);
-        return response.data;
+        if (Array.isArray(response?.data) && response.data.length > 0) {
+          return response.data.map(ev => ({ ...ev, timestamp: formatToIST(ev.timestamp) }));
+        }
       }
     } catch (err) {
       console.warn('[CustodyService] API request failed, using local custody events store:', err);
     }
 
     const sourceList = isSandboxModeActive() ? sandboxCustodyEventsState : getGenuineCustodyEvents();
-    return sourceList.filter((ev) => ev.evidenceId.toUpperCase() === evidenceId.toUpperCase());
+    return sourceList
+      .filter((ev) => ev.evidenceId.toUpperCase() === evidenceId.toUpperCase())
+      .map(ev => ({ ...ev, timestamp: formatToIST(ev.timestamp) }));
   },
 
   async recordCustodyEvent(eventPayload) {
+    let remoteEvent = null;
     try {
       if (!IS_MOCK_FALLBACK) {
         const response = await apiClient.post('/custody/events', eventPayload);
-        return response.data;
+        if (response?.data) {
+          remoteEvent = response.data;
+        }
       }
     } catch (err) {
-      console.warn('[CustodyService] API request failed, using local custody events store:', err);
+      console.warn('[CustodyService] Remote custody sync failed, recording locally:', err);
     }
 
-    const newEvent = {
+    const newEvent = remoteEvent || {
       eventId: `EVT-${Math.floor(1000 + Math.random() * 9000)}`,
       evidenceId: eventPayload.evidenceId,
       event: eventPayload.event,
@@ -111,7 +136,7 @@ export const custodyService = {
     if (isSandboxModeActive()) {
       sandboxCustodyEventsState.unshift(newEvent);
     } else {
-      const current = getGenuineCustodyEvents();
+      const current = getGenuineCustodyEvents().filter(e => e.eventId !== newEvent.eventId);
       current.unshift(newEvent);
       saveGenuineCustodyEvents(current);
     }

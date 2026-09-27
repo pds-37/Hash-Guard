@@ -1,5 +1,6 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from app.core.config import settings
 from app.core.exceptions import CEEException, cee_exception_handler
 from app.database.database import engine, Base
@@ -39,13 +40,29 @@ def startup_event():
     except Exception as e:
         print(f"Startup initialization failed: {e}")
 
-app.add_middleware(
+# ─────────────────────────────────────────────────────────────────────────────
+# CORS: explicitly list all trusted origins + a wildcard regex fallback.
+# NOTE: allow_credentials=True is INCOMPATIBLE with allow_origins=["*"].
+# We list specific origins and also cover all *.vercel.app previews via regex.
+# ─────────────────────────────────────────────────────────────────────────────
+ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "http://localhost:3000",
+    "http://127.0.0.1:5173",
+    "http://127.0.0.1:3000",
+    # Production Vercel deployment
+    "https://hash-guard-ecru.vercel.app",
+]
 
+app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=ALLOWED_ORIGINS,
+    # Also allow any *.vercel.app preview deploy and localhost variants
+    allow_origin_regex=r"^https?://(localhost|127\.0\.0\.1)(:\d+)?$|^https://.*\.vercel\.app$|^https://.*\.netlify\.app$",
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allow_headers=["*"],
+    expose_headers=["*"],
 )
 
 app.add_exception_handler(CEEException, cee_exception_handler)

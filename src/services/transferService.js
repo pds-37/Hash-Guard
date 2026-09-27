@@ -32,16 +32,32 @@ const saveGenuineTransfers = (list) => {
 
 export const transferService = {
   async getTransfers(filters = {}) {
+    let remoteData = [];
     try {
       if (!IS_MOCK_FALLBACK) {
         const response = await apiClient.get('/transfers', { params: filters });
-        return response.data;
+        if (Array.isArray(response?.data)) {
+          remoteData = response.data;
+        }
       }
     } catch (err) {
       console.warn('[TransferService] API request failed, using local transfers store:', err);
     }
 
-    const sourceList = isSandboxModeActive() ? sandboxTransfersState : getGenuineTransfers();
+    const localData = isSandboxModeActive() ? sandboxTransfersState : getGenuineTransfers();
+
+    // Merge local and remote transfers so newly initiated transfers are immediately visible
+    const seenIds = new Set();
+    const mergedList = [];
+    for (const item of [...localData, ...remoteData]) {
+      const key = item.id || item.transfer_id;
+      if (key && !seenIds.has(key)) {
+        seenIds.add(key);
+        mergedList.push(item);
+      }
+    }
+
+    const sourceList = mergedList.length > 0 ? mergedList : (isSandboxModeActive() ? sandboxTransfersState : mockTransfers);
 
     return sourceList.filter((item) => {
       if (filters.status && filters.status !== 'ALL' && item.status !== filters.status) {
@@ -50,11 +66,11 @@ export const transferService = {
       if (filters.search) {
         const q = filters.search.toLowerCase();
         return (
-          item.id.toLowerCase().includes(q) ||
-          item.evidenceId.toLowerCase().includes(q) ||
-          item.evidenceTitle.toLowerCase().includes(q) ||
-          item.fromOrg.toLowerCase().includes(q) ||
-          item.toOrg.toLowerCase().includes(q)
+          (item.id || '').toLowerCase().includes(q) ||
+          (item.evidenceId || '').toLowerCase().includes(q) ||
+          (item.evidenceTitle || '').toLowerCase().includes(q) ||
+          (item.fromOrg || '').toLowerCase().includes(q) ||
+          (item.toOrg || '').toLowerCase().includes(q)
         );
       }
       return true;
@@ -62,18 +78,21 @@ export const transferService = {
   },
 
   async initiateTransfer(payload) {
+    let remoteCreated = null;
     try {
       if (!IS_MOCK_FALLBACK) {
         const response = await apiClient.post('/transfers', payload);
-        return response.data;
+        if (response?.data) {
+          remoteCreated = response.data;
+        }
       }
     } catch (err) {
-      console.warn('[TransferService] API request failed, using local transfers store:', err);
+      console.warn('[TransferService] Remote transfer dispatch sync failed, recording locally:', err);
     }
 
     const sourceList = isSandboxModeActive() ? sandboxTransfersState : getGenuineTransfers();
 
-    const newTransfer = {
+    const newTransfer = remoteCreated || {
       id: `TR-00${sourceList.length + 1}`,
       evidenceId: payload.evidenceId || 'EV-001',
       evidenceTitle: payload.evidenceTitle || 'Digital Forensic Specimen',
@@ -87,7 +106,7 @@ export const transferService = {
       manifestHash: payload.manifestHash || '8f3a91bc72f4cd2a4e9b671a5c28e930f1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6',
       initiatedAt: new Date().toISOString().replace('T', ' ').substring(0, 19) + ' UTC',
       completedAt: null,
-      blockchainTx: '0x' + Array.from({length: 64}, () => Math.floor(Math.random()*16).toString(16)).join(''),
+      blockchainTx: payload.txHash || ('0x' + Array.from({length: 64}, () => Math.floor(Math.random()*16).toString(16)).join('')),
       steps: [
         { step: "MANIFEST_SIGN", org: payload.fromOrg || "Organization A", timestamp: new Date().toLocaleTimeString(), status: "COMPLETED" },
         { step: "SECURE_DISPATCH", org: payload.fromOrg || "Organization A", timestamp: new Date().toLocaleTimeString(), status: "IN_PROGRESS" },
@@ -100,7 +119,7 @@ export const transferService = {
     if (isSandboxModeActive()) {
       sandboxTransfersState.unshift(newTransfer);
     } else {
-      const current = getGenuineTransfers();
+      const current = getGenuineTransfers().filter(t => t.id !== newTransfer.id);
       current.unshift(newTransfer);
       saveGenuineTransfers(current);
     }
@@ -139,51 +158,42 @@ export const transferService = {
   },
 
   async verifyAndAcceptTransfer(transferId) {
+    let remoteAccepted = null;
     try {
       if (!IS_MOCK_FALLBACK) {
         const response = await apiClient.post(`/transfers/${transferId}/accept`);
-        return response.data;
+        if (response?.data) {
+          remoteAccepted = response.data;
+        }
       }
     } catch (err) {
-      console.warn('[TransferService] API request failed, using local transfers store:', err);
+      console.warn('[TransferService] Remote transfer accept sync failed, updating locally:', err);
     }
 
-    let acceptedTransfer = null;
+    let acceptedTransfer = remoteAccepted;
+
+    const updater = (t) => {
+      if (t.id === transferId) {
+        const updated = {
+          ...t,
+          status: 'VERIFIED',
+          completedAt: new Date().toISOString().replace('T', ' ').substring(0, 19) + ' UTC',
+          steps: (t.steps || []).map((s) => ({
+            ...s,
+            status: 'COMPLETED',
+            timestamp: s.timestamp || new Date().toLocaleTimeString()
+          }))
+        };
+        if (!acceptedTransfer) acceptedTransfer = updated;
+        return updated;
+      }
+      return t;
+    };
 
     if (isSandboxModeActive()) {
-      sandboxTransfersState = sandboxTransfersState.map((t) => {
-        if (t.id === transferId) {
-          acceptedTransfer = {
-            ...t,
-            status: 'VERIFIED',
-            completedAt: new Date().toISOString().replace('T', ' ').substring(0, 19) + ' UTC',
-            steps: t.steps.map((s) => ({
-              ...s,
-              status: 'COMPLETED',
-              timestamp: s.timestamp || new Date().toLocaleTimeString()
-            }))
-          };
-          return acceptedTransfer;
-        }
-        return t;
-      });
+      sandboxTransfersState = sandboxTransfersState.map(updater);
     } else {
-      const current = getGenuineTransfers().map((t) => {
-        if (t.id === transferId) {
-          acceptedTransfer = {
-            ...t,
-            status: 'VERIFIED',
-            completedAt: new Date().toISOString().replace('T', ' ').substring(0, 19) + ' UTC',
-            steps: t.steps.map((s) => ({
-              ...s,
-              status: 'COMPLETED',
-              timestamp: s.timestamp || new Date().toLocaleTimeString()
-            }))
-          };
-          return acceptedTransfer;
-        }
-        return t;
-      });
+      const current = getGenuineTransfers().map(updater);
       saveGenuineTransfers(current);
     }
 
