@@ -66,13 +66,14 @@ export const auditService = {
       }
     }
 
-    // Sort newest first
-    mergedList.sort((a, b) => {
-      const timeA = new Date(a.timestamp).getTime();
-      const timeB = new Date(b.timestamp).getTime();
-      if (isNaN(timeA) || isNaN(timeB)) return 0;
-      return timeB - timeA;
-    });
+    // Safe sort: IST strings like "2026-09-27 22:14:30 IST" need the suffix stripped
+    const safeMs = (ts) => {
+      if (!ts) return 0;
+      const clean = String(ts).replace(/\s+IST$/, '').replace(' ', 'T') + (String(ts).includes('T') || String(ts).includes('+') ? '' : 'Z');
+      const t = new Date(clean).getTime();
+      return isNaN(t) ? 0 : t;
+    };
+    mergedList.sort((a, b) => safeMs(b.timestamp) - safeMs(a.timestamp));
 
     return mergedList.filter((log) => {
       if (filters.event && filters.event !== 'ALL' && log.event !== filters.event) {

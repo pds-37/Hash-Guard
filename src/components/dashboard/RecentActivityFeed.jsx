@@ -7,7 +7,13 @@ export const RecentActivityFeed = ({ events = [] }) => {
   const { isTamperSimulated } = useApp();
 
   // Show up to 5 events
-  let displayEvents = [...events].sort((a,b) => (parseTimestamp(b.timestamp)?.getTime() || 0) - (parseTimestamp(a.timestamp)?.getTime() || 0)).slice(0, 5);
+  const safeParsedTime = (ts) => {
+    const p = parseTimestamp(ts);
+    if (!p || typeof p.getTime !== 'function') return 0;
+    const t = p.getTime();
+    return isNaN(t) ? 0 : t;
+  };
+  let displayEvents = [...events].sort((a, b) => safeParsedTime(b.timestamp) - safeParsedTime(a.timestamp)).slice(0, 5);
 
   const getActionStyles = (action) => {
     switch (action) {

@@ -65,7 +65,7 @@ export function formatToIST(value) {
 export function parseTimestamp(value) {
   if (value === null || value === undefined || value === '') return null;
   if (value instanceof Date) return isNaN(value.getTime()) ? null : value;
-  
+
   if (typeof value === 'number') {
     if (isNaN(value)) return null;
     return new Date(value < 1e11 ? value * 1000 : value);
@@ -75,9 +75,16 @@ export function parseTimestamp(value) {
     const trimmed = value.trim();
     if (!trimmed || trimmed === '—' || trimmed === 'null' || trimmed === 'undefined') return null;
 
-    // Prevent double conversion if already formatted in IST
-    if (trimmed.includes('IST') || trimmed.includes('Asia/Kolkata')) {
-      return { isAlreadyIST: true, formatted: trimmed };
+    // Handle IST-formatted strings like "2026-09-27 22:14:30 IST"
+    // Strip the IST suffix and parse as UTC-equivalent ISO
+    if (trimmed.endsWith(' IST') || trimmed.includes('IST')) {
+      const stripped = trimmed.replace(/\s*IST$/, '').trim();
+      // It was stored as local IST so convert by subtracting IST offset (5h30m = 19800s)
+      const d = new Date(stripped.replace(' ', 'T') + 'Z');
+      if (!isNaN(d.getTime())) {
+        // Subtract 5:30 to convert from stored-as-IST back to real UTC
+        return new Date(d.getTime() - 19800000);
+      }
     }
 
     if (/^\d+$/.test(trimmed)) {
@@ -88,7 +95,7 @@ export function parseTimestamp(value) {
     // Strip parenthetical notes like (RFC 3161 Certified)
     const cleaned = trimmed.replace(/\(.*?\)/g, '').trim();
 
-    // Check for 'YYYY-MM-DD HH:mm:ss' with optional UTC (HashGuard canonical format)
+    // HashGuard canonical format: 'YYYY-MM-DD HH:mm:ss' with optional UTC
     const match = cleaned.match(/^(\d{4}-\d{2}-\d{2})[ T](\d{2}:\d{2}:\d{2}(?:\.\d+)?)(?:\s*UTC)?$/i);
     if (match) {
       const iso = match[1] + 'T' + match[2] + 'Z';
@@ -110,7 +117,6 @@ export function parseTimestamp(value) {
 export function formatISTTimestamp(value) {
   const parsed = parseTimestamp(value);
   if (!parsed) return '—';
-  if (parsed.isAlreadyIST) return parsed.formatted;
 
   const parts = new Intl.DateTimeFormat(IST_LOCALE, {
     timeZone: IST_TIMEZONE,
@@ -133,7 +139,6 @@ export function formatISTTimestamp(value) {
 export function formatISTDate(value) {
   const parsed = parseTimestamp(value);
   if (!parsed) return '—';
-  if (parsed.isAlreadyIST) return parsed.formatted;
 
   const parts = new Intl.DateTimeFormat(IST_LOCALE, {
     timeZone: IST_TIMEZONE,
@@ -152,7 +157,6 @@ export function formatISTDate(value) {
 export function formatISTTime(value, includeSeconds = true) {
   const parsed = parseTimestamp(value);
   if (!parsed) return '—';
-  if (parsed.isAlreadyIST) return parsed.formatted;
 
   const parts = new Intl.DateTimeFormat(IST_LOCALE, {
     timeZone: IST_TIMEZONE,
@@ -172,7 +176,6 @@ export function formatISTTime(value, includeSeconds = true) {
 export function formatISTCustodyEvent(value) {
   const parsed = parseTimestamp(value);
   if (!parsed) return '—';
-  if (parsed.isAlreadyIST) return parsed.formatted;
 
   const parts = new Intl.DateTimeFormat(IST_LOCALE, {
     timeZone: IST_TIMEZONE,
@@ -194,8 +197,7 @@ export function formatISTCustodyEvent(value) {
  */
 export function formatRelativeTime(value, compact = false) {
   const parsed = parseTimestamp(value);
-  if (!parsed) return '—';
-  if (parsed.isAlreadyIST) return parsed.formatted;
+  if (!parsed || typeof parsed.getTime !== 'function') return '—';
 
   const now = Date.now();
   const diffMs = now - parsed.getTime();

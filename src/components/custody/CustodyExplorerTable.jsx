@@ -38,7 +38,14 @@ export const CustodyExplorerTable = ({ events = [] }) => {
   const prevHashMap = useMemo(() => {
     const map = new Map();
     const chains = {};
-    const chronological = [...events].sort((a, b) => new Date(a.timestamp || 0) - new Date(b.timestamp || 0));
+    const safeMs = (ts) => {
+      if (!ts) return 0;
+      // IST-formatted strings like "2026-09-27 22:14:30 IST" — strip the suffix so Date can parse
+      const clean = String(ts).replace(/\s+IST$/, '').replace(' ', 'T') + (String(ts).includes('T') || String(ts).includes('+') ? '' : 'Z');
+      const t = new Date(clean).getTime();
+      return isNaN(t) ? 0 : t;
+    };
+    const chronological = [...events].sort((a, b) => safeMs(a.timestamp) - safeMs(b.timestamp));
 
     chronological.forEach((ev) => {
       const key = (ev.evidenceId || '').toUpperCase();
