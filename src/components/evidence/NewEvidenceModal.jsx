@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Modal } from '../common/Modal';
 import { ShieldPlus, Hash, Upload, Loader2, Building2 } from 'lucide-react';
 import { evidenceService } from '../../services/evidenceService';
@@ -72,10 +72,21 @@ export const NewEvidenceModal = ({ isOpen, onClose, onCreated }) => {
   };
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const isSubmittingRef = useRef(false);
   const [showTerminal, setShowTerminal] = useState(false);
+
+  useEffect(() => {
+    if (!isOpen) {
+      isSubmittingRef.current = false;
+      setIsSubmitting(false);
+      setShowTerminal(false);
+    }
+  }, [isOpen]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (isSubmittingRef.current || isSubmitting) return;
+
     if (!computedHash || computedHash.includes('Computing')) {
         alert("Please wait for the hash to finish computing or provide one manually.");
         return;
@@ -85,6 +96,8 @@ export const NewEvidenceModal = ({ isOpen, onClose, onCreated }) => {
   };
 
   const executeBlockchainTransaction = async () => {
+    if (isSubmittingRef.current) return;
+    isSubmittingRef.current = true;
     setIsSubmitting(true);
     let txHash = '0x' + Array.from({length: 64}, () => Math.floor(Math.random()*16).toString(16)).join('');
     const assetId = `EV-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
@@ -165,9 +178,20 @@ export const NewEvidenceModal = ({ isOpen, onClose, onCreated }) => {
       alert(`Error creating evidence: ${error.message || 'Check console or backend logs'}`);
     } finally {
       setIsSubmitting(false);
+      isSubmittingRef.current = false;
       setShowTerminal(false);
     }
   };
+
+  const terminalSteps = useMemo(() => [
+    "Initializing SECP256k1 Elliptic Curve module...",
+    "Packing ABI arguments: (assetId, assetType, organizationId, contentHash, metadataHash, storageRef)",
+    `Executing local client-side SHA-256 Digest: ${computedHash ? computedHash.substring(0, 16) + '...' : ''}`,
+    "Signing payload with Multi-Sig Identity Wallet...",
+    "Broadcasting POST /api/v1/evidence (HTTP/2.0)",
+    "Awaiting transaction receipt from Anvil EVM (ChainID: 31337)...",
+    "Transaction Confirmed! Block successfully minted."
+  ], [computedHash]);
 
   return (
     <Modal
@@ -415,15 +439,7 @@ export const NewEvidenceModal = ({ isOpen, onClose, onCreated }) => {
         isOpen={showTerminal} 
         title="EVM NODE: REGISTRY ANCHOR"
         onComplete={executeBlockchainTransaction}
-        steps={[
-          "Initializing SECP256k1 Elliptic Curve module...",
-          "Packing ABI arguments: (assetId, assetType, organizationId, contentHash, metadataHash, storageRef)",
-          `Executing local client-side SHA-256 Digest: ${computedHash ? computedHash.substring(0, 16) + '...' : ''}`,
-          "Signing payload with Multi-Sig Identity Wallet...",
-          "Broadcasting POST /api/v1/evidence (HTTP/2.0)",
-          "Awaiting transaction receipt from Anvil EVM (ChainID: 31337)...",
-          "Transaction Confirmed! Block successfully minted."
-        ]}
+        steps={terminalSteps}
       />
     </Modal>
   );

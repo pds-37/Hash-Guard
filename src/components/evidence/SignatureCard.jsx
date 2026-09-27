@@ -1,6 +1,7 @@
 import React from 'react';
 import { KeyRound, ShieldCheck, ShieldAlert, CheckCircle2, FileKey } from 'lucide-react';
 import { Badge } from '../common/Badge';
+import { formatISTTimestamp } from '../../utils/formatters';
 
 export const SignatureCard = ({ signature, evidenceStatus }) => {
   const isCompromised = evidenceStatus === 'COMPROMISED' || signature?.status === 'INVALID';
@@ -76,6 +77,18 @@ export const SignatureCard = ({ signature, evidenceStatus }) => {
           <span>Signed Manifest ID:</span>
           <span className="text-ce-text-primary font-bold">{signature?.manifestId || 'MNF-2026-0816-001'}</span>
         </div>
+
+        {(signature?.signedTimestamp || signature?.timestamp) && (
+          <div className="flex items-center justify-between text-[11px] text-ce-text-muted pt-2 border-t border-ce-border">
+            <span>Attestation Timestamp (IST):</span>
+            <span 
+              className="text-ce-text-primary font-mono"
+              title={`Source timestamp: UTC (${signature.signedTimestamp || signature.timestamp})`}
+            >
+              {formatISTTimestamp(signature.signedTimestamp || signature.timestamp)}
+            </span>
+          </div>
+        )}
       </div>
     </div>
   );

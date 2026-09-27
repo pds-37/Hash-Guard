@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Modal } from '../common/Modal';
 import { Download, Check, Printer, Copy, Info } from 'lucide-react';
 import { Badge } from '../common/Badge';
+import { formatISTTimestamp } from '../../utils/formatters';
 
 export const VerificationReportModal = ({ isOpen, onClose, result }) => {
   const [copied, setCopied] = useState(false);
@@ -13,7 +14,7 @@ export const VerificationReportModal = ({ isOpen, onClose, result }) => {
     attestationTitle: "INDEPENDENT DIGITAL EVIDENCE INTEGRITY AUDIT REPORT",
     targetIdentifier: result.identifier,
     verificationStatus: result.overallStatus,
-    timestampUTC: result.verifiedAt,
+    timestampIST: formatISTTimestamp(result.verifiedAt),
     auditorIdentity: "National Cyber Evidence Verification Authority",
     onChainAnchorBlock: result.onChainBlock,
     proofChecks: result.checks.map(c => ({
@@ -89,8 +90,8 @@ export const VerificationReportModal = ({ isOpen, onClose, result }) => {
                      <td class="p-3">${result.identifier}</td>
                    </tr>
                    <tr class="border-b border-slate-900">
-                     <th class="p-3 bg-slate-100 border-r border-slate-900">Audit Timestamp (UTC)</th>
-                     <td class="p-3">${result.verifiedAt}</td>
+                     <th class="p-3 bg-slate-100 border-r border-slate-900">Audit Timestamp (IST)</th>
+                     <td class="p-3">${formatISTTimestamp(result.verifiedAt)}</td>
                    </tr>
                    <tr class="border-b border-slate-900">
                      <th class="p-3 bg-slate-100 border-r border-slate-900">Ethereum Anchor Block</th>
@@ -177,7 +178,7 @@ export const VerificationReportModal = ({ isOpen, onClose, result }) => {
             </div>
             <div>
               <span className="text-ce-text-muted font-bold uppercase tracking-wider block mb-0.5">Timestamp:</span>{' '}
-              <span className="text-ce-text-secondary font-semibold text-xs">{result.verifiedAt}</span>
+              <span className="text-ce-text-secondary font-semibold text-xs">{formatToIST(result.verifiedAt)}</span>
             </div>
             <div>
               <span className="text-ce-text-muted font-bold uppercase tracking-wider block mb-0.5">Anchor Block:</span>{' '}

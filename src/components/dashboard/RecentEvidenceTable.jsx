@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FileText, ArrowRight, ShieldCheck, Clock, Image, FileQuestion, HardDrive, Smartphone, AlertTriangle } from 'lucide-react';
+import { formatISTTimestamp, formatRelativeTime } from '../../utils/formatters';
 
 export const RecentEvidenceTable = ({ evidenceList = [] }) => {
   const navigate = useNavigate();
@@ -40,7 +41,7 @@ export const RecentEvidenceTable = ({ evidenceList = [] }) => {
               <th className="py-2.5 px-4 font-semibold">Type</th>
               <th className="py-2.5 px-4 font-semibold">Title</th>
               <th className="py-2.5 px-4 font-semibold">Status</th>
-              <th className="py-2.5 px-4 font-semibold">Logged</th>
+              <th className="py-2.5 px-4 font-semibold whitespace-nowrap">Logged (IST)</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-ce-border">
@@ -80,8 +81,11 @@ export const RecentEvidenceTable = ({ evidenceList = [] }) => {
                     </span>
                   )}
                 </td>
-                <td className="py-3 px-4 text-ce-text-muted font-mono whitespace-nowrap">
-                  {getTimeAgo(idx)}
+                <td 
+                  className="py-3 px-4 text-ce-text-muted font-mono whitespace-nowrap min-w-[180px]"
+                  title={item.createdAt ? `Source: UTC (${item.createdAt})` : undefined}
+                >
+                  {item.createdAt ? formatISTTimestamp(item.createdAt) : getTimeAgo(idx)}
                 </td>
               </tr>
             ))}

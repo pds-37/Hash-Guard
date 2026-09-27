@@ -11,7 +11,7 @@ import {
   Hash,
   FileKey
 } from 'lucide-react';
-import { getEventColor } from '../../utils/formatters';
+import { getEventColor, formatISTCustodyEvent } from '../../utils/formatters';
 
 export const CustodyTimeline = ({ events = [], currentStatus = 'VERIFIED' }) => {
   const [viewMode, setViewMode] = React.useState('full'); // 'full' | 'script'
@@ -52,7 +52,7 @@ export const CustodyTimeline = ({ events = [], currentStatus = 'VERIFIED' }) => 
               onClick={() => setViewMode('script')}
               className={`px-2.5 py-1 rounded transition-colors ${viewMode === 'script' ? 'bg-ce-brand text-white font-bold' : 'text-ce-text-muted hover:text-ce-text-primary'}`}
             >
-              Investigation Sequence (09:41–11:05)
+              Investigation Sequence (09:41–11:05 IST)
             </button>
           </div>
 
@@ -71,7 +71,7 @@ export const CustodyTimeline = ({ events = [], currentStatus = 'VERIFIED' }) => 
           <div className="space-y-3 font-mono text-xs">
             {scriptTimeline.map((item, i) => (
               <div key={i} className="flex items-start gap-4 p-3 rounded bg-ce-bg border border-ce-border hover:border-ce-brand/40 transition-colors">
-                <span className="text-ce-brand font-bold shrink-0">{item.time}</span>
+                <span className="text-ce-brand font-bold shrink-0">{item.time} IST</span>
                 <span className="text-ce-text-muted">—</span>
                 <div className="flex-1">
                   <span className="text-ce-text-primary font-bold">{item.event}</span>
@@ -161,9 +161,12 @@ export const CustodyTimeline = ({ events = [], currentStatus = 'VERIFIED' }) => 
                   </div>
 
                   <div>
-                    <span className="text-[10px] text-ce-text-muted block uppercase tracking-wider font-semibold">Timestamp (UTC):</span>
-                    <span className="text-ce-text-secondary block mt-1">
-                      {ev.timestamp}
+                    <span className="text-[10px] text-ce-text-muted block uppercase tracking-wider font-semibold">Timestamp (IST):</span>
+                    <span 
+                      className="text-ce-text-secondary block mt-1"
+                      title={ev.timestamp ? `Source timestamp: UTC (${ev.timestamp})` : undefined}
+                    >
+                      {formatISTCustodyEvent(ev.timestamp)}
                     </span>
                   </div>
 

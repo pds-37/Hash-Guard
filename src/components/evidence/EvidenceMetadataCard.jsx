@@ -1,5 +1,6 @@
 import React from 'react';
 import { Database, User, Calendar, HardDrive, FileText, Building2, Shield } from 'lucide-react';
+import { formatISTTimestamp } from '../../utils/formatters';
 
 export const EvidenceMetadataCard = ({ evidence }) => {
   const metadataItems = [
@@ -8,7 +9,7 @@ export const EvidenceMetadataCard = ({ evidence }) => {
     { label: 'Evidence Type', value: evidence.type, icon: FileText },
     { label: 'Source Organization', value: evidence.sourceOrg, icon: Building2 },
     { label: 'Collector', value: evidence.collector, icon: User, mono: true },
-    { label: 'Created Timestamp', value: evidence.createdAt, icon: Calendar, mono: true },
+    { label: 'Created Timestamp (IST)', value: formatISTTimestamp(evidence.createdAt), icon: Calendar, mono: true },
     { label: 'Current Custodian', value: evidence.currentCustodian, icon: Building2 },
     { label: 'File Size', value: evidence.fileSize, icon: HardDrive, mono: true },
     { label: 'Hash Algorithm', value: evidence.hashAlgorithm || 'SHA-256', icon: Database, mono: true },

@@ -1,5 +1,6 @@
 import { apiClient, IS_MOCK_FALLBACK } from './api';
 import { mockAuditLogs } from '../mock/auditLogs';
+import { formatToIST, getISTNowString } from '../utils/formatters';
 
 const isSandboxModeActive = () => {
   try {
@@ -39,7 +40,10 @@ export const auditService = {
       // Fallback
     }
 
-    const sourceList = isSandboxModeActive() ? sandboxAuditLogsState : getGenuineAuditLogs();
+    const sourceList = (isSandboxModeActive() ? sandboxAuditLogsState : getGenuineAuditLogs()).map(log => ({
+      ...log,
+      timestamp: formatToIST(log.timestamp)
+    }));
 
     return sourceList.filter((log) => {
       if (filters.event && filters.event !== 'ALL' && log.event !== filters.event) {
@@ -66,7 +70,7 @@ export const auditService = {
   async logEvent(logPayload) {
     const newLog = {
       id: `AUD-${Math.floor(1000 + Math.random() * 9000)}`,
-      timestamp: new Date().toISOString().replace('T', ' ').substring(0, 19) + ' UTC',
+      timestamp: getISTNowString(),
       evidenceId: logPayload.evidenceId || 'N/A',
       event: logPayload.event || 'SYSTEM_ACTION',
       actor: logPayload.actor || 'system',

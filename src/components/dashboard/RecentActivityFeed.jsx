@@ -1,12 +1,13 @@
 import React from 'react';
 import { Activity, ShieldCheck, ArrowRightLeft, FileWarning, Key, UserPlus } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
+import { formatISTTime, formatISTTimestamp, parseTimestamp } from '../../utils/formatters';
 
 export const RecentActivityFeed = ({ events = [] }) => {
   const { isTamperSimulated } = useApp();
 
   // Show up to 5 events
-  let displayEvents = [...events].sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp)).slice(0, 5);
+  let displayEvents = [...events].sort((a,b) => (parseTimestamp(b.timestamp)?.getTime() || 0) - (parseTimestamp(a.timestamp)?.getTime() || 0)).slice(0, 5);
 
   const getActionStyles = (action) => {
     switch (action) {
@@ -30,12 +31,7 @@ export const RecentActivityFeed = ({ events = [] }) => {
   };
 
   const getTimeFormat = (dateStr) => {
-    try {
-      const d = new Date(dateStr);
-      return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-    } catch {
-      return '00:00:00';
-    }
+    return formatISTTime(dateStr);
   };
 
   return (

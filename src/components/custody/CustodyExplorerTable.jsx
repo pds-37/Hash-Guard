@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Badge } from '../common/Badge';
-import { getEventColor, truncateHash } from '../../utils/formatters';
+import { getEventColor, truncateHash, formatISTCustodyEvent } from '../../utils/formatters';
 import { ExternalLink } from 'lucide-react';
 
 export const CustodyExplorerTable = ({ events = [] }) => {
@@ -17,7 +17,7 @@ export const CustodyExplorerTable = ({ events = [] }) => {
               <th className="py-3 px-4 font-semibold uppercase">Hash Chain Link (Prev → Current)</th>
               <th className="py-3 px-4 font-semibold uppercase">Custodial Actor</th>
               <th className="py-3 px-4 font-semibold uppercase">Organization</th>
-              <th className="py-3 px-4 font-semibold uppercase">Timestamp (UTC)</th>
+              <th className="py-3 px-4 font-semibold uppercase whitespace-nowrap">Timestamp (IST)</th>
               <th className="py-3 px-4 font-semibold uppercase">Signature</th>
               <th className="py-3 px-4 font-semibold text-right uppercase">Verification</th>
             </tr>
@@ -72,8 +72,11 @@ export const CustodyExplorerTable = ({ events = [] }) => {
                   <td className="py-3.5 px-4 text-ce-text-muted whitespace-nowrap">
                     {ev.organization}
                   </td>
-                  <td className="py-3.5 px-4 text-ce-text-muted text-[11px] whitespace-nowrap">
-                    {ev.timestamp}
+                  <td 
+                    className="py-3.5 px-4 text-ce-text-muted text-[11px] whitespace-nowrap min-w-[180px]"
+                    title={ev.timestamp ? `Source timestamp: UTC (${ev.timestamp})` : undefined}
+                  >
+                    {formatISTCustodyEvent(ev.timestamp)}
                   </td>
                   <td className="py-3.5 px-4 text-ce-text-muted whitespace-nowrap">
                     {ev.parentId ? (

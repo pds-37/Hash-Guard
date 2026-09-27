@@ -28,8 +28,9 @@ export const EvidencePage = () => {
   }, [searchQuery]);
 
   useEffect(() => {
-    async function loadData() {
-      setLoading(true);
+    let isMounted = true;
+    async function loadData(showLoading = false) {
+      if (showLoading) setLoading(true);
       setError(null);
       try {
         const data = await evidenceService.getAllEvidence({
@@ -38,14 +39,25 @@ export const EvidencePage = () => {
           type: typeFilter,
           organization: orgFilter
         });
-        setEvidenceList(data);
+        if (isMounted) setEvidenceList(data);
       } catch (err) {
-        setError(err.message || 'Failed to query evidence repository');
+        if (isMounted) setError(err.message || 'Failed to query evidence repository');
       } finally {
-        setLoading(false);
+        if (isMounted && showLoading) setLoading(false);
       }
     }
-    loadData();
+
+    loadData(true);
+
+    // Real-time polling: automatically fetch records in real-time
+    const interval = setInterval(() => {
+      loadData(false);
+    }, 3500);
+
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
   }, [search, statusFilter, typeFilter, orgFilter, refreshTrigger, isTamperSimulated]);
 
   const handleResetFilters = () => {
@@ -59,8 +71,14 @@ export const EvidencePage = () => {
     <div className="space-y-6">
       <PageHeader
         title="Digital Asset Repository"
-        subtitle="Manage and track digital evidence exhibits."
+        subtitle="Manage and track digital evidence exhibits in real-time (IST)."
         breadcrumbs={['Dashboard', 'Evidence']}
+        badge={
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            REAL-TIME IST
+          </span>
+        }
         actionButton={
           <button
             onClick={() => setShowModal(true)}

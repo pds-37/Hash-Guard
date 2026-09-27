@@ -1,5 +1,6 @@
 import { apiClient, IS_MOCK_FALLBACK } from './api';
 import { mockEvidenceList } from '../mock/evidence';
+import { formatToIST, getISTNowString } from '../utils/formatters';
 
 // Helpers to isolate Sandbox (Demo) from Genuine (Production)
 const isSandboxModeActive = () => {
@@ -61,6 +62,7 @@ export const evidenceService = {
   },
 
   async getAllEvidence(filters = {}) {
+    let list = [];
     try {
       if (!IS_MOCK_FALLBACK) {
         const response = await apiClient.get('/evidence', { params: filters });
@@ -69,18 +71,54 @@ export const evidenceService = {
           const localData = getGenuineEvidence();
           const remoteIds = new Set(remoteData.map(item => (item.id || '').toUpperCase()));
           const unmergedLocal = localData.filter(item => !remoteIds.has((item.id || '').toUpperCase()));
-          return this._filterList([...unmergedLocal, ...remoteData], filters);
-        }
-        if (remoteData.length > 0) {
-          return this._filterList(remoteData, filters);
+          list = [...unmergedLocal, ...remoteData];
+        } else if (remoteData.length > 0) {
+          list = remoteData;
         }
       }
     } catch (err) {
       console.warn('[EvidenceService] API request failed, using local ledger state:', err);
     }
 
-    const sourceList = isSandboxModeActive() ? sandboxEvidenceState : getGenuineEvidence();
-    return this._filterList(sourceList, filters);
+    if (list.length === 0) {
+      list = isSandboxModeActive() ? sandboxEvidenceState : getGenuineEvidence();
+    }
+
+    // Deduplicate records by ID to guarantee single evidence representation
+    const seenIds = new Set();
+    const uniqueList = [];
+    for (const item of list) {
+      const cleanId = (item.id || '').toUpperCase();
+      if (!cleanId || !seenIds.has(cleanId)) {
+        if (cleanId) seenIds.add(cleanId);
+        uniqueList.push(item);
+      }
+    }
+
+    // Convert all timestamps to IST in real-time when records are fetched
+    let hasChanges = false;
+    const formattedList = uniqueList.map(item => {
+      const istCreatedAt = formatToIST(item.createdAt);
+      const istLastEventTime = formatToIST(item.lastEventTime || item.createdAt);
+      if (item.createdAt !== istCreatedAt || item.lastEventTime !== istLastEventTime) {
+        hasChanges = true;
+      }
+      return {
+        ...item,
+        createdAt: istCreatedAt,
+        lastEventTime: istLastEventTime,
+        signature: item.signature ? {
+          ...item.signature,
+          signedTimestamp: formatToIST(item.signature.signedTimestamp || item.createdAt)
+        } : item.signature
+      };
+    });
+
+    if (!isSandboxModeActive() && hasChanges) {
+      saveGenuineEvidence(formattedList);
+    }
+
+    return this._filterList(formattedList, filters);
   },
 
   async getEvidenceById(id) {
@@ -191,7 +229,7 @@ export const evidenceService = {
 
   async updateEvidenceCustodian(evidenceId, newCustodian, lastEvent = 'TRANSFER') {
     const cleanId = (evidenceId || '').trim().toUpperCase();
-    const nowStr = new Date().toISOString().replace('T', ' ').substring(0, 19) + ' UTC';
+    const nowStr = getISTNowString();
 
     if (isSandboxModeActive()) {
       sandboxEvidenceState = sandboxEvidenceState.map(ev => {
@@ -332,13 +370,15 @@ export const evidenceService = {
 
     const sourceList = isSandboxModeActive() ? sandboxEvidenceState : getGenuineEvidence();
 
+    const nowIST = getISTNowString();
+
     const newEvidence = {
       ...sanitizedPayload,
       hashAlgorithm: 'SHA-256',
       status: 'VERIFIED',
-      createdAt: new Date().toISOString().replace('T', ' ').substring(0, 19) + ' UTC',
+      createdAt: nowIST,
       lastEvent: 'COLLECT',
-      lastEventTime: new Date().toISOString().replace('T', ' ').substring(0, 19) + ' UTC',
+      lastEventTime: nowIST,
       storageType: 'OFF-CHAIN SECURED',
       storageLocation: `vault://secure-enclave/${sanitizedPayload.title || 'evidence'}.raw`,
       accessControl: 'RESTRICTED / AUTHORIZED ROLES ONLY',
@@ -350,7 +390,7 @@ export const evidenceService = {
         signer: sanitizedPayload.sourceOrg || 'Organization A (CERT-Alpha CA)',
         algorithm: 'ECDSA / secp256k1',
         publicKeyFingerprint: 'SHA256:4b9a7c...8f12',
-        signedTimestamp: new Date().toISOString().replace('T', ' ').substring(0, 19) + ' UTC',
+        signedTimestamp: nowIST,
         manifestId: `MNF-2026-0816-${sourceList.length + 10}`
       },
       isDerived: Boolean(sanitizedPayload.parentEvidenceId),
@@ -358,11 +398,15 @@ export const evidenceService = {
     };
 
     if (isSandboxModeActive()) {
-      sandboxEvidenceState.unshift(newEvidence);
+      if (!sandboxEvidenceState.some(e => (e.id || '').toUpperCase() === (newEvidence.id || '').toUpperCase())) {
+        sandboxEvidenceState.unshift(newEvidence);
+      }
     } else {
       const current = getGenuineEvidence();
-      current.unshift(newEvidence);
-      saveGenuineEvidence(current);
+      if (!current.some(e => (e.id || '').toUpperCase() === (newEvidence.id || '').toUpperCase())) {
+        current.unshift(newEvidence);
+        saveGenuineEvidence(current);
+      }
     }
 
     // Auto-record initial COLLECT custody event in ledger

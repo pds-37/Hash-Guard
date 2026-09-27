@@ -1,6 +1,7 @@
 import React from 'react';
 import { History, CheckCircle2, ArrowRight, ShieldCheck, User, Clock, Check } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { formatISTCustodyEvent } from '../../utils/formatters';
 
 export const CustodyActivityStream = ({ latestEvent }) => {
   const lifecycleSteps = [
@@ -101,9 +102,12 @@ export const CustodyActivityStream = ({ latestEvent }) => {
               <User className="w-3.5 h-3.5" />
               {latestEvent.actor}
             </span>
-            <span className="flex items-center gap-1.5">
+            <span 
+              className="flex items-center gap-1.5"
+              title={latestEvent.timestamp ? `Source timestamp: UTC (${latestEvent.timestamp})` : undefined}
+            >
               <Clock className="w-3.5 h-3.5" />
-              {latestEvent.timestamp}
+              {formatISTCustodyEvent(latestEvent.timestamp)}
             </span>
           </div>
         </div>

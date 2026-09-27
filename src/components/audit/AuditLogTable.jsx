@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Badge } from '../common/Badge';
-import { getEventColor } from '../../utils/formatters';
+import { getEventColor, formatISTTimestamp } from '../../utils/formatters';
 import { Blocks } from 'lucide-react';
 
 export const AuditLogTable = ({ logs = [] }) => {
@@ -11,7 +11,7 @@ export const AuditLogTable = ({ logs = [] }) => {
         <table className="w-full text-left border-collapse text-xs">
           <thead>
             <tr className="border-b border-ce-border bg-[#0a0a0c] text-ce-text-muted font-mono uppercase tracking-wider">
-              <th className="py-3 px-4 font-bold">Timestamp (UTC)</th>
+              <th className="py-3 px-4 font-bold whitespace-nowrap">Timestamp (IST)</th>
               <th className="py-3 px-4 font-bold">Event</th>
               <th className="py-3 px-4 font-bold">Custodial Actor</th>
               <th className="py-3 px-4 font-bold">Organization</th>
@@ -31,8 +31,11 @@ export const AuditLogTable = ({ logs = [] }) => {
                     isCompromised ? 'bg-ce-danger/10' : ''
                   }`}
                 >
-                  <td className="py-3 px-4 text-ce-text-secondary whitespace-nowrap">
-                    {log.timestamp}
+                  <td 
+                    className="py-3 px-4 text-ce-text-secondary whitespace-nowrap min-w-[180px]"
+                    title={log.timestamp ? `Source timestamp: UTC (${log.timestamp})` : undefined}
+                  >
+                    {formatISTTimestamp(log.timestamp)}
                   </td>
                   <td className="py-3 px-4 whitespace-nowrap">
                     <span

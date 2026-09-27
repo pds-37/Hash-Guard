@@ -1,14 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Loader2, CheckCircle2 } from 'lucide-react';
 
-export const BlockchainTerminalOverlay = ({ isOpen, title, steps, onComplete }) => {
+export const BlockchainTerminalOverlay = ({ isOpen, title, steps = [], onComplete }) => {
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [logs, setLogs] = useState([]);
+  const hasTriggeredRef = useRef(false);
+  const onCompleteRef = useRef(onComplete);
+
+  useEffect(() => {
+    onCompleteRef.current = onComplete;
+  }, [onComplete]);
   
   useEffect(() => {
     if (!isOpen) {
       setCurrentStepIndex(0);
       setLogs([]);
+      hasTriggeredRef.current = false;
       return;
     }
 
@@ -18,13 +25,14 @@ export const BlockchainTerminalOverlay = ({ isOpen, title, steps, onComplete }) 
         setCurrentStepIndex(prev => prev + 1);
       }, Math.random() * 400 + 300); // 300-700ms per step
       return () => clearTimeout(timer);
-    } else {
+    } else if (!hasTriggeredRef.current) {
+      hasTriggeredRef.current = true;
       const finishTimer = setTimeout(() => {
-        if (onComplete) onComplete();
+        if (onCompleteRef.current) onCompleteRef.current();
       }, 1000);
       return () => clearTimeout(finishTimer);
     }
-  }, [isOpen, currentStepIndex, steps, onComplete]);
+  }, [isOpen, currentStepIndex, steps.length]);
 
   if (!isOpen) return null;
 

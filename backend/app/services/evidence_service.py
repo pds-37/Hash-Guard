@@ -1,8 +1,17 @@
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 from sqlalchemy.orm import Session
 from app.models.evidence import Evidence
 from app.schemas.evidence import EvidenceCreate, EvidenceResponse, SignatureSchema
+
+IST = timezone(timedelta(hours=5, minutes=30))
+
+def to_ist_str(dt):
+    if not dt:
+        return ""
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+    return dt.astimezone(IST).strftime('%Y-%m-%d %H:%M:%S IST')
 
 class EvidenceService:
     @staticmethod
@@ -205,9 +214,9 @@ class EvidenceService:
             status=e.status,
             fileSize=e.file_size,
             collector=e.collector,
-            createdAt=e.created_at.strftime('%Y-%m-%d %H:%M:%S UTC') if e.created_at else "",
+            createdAt=to_ist_str(e.created_at),
             lastEvent=e.last_event,
-            lastEventTime=e.last_event_time.strftime('%Y-%m-%d %H:%M:%S UTC') if e.last_event_time else "",
+            lastEventTime=to_ist_str(e.last_event_time),
             storageType=e.storage_type,
             storageLocation=e.storage_location,
             accessControl=e.access_control,
@@ -219,7 +228,7 @@ class EvidenceService:
                 signer=f"{e.source_org} CA",
                 algorithm="ECDSA / secp256k1",
                 publicKeyFingerprint="SHA256:...",
-                signedTimestamp=e.created_at.strftime('%Y-%m-%d %H:%M:%S UTC') if e.created_at else "",
+                signedTimestamp=to_ist_str(e.created_at),
                 manifestId=f"MNF-{e.id}"
             ),
             parentEvidenceId=e.parent_evidence_id,
@@ -230,7 +239,7 @@ class EvidenceService:
             retentionPolicyId=getattr(e, 'retention_policy_id', None),
             retentionPolicyName=getattr(e, 'retention_policy_name', None),
             retentionStatus=getattr(e, 'retention_status', 'ACTIVE'),
-            retentionExpiresAt=e.retention_expires_at.strftime('%Y-%m-%d %H:%M:%S UTC') if getattr(e, 'retention_expires_at', None) else ("SUSPENDED" if getattr(e, 'legal_hold', False) else None),
+            retentionExpiresAt=to_ist_str(e.retention_expires_at) if getattr(e, 'retention_expires_at', None) else ("SUSPENDED" if getattr(e, 'legal_hold', False) else None),
             legalHold=getattr(e, 'legal_hold', False),
             legalHoldReason=getattr(e, 'legal_hold_reason', None)
         )

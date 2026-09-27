@@ -2,6 +2,7 @@ import React from 'react';
 import { Badge } from '../common/Badge';
 import { ArrowRight, CheckCircle2, AlertTriangle, ExternalLink } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { formatISTCustodyEvent } from '../../utils/formatters';
 
 export const TransferQueue = ({
   transfers = [],
@@ -103,7 +104,12 @@ export const TransferQueue = ({
                         <CheckCircle2 className="w-3.5 h-3.5" />
                         <span>RECEIPT VERIFIED</span>
                       </div>
-                      <span className="text-ce-text-muted text-[10px]">{item.completedAt}</span>
+                      <span 
+                        className="text-ce-text-muted text-[10px]"
+                        title={item.completedAt ? `Source timestamp: UTC (${item.completedAt})` : undefined}
+                      >
+                        {formatISTCustodyEvent(item.completedAt)}
+                      </span>
                     </div>
                   )}
 

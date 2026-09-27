@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Badge } from '../common/Badge';
-import { truncateHash, getEventColor } from '../../utils/formatters';
+import { truncateHash, getEventColor, formatISTTimestamp } from '../../utils/formatters';
 import { ExternalLink, Copy, Check, Trash2, ShieldCheck, Lock } from 'lucide-react';
 import { evidenceService } from '../../services/evidenceService';
 import { useApp } from '../../context/AppContext';
@@ -58,7 +58,7 @@ export const EvidenceTable = ({ evidenceList = [] }) => {
               <th className="py-3 px-4 font-semibold">SHA-256 Hash</th>
               <th className="py-3 px-4 font-semibold">Status</th>
               <th className="py-3 px-4 font-semibold">Last Event</th>
-              <th className="py-3 px-4 font-semibold">Logged Date</th>
+              <th className="py-3 px-4 font-semibold whitespace-nowrap">Logged Date (IST)</th>
               <th className="py-3 px-4 font-semibold text-right">Actions</th>
             </tr>
           </thead>
@@ -146,8 +146,11 @@ export const EvidenceTable = ({ evidenceList = [] }) => {
                     {item.lastEvent}
                   </span>
                 </td>
-                <td className="py-3 px-4 text-ce-text-muted font-mono whitespace-nowrap">
-                  {item.createdAt ? (item.createdAt.includes('T') ? item.createdAt.split('T')[0] : item.createdAt.split(' ')[0]) : 'Recent'}
+                <td 
+                  className="py-3 px-4 text-ce-text-muted font-mono whitespace-nowrap min-w-[200px]"
+                  title={item.createdAt ? `Source timestamp: UTC (${item.createdAt})` : undefined}
+                >
+                  {formatISTTimestamp(item.createdAt)}
                 </td>
                 <td className="py-3 px-4 text-right whitespace-nowrap">
                   <div className="inline-flex items-center gap-2">

@@ -17,6 +17,48 @@ const upload = multer({ dest: UPLOADS_DIR });
 app.use(cors());
 app.use(express.json());
 
+function getISTNowString() {
+  const d = new Date();
+  const parts = new Intl.DateTimeFormat('en-IN', {
+    timeZone: 'Asia/Kolkata',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false
+  }).formatToParts(d);
+  const get = (type) => (parts.find(p => p.type === type) || {}).value || '00';
+  return `${get('year')}-${get('month')}-${get('day')} ${get('hour')}:${get('minute')}:${get('second')} IST`;
+}
+
+function formatToIST(dateStr) {
+  if (!dateStr) return '—';
+  if (typeof dateStr === 'string' && dateStr.includes('IST')) return dateStr;
+  try {
+    let cleanStr = String(dateStr).trim();
+    if (cleanStr.endsWith(' U')) cleanStr = cleanStr.slice(0, -2) + ' UTC';
+    if (!cleanStr.includes('Z') && !cleanStr.includes('UTC') && !cleanStr.includes('+')) cleanStr += ' UTC';
+    const d = new Date(cleanStr);
+    if (isNaN(d.getTime())) return dateStr;
+    const parts = new Intl.DateTimeFormat('en-IN', {
+      timeZone: 'Asia/Kolkata',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false
+    }).formatToParts(d);
+    const get = (type) => (parts.find(p => p.type === type) || {}).value || '00';
+    return `${get('year')}-${get('month')}-${get('day')} ${get('hour')}:${get('minute')}:${get('second')} IST`;
+  } catch {
+    return dateStr;
+  }
+}
+
 // Initialize DB
 async function initDb() {
   try {
@@ -75,7 +117,12 @@ app.post('/api/v1/auth/login', (req, res) => {
 // Evidence Routes
 app.get('/api/v1/evidence', async (req, res) => {
   const db = await readDb();
-  res.json(db.evidence);
+  const formatted = (db.evidence || []).map(e => ({
+    ...e,
+    createdAt: formatToIST(e.createdAt),
+    lastEventTime: formatToIST(e.lastEventTime || e.createdAt)
+  }));
+  res.json(formatted);
 });
 
 app.post('/api/v1/evidence', upload.single('file'), async (req, res) => {
@@ -101,6 +148,8 @@ app.post('/api/v1/evidence', upload.single('file'), async (req, res) => {
     calculatedHash = require('crypto').randomBytes(32).toString('hex');
   }
 
+  const nowIST = getISTNowString();
+
   const newEvidence = {
     id: payload.id || `EV-${uuidv4().substring(0,8).toUpperCase()}`,
     caseId: payload.caseId || 'CASE-2026-9012',
@@ -118,9 +167,9 @@ app.post('/api/v1/evidence', upload.single('file'), async (req, res) => {
     status: 'VERIFIED',
     fileSize: payload.fileSize || (req.file ? `${(req.file.size / (1024 * 1024)).toFixed(2)} MB` : '1.0 MB'),
     collector: payload.collector || 'admin@cyberlab.local',
-    createdAt: new Date().toISOString().replace('T', ' ').substring(0, 19) + ' UTC',
+    createdAt: nowIST,
     lastEvent: 'COLLECT',
-    lastEventTime: new Date().toISOString().replace('T', ' ').substring(0, 19) + ' UTC',
+    lastEventTime: nowIST,
     storageType: 'OFF-CHAIN SECURED',
     storageLocation: storedFilePath || `vault://secure-enclave/${payload.title || 'evidence'}.bin`,
     blockchainStatus: 'ON-CHAIN RECORD VERIFIED',
@@ -134,7 +183,7 @@ app.post('/api/v1/evidence', upload.single('file'), async (req, res) => {
       signer: payload.sourceOrg || 'Organization B (Cyber Defense Lab CA)',
       algorithm: 'ECDSA / secp256k1',
       publicKeyFingerprint: 'SHA256:' + require('crypto').randomBytes(8).toString('hex'),
-      signedTimestamp: new Date().toISOString().replace('T', ' ').substring(0, 19) + ' UTC',
+      signedTimestamp: nowIST,
       manifestId: `MNF-${Date.now()}`
     },
     description: payload.description || 'Legitimate evidence collected and sealed on custody ledger.'
@@ -332,7 +381,7 @@ app.post('/api/v1/verification/verify', async (req, res) => {
       identifier: item.id,
       overallStatus: isTampered ? 'COMPROMISED' : 'VERIFIED',
       tamperDetected: isTampered,
-      verifiedAt: new Date().toISOString().replace('T', ' ').substring(0, 19) + ' UTC',
+      verifiedAt: getISTNowString(),
       auditorId: 'AUDITOR-INDEPENDENT-GLOBAL',
       onChainBlock: item.blockNumber || 482910,
       checks: [

@@ -1,5 +1,6 @@
 import { apiClient, IS_MOCK_FALLBACK } from './api';
 import { mockCustodyEvents } from '../mock/custodyEvents';
+import { formatToIST, getISTNowString } from '../utils/formatters';
 
 const isSandboxModeActive = () => {
   try {
@@ -39,7 +40,10 @@ export const custodyService = {
       console.warn('[CustodyService] API request failed, using local custody events store:', err);
     }
 
-    const sourceList = isSandboxModeActive() ? sandboxCustodyEventsState : getGenuineCustodyEvents();
+    const sourceList = (isSandboxModeActive() ? sandboxCustodyEventsState : getGenuineCustodyEvents()).map(ev => ({
+      ...ev,
+      timestamp: formatToIST(ev.timestamp)
+    }));
 
     return sourceList.filter((item) => {
       if (filters.evidenceId && item.evidenceId.toUpperCase() !== filters.evidenceId.toUpperCase()) {
@@ -95,7 +99,7 @@ export const custodyService = {
       event: eventPayload.event,
       actor: eventPayload.actor || 'analyst-current@cyber.org',
       organization: eventPayload.organization || 'Organization B (Cyber Lab)',
-      timestamp: new Date().toISOString().replace('T', ' ').substring(0, 19) + ' UTC',
+      timestamp: getISTNowString(),
       hash: eventPayload.hash || '8f3a91bc72f4cd2a4e9b671a5c28e930f1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6',
       verification: 'VERIFIED',
       signature: '3045022100' + Array.from({length: 20}, () => Math.floor(Math.random()*16).toString(16)).join('') + '...VALID',
