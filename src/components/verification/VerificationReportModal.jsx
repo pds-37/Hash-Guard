@@ -177,8 +177,13 @@ export const VerificationReportModal = ({ isOpen, onClose, result }) => {
               <span className="text-ce-text-primary font-bold text-xs">{result.identifier}</span>
             </div>
             <div>
-              <span className="text-ce-text-muted font-bold uppercase tracking-wider block mb-0.5">Timestamp:</span>{' '}
-              <span className="text-ce-text-secondary font-semibold text-xs">{formatToIST(result.verifiedAt)}</span>
+              <span className="text-ce-text-muted font-bold uppercase tracking-wider block mb-0.5">Timestamp (IST):</span>{' '}
+              <span 
+                className="text-ce-text-secondary font-semibold text-xs"
+                title={result.verifiedAt ? `Source timestamp: UTC (${result.verifiedAt})` : undefined}
+              >
+                {formatISTTimestamp(result.verifiedAt)}
+              </span>
             </div>
             <div>
               <span className="text-ce-text-muted font-bold uppercase tracking-wider block mb-0.5">Anchor Block:</span>{' '}
