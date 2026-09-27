@@ -2,6 +2,7 @@ import React from 'react';
 import { X, FileText, ArrowUpRight } from 'lucide-react';
 import { Badge } from '../common/Badge';
 import { Link } from 'react-router-dom';
+import { formatISTTimestamp } from '../../utils/formatters';
 
 export const LineageNodeDetailsDrawer = ({ node, onClose, onDeriveFromNode }) => {
   if (!node) return null;

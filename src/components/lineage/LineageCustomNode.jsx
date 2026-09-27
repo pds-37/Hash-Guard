@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { Handle, Position } from '@xyflow/react';
 import { Badge } from '../common/Badge';
-import { truncateHash } from '../../utils/formatters';
+import { truncateHash, formatISTDate, formatISTTimestamp } from '../../utils/formatters';
 import { Shield, FileText, Cpu, GitFork } from 'lucide-react';
 
 export const LineageCustomNode = memo(({ data, selected }) => {
@@ -90,9 +90,12 @@ export const LineageCustomNode = memo(({ data, selected }) => {
         </div>
 
         <div className="flex items-center justify-between">
-          <span>Anchored:</span>
-          <span className="text-ce-text-muted">
-            {data.timestamp?.split(' ')[0]}
+          <span>Anchored (IST):</span>
+          <span 
+            className="text-ce-text-muted"
+            title={data.timestamp ? `Source timestamp: UTC (${data.timestamp}) • IST: ${formatISTTimestamp(data.timestamp)}` : undefined}
+          >
+            {data.timestamp ? formatISTDate(data.timestamp) : '—'}
           </span>
         </div>
       </div>
