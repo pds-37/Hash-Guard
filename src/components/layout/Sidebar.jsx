@@ -16,9 +16,7 @@ import {
   Menu,
   Wallet,
   LogOut,
-  Globe,
-  Clock,
-  Layers
+  Clock
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { Logo } from '../common/Logo';
@@ -32,8 +30,6 @@ export const Sidebar = ({ isMobileOpen, setMobileOpen }) => {
       label: 'Overview',
       items: [
         { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
-        { name: 'System Architecture', path: '/architecture', icon: Layers },
-        { name: 'Landing Overview', path: '/', icon: Globe },
       ]
     },
     {
@@ -202,7 +198,7 @@ export const Sidebar = ({ isMobileOpen, setMobileOpen }) => {
         <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-6">
           {navigationGroups.map((group, idx) => {
             const allowedItems = group.items.filter(item => 
-              item.path === '/' || item.path === '/architecture' || currentRole.allowedPages.includes(item.path.replace('/', ''))
+              currentRole.allowedPages.includes(item.path.replace('/', ''))
             );
             
             if (allowedItems.length === 0) return null;
