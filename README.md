@@ -102,6 +102,7 @@ Conventional evidence management relies on centralized databases (Active Directo
 - **🤖 Gen-AI Forensic Threat Triage**: Embedded neural triage powered by Google Gemini (`gemini-1.5-flash` / `gemini-pro`) to analyze Shannon entropy, identify binary packing, extract MITRE ATT&CK indicators, and parse IOCs from investigator notes.
 - **⏳ NIST SP 800-88 Compliant Retention & Shredding**: Automated life cycle retention schedules, administrative legal hold lockdowns, and verifiable cryptographic media eradication logging.
 - **🌗 Persistent SOC High-Contrast Theme System**: Sleek forensic dark mode and high-contrast light mode with real-time UI switching and persistent local preferences.
+- **✨ High-Impact Forensic Landing Interface**: Integrated dual-path cryptographic evidence flow visualization ("Digital Evidence That Stays True"), real-time on-chain proof inspection, interactive tamper drill modals, and a 4-step forensic lifecycle overview (Register Evidence, Track Custody, Verify Integrity, Maintain Trust).
 - **🎯 1-Click Sandbox Evaluation Route (`/sandbox`)**: Instant automated authentication as Lead Forensic Investigator with realistic forensic datasets for seamless review and evaluation without manual setup.
 
 ---
@@ -564,7 +565,7 @@ npm run dev
 
 The application is now live at **`http://localhost:5173`**.
 
-> **💡 Instant Reviewer Sandbox**: Navigate to **`http://localhost:5173/sandbox`** or click **"Launch Interactive Sandbox"** on the landing page to bypass login, seed realistic cyber forensic datasets, and evaluate the full SOC environment immediately!
+> **💡 Instant Reviewer Sandbox**: Navigate to **`http://localhost:5173/sandbox`** or click **"Launch Evaluation Sandbox"** on the landing page to bypass login, seed realistic cyber forensic datasets, and evaluate the full SOC environment immediately!
 
 ---
 
@@ -837,6 +838,7 @@ Cyber-Evidence-Exchange/
 ├── docs/                             # Technical Documentation
 │   └── API_CONTRACT.md               # Frontend-Backend REST API Contract Specification
 ├── public/                           # Static assets served at root
+│   ├── assets/                       # High-resolution hero visuals & process diagrams
 │   └── cyber_evidence_logo.jpg       # High-resolution platform logo
 ├── docker-compose.yml                # Enterprise multi-container orchestration
 ├── package.json                      # Frontend dependencies & npm scripts
