@@ -228,7 +228,7 @@ export const ARCHITECTURE_NODES = {
         'DID Registry Document hashes',
         'Custody transfer receipts & immutable block timestamps'
       ]
-    ],
+    },
     whyItMatters: 'Storing large binary evidence files directly on-chain is cost-prohibitive, inefficient, and violates data privacy laws. Off-chain storage maintains confidentiality while the blockchain anchors integrity.',
     codeReferences: [
       'backend/app/storage/minio_client.py',

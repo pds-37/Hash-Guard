@@ -13,6 +13,7 @@ import { SettingsPage } from './pages/Settings/SettingsPage';
 import { RetentionPage } from './pages/Retention/RetentionPage';
 import { LoginPage } from './pages/LoginPage';
 import { LandingPage } from './pages/Landing/LandingPage';
+import { ArchitecturePage } from './pages/Architecture/ArchitecturePage';
 import { BootSequence } from './components/layout/BootSequence';
 import { useApp } from './context/AppContext';
 
@@ -63,7 +64,7 @@ export function App() {
   const { currentRole } = useApp();
   const location = useLocation();
 
-  const isLandingPage = location.pathname === '/' || location.pathname === '/landing' || location.pathname === '/sandbox';
+  const isLandingPage = location.pathname === '/' || location.pathname === '/landing' || location.pathname === '/sandbox' || location.pathname === '/architecture';
 
   return (
     <>
@@ -73,6 +74,7 @@ export function App() {
           <Route path="/" element={<LandingPage />} />
           <Route path="/landing" element={<LandingPage />} />
           <Route path="/sandbox" element={<SandboxRoute />} />
+          <Route path="/architecture" element={<ArchitecturePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route element={<AppShell />}>
             <Route path="/dashboard" element={<ProtectedRoute element={<DashboardPage />} pathId="dashboard" />} />
