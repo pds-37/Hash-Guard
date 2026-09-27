@@ -70,6 +70,26 @@ class TransferService:
         except Exception as e:
             print(f"Failed to create TRANSFER event: {e}")
 
+        # Auto-create AuditLog entry for CROSS_ORG_TRANSFER
+        from app.models.audit_log import AuditLog
+        try:
+            audit_entry = AuditLog(
+                id=f"AUD-{str(uuid.uuid4())[:8].upper()}",
+                timestamp=datetime.utcnow(),
+                event="CROSS_ORG_TRANSFER",
+                actor=new_transfer.from_actor,
+                organization=new_transfer.from_org,
+                evidence_id=new_transfer.evidence_id,
+                event_id=f"EVT-{str(uuid.uuid4())[:8].upper()}",
+                verification="PENDING",
+                reference=tx_hash,
+                details=f"Cross-organization transfer of '{new_transfer.evidence_title}' dispatched to {new_transfer.to_org}."
+            )
+            db.add(audit_entry)
+            db.commit()
+        except Exception as e:
+            print(f"Failed to create transfer audit log: {e}")
+
         return TransferService._format_response(new_transfer)
 
     @staticmethod
@@ -107,6 +127,26 @@ class TransferService:
                 evidence.last_event = "RECEIVE"
                 evidence.status = "VERIFIED"
                 db.commit()
+
+            # Auto-create AuditLog entry for TRANSFER_ACCEPTED
+            from app.models.audit_log import AuditLog
+            try:
+                audit_entry = AuditLog(
+                    id=f"AUD-{str(uuid.uuid4())[:8].upper()}",
+                    timestamp=datetime.utcnow(),
+                    event="TRANSFER_ACCEPTED",
+                    actor=transfer.to_actor,
+                    organization=transfer.to_org,
+                    evidence_id=transfer.evidence_id,
+                    event_id=f"EVT-{str(uuid.uuid4())[:8].upper()}",
+                    verification="VERIFIED",
+                    reference=transfer.blockchain_tx or f"0x{uuid.uuid4().hex}",
+                    details=f"Transfer of '{transfer.evidence_title}' verified and accepted into custody by {transfer.to_org}."
+                )
+                db.add(audit_entry)
+                db.commit()
+            except Exception as auditErr:
+                print(f"Failed to create transfer accept audit log: {auditErr}")
                 
         except Exception as e:
             print(f"Failed to create RECEIVE event or update evidence: {e}")

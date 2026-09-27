@@ -31,36 +31,65 @@ const saveGenuineAuditLogs = (list) => {
 
 export const auditService = {
   async getAuditLogs(filters = {}) {
+    let apiLogs = [];
     try {
       if (!IS_MOCK_FALLBACK) {
         const response = await apiClient.get('/audit', { params: filters });
-        return response.data;
+        if (Array.isArray(response?.data)) {
+          apiLogs = response.data.map(log => ({
+            ...log,
+            evidenceId: log.evidenceId || log.evidence_id || 'N/A',
+            eventId: log.eventId || log.event_id || log.id,
+            timestamp: formatToIST(log.timestamp)
+          }));
+        }
       }
     } catch (err) {
-      // Fallback
+      // Remote API unavailable, fallback gracefully
     }
 
-    const sourceList = (isSandboxModeActive() ? sandboxAuditLogsState : getGenuineAuditLogs()).map(log => ({
+    const localSource = (isSandboxModeActive() ? sandboxAuditLogsState : getGenuineAuditLogs()).map(log => ({
       ...log,
+      evidenceId: log.evidenceId || log.evidence_id || 'N/A',
+      eventId: log.eventId || log.event_id || log.id,
       timestamp: formatToIST(log.timestamp)
     }));
 
-    return sourceList.filter((log) => {
+    // If localSource is empty and apiLogs has items, use apiLogs; if apiLogs empty, use localSource; or merge
+    const seenIds = new Set();
+    const mergedList = [];
+    for (const log of [...apiLogs, ...localSource]) {
+      const key = log.id || log.eventId || `${log.timestamp}-${log.event}`;
+      if (!seenIds.has(key)) {
+        seenIds.add(key);
+        mergedList.push(log);
+      }
+    }
+
+    // Sort newest first
+    mergedList.sort((a, b) => {
+      const timeA = new Date(a.timestamp).getTime();
+      const timeB = new Date(b.timestamp).getTime();
+      if (isNaN(timeA) || isNaN(timeB)) return 0;
+      return timeB - timeA;
+    });
+
+    return mergedList.filter((log) => {
       if (filters.event && filters.event !== 'ALL' && log.event !== filters.event) {
         return false;
       }
-      if (filters.organization && filters.organization !== 'ALL' && !log.organization.includes(filters.organization)) {
+      if (filters.organization && filters.organization !== 'ALL' && !(log.organization || '').toLowerCase().includes(filters.organization.toLowerCase())) {
         return false;
       }
       if (filters.search) {
         const q = filters.search.toLowerCase();
         return (
-          log.id.toLowerCase().includes(q) ||
-          log.evidenceId.toLowerCase().includes(q) ||
-          log.actor.toLowerCase().includes(q) ||
-          log.event.toLowerCase().includes(q) ||
-          log.details.toLowerCase().includes(q) ||
-          log.reference.toLowerCase().includes(q)
+          (log.id || '').toLowerCase().includes(q) ||
+          (log.evidenceId || '').toLowerCase().includes(q) ||
+          (log.actor || '').toLowerCase().includes(q) ||
+          (log.event || '').toLowerCase().includes(q) ||
+          (log.details || '').toLowerCase().includes(q) ||
+          (log.reference || '').toLowerCase().includes(q)
         );
       }
       return true;
@@ -69,16 +98,26 @@ export const auditService = {
 
   async logEvent(logPayload) {
     const newLog = {
-      id: `AUD-${Math.floor(1000 + Math.random() * 9000)}`,
+      id: logPayload.id || `AUD-${Math.floor(1000 + Math.random() * 9000)}`,
       timestamp: getISTNowString(),
-      evidenceId: logPayload.evidenceId || 'N/A',
+      evidenceId: logPayload.evidenceId || logPayload.evidence_id || 'N/A',
+      eventId: logPayload.eventId || logPayload.event_id || `EVT-${Math.floor(1000 + Math.random() * 9000).toString(16).toUpperCase()}`,
       event: logPayload.event || 'SYSTEM_ACTION',
       actor: logPayload.actor || 'system',
       organization: logPayload.organization || 'Local Node',
       details: logPayload.details || 'Cryptographic audit log recorded',
-      reference: logPayload.reference || '0x' + Array.from({length: 40}, () => Math.floor(Math.random()*16).toString(16)).join(''),
-      verification: 'VERIFIED'
+      reference: logPayload.reference || ('0x' + Array.from({length: 64}, () => Math.floor(Math.random()*16).toString(16)).join('')),
+      verification: logPayload.verification || 'VERIFIED'
     };
+
+    // Try synchronizing with backend API
+    try {
+      if (!IS_MOCK_FALLBACK) {
+        await apiClient.post('/audit', newLog);
+      }
+    } catch (err) {
+      console.warn('[AuditService] Remote audit log sync failed, recording locally:', err);
+    }
 
     if (isSandboxModeActive()) {
       sandboxAuditLogsState.unshift(newLog);

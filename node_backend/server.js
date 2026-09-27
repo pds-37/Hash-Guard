@@ -268,6 +268,25 @@ app.get('/api/v1/audit', async (req, res) => {
   res.json(db.audit_logs);
 });
 
+app.post('/api/v1/audit', async (req, res) => {
+  const db = await readDb();
+  const log = {
+    id: req.body.id || `AUD-${uuidv4().substring(0,8).toUpperCase()}`,
+    timestamp: req.body.timestamp || new Date().toISOString(),
+    event: req.body.event || 'SYSTEM_ACTION',
+    actor: req.body.actor || 'system',
+    organization: req.body.organization || 'Organization B (Cyber Defense Lab)',
+    evidence_id: req.body.evidenceId || req.body.evidence_id || 'N/A',
+    event_id: req.body.eventId || req.body.event_id || `EVT-${uuidv4().substring(0,8).toUpperCase()}`,
+    verification: req.body.verification || 'VERIFIED',
+    reference: req.body.reference || ('0x' + require('crypto').randomBytes(32).toString('hex')),
+    details: req.body.details || 'Cryptographic audit log recorded'
+  };
+  db.audit_logs.unshift(log);
+  await writeDb(db);
+  res.json(log);
+});
+
 // Retention Policies Routes
 app.get('/api/v1/admin/retention/policies', async (req, res) => {
   const db = await readDb();

@@ -120,6 +120,17 @@ export const transferService = {
         `${newTransfer.fromOrg} -> ${newTransfer.toOrg} (In Transit)`,
         'TRANSFER'
       );
+
+      const { auditService } = await import('./auditService');
+      await auditService.logEvent({
+        evidenceId: newTransfer.evidenceId,
+        event: 'CROSS_ORG_TRANSFER',
+        actor: newTransfer.fromActor,
+        organization: newTransfer.fromOrg,
+        details: `Custody transfer of '${newTransfer.evidenceTitle}' dispatched to ${newTransfer.toOrg}. Protocol: mTLS Encrypted Transport.`,
+        reference: newTransfer.blockchainTx || ('0x' + Array.from({length: 64}, () => Math.floor(Math.random()*16).toString(16)).join('')),
+        verification: 'PENDING'
+      });
     } catch (e) {
       console.warn('Auto transfer event creation skipped:', e);
     }
@@ -192,6 +203,17 @@ export const transferService = {
           acceptedTransfer.toOrg,
           'RECEIVE'
         );
+
+        const { auditService } = await import('./auditService');
+        await auditService.logEvent({
+          evidenceId: acceptedTransfer.evidenceId,
+          event: 'TRANSFER_ACCEPTED',
+          actor: acceptedTransfer.toActor,
+          organization: acceptedTransfer.toOrg,
+          details: `Transfer ${transferId} verified and accepted into custody by ${acceptedTransfer.toOrg}.`,
+          reference: acceptedTransfer.blockchainTx || ('0x' + Array.from({length: 64}, () => Math.floor(Math.random()*16).toString(16)).join('')),
+          verification: 'VERIFIED'
+        });
       } catch (e) {
         console.warn('Auto receive event creation skipped:', e);
       }

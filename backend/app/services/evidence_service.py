@@ -152,6 +152,26 @@ class EvidenceService:
         except Exception as e:
             print(f"Failed to create custody event: {e}")
 
+        # Auto-create AuditLog entry for EVIDENCE_SEALED
+        from app.models.audit_log import AuditLog
+        try:
+            audit_entry = AuditLog(
+                id=f"AUD-{str(uuid.uuid4())[:8].upper()}",
+                timestamp=datetime.utcnow(),
+                event="EVIDENCE_SEALED",
+                actor=new_ev.collector,
+                organization=new_ev.source_org,
+                evidence_id=new_ev.id,
+                event_id=f"EVT-{str(uuid.uuid4())[:8].upper()}",
+                verification="VERIFIED" if tx_hash else "PENDING",
+                reference=tx_hash if tx_hash else f"0x{uuid.uuid4().hex}",
+                details=f"Evidence '{new_ev.title}' sealed into custody. Client SHA-256: {new_ev.hash[:16]}..."
+            )
+            db.add(audit_entry)
+            db.commit()
+        except Exception as e:
+            print(f"Failed to create audit log entry: {e}")
+
         return EvidenceService._format_response(new_ev)
 
     @staticmethod

@@ -141,6 +141,30 @@ def init_db():
             db.add(user_a)
         db.commit()
 
+        # Seed initial Evidence exhibits if empty
+        from app.models.evidence import Evidence
+        if db.query(Evidence).count() == 0:
+            sample_ev = Evidence(
+                id="EV-C17CE47C",
+                title="LockBit 3.0 Ransomware Payload",
+                type="Malware Binary",
+                source_org="Organization A — CERT-Alpha",
+                current_custodian="Organization A — CERT-Alpha",
+                hash="8f3a91bc72f4cd2a4e9b671a5c28e930f1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6",
+                expected_hash="8f3a91bc72f4cd2a4e9b671a5c28e930f1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6",
+                file_size="0.64 KB",
+                collector="analyst-1@cert-alpha.gov",
+                description="Forensic bitstream dump of LockBit 3.0 Black variant recovered from compromised hypervisor.",
+                forensic_notes="PE binary unpack reveals shadow copy deletion routines and C2 callback URLs.",
+                storage_location="vault://secure-enclave/EV-C17CE47C.raw",
+                tx_hash="0x8f3a91bc72f4cd2a4e9b671a5c28e930f1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6",
+                block_number=482780,
+                blockchain_status="CONFIRMED",
+                status="VERIFIED"
+            )
+            db.add(sample_ev)
+            db.commit()
+
         # Seed initial audit logs if empty
         if db.query(AuditLog).count() == 0:
             now = datetime.utcnow()
@@ -154,8 +178,8 @@ def init_db():
                     evidence_id="N/A",
                     event_id=f"EVT-{str(uuid.uuid4())[:8].upper()}",
                     verification="SUCCESS",
-                    reference="Auth-Gateway-1",
-                    details="User successfully authenticated via Multi-Factor Authentication."
+                    reference="did:ethr:0xa77ed19aca6f082e1c93a0271b83d10291e0182f",
+                    details="User authenticated via Web3 ECDSA keypair and decentralized identifier (DID)."
                 ),
                 AuditLog(
                     id=f"AUD-{str(uuid.uuid4())[:8].upper()}",
@@ -166,8 +190,8 @@ def init_db():
                     evidence_id="EV-C17CE47C",
                     event_id=f"EVT-{str(uuid.uuid4())[:8].upper()}",
                     verification="VERIFIED",
-                    reference="SmartContract-0x8f3a",
-                    details="Cryptographic hash of evidence binary sealed on the blockchain ledger."
+                    reference="0x8f3a91bc72f4cd2a4e9b671a5c28e930f1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6",
+                    details="Cryptographic SHA-256 manifest anchored on-chain to HashGuard smart contract (0x3592...7052)."
                 ),
                 AuditLog(
                     id=f"AUD-{str(uuid.uuid4())[:8].upper()}",
@@ -178,8 +202,8 @@ def init_db():
                     evidence_id="EV-C17CE47C",
                     event_id=f"EVT-{str(uuid.uuid4())[:8].upper()}",
                     verification="VERIFIED",
-                    reference="Gemini-1.5-Flash",
-                    details="Automated LLM forensic analysis performed. Threat level classified as CRITICAL."
+                    reference="0x8eb2d91c7a1024e03bc184a839f9024c6198f12a3d0a3db8cec29910bac32d2",
+                    details="Automated LLM forensic classification attested on-chain via oracle proof digest."
                 ),
                 AuditLog(
                     id=f"AUD-{str(uuid.uuid4())[:8].upper()}",
@@ -190,8 +214,20 @@ def init_db():
                     evidence_id="EV-C17CE47C",
                     event_id=f"EVT-{str(uuid.uuid4())[:8].upper()}",
                     verification="PENDING",
-                    reference="mTLS-Dispatch",
-                    details="Secure evidence transfer initiated to Organization B (Cyber Defense Lab)."
+                    reference="0x885aa76a3921b74e6f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e",
+                    details="Smart contract escrow lock initiated. Transfer payload dispatched to Organization B (Cyber Defense Lab)."
+                ),
+                AuditLog(
+                    id=f"AUD-{str(uuid.uuid4())[:8].upper()}",
+                    timestamp=now - timedelta(minutes=45),
+                    event="EVIDENCE_SEALED",
+                    actor="analyst@cyberlab.local",
+                    organization="Cyber Defense Lab",
+                    evidence_id="EV-001",
+                    event_id=f"EVT-{str(uuid.uuid4())[:8].upper()}",
+                    verification="VERIFIED",
+                    reference="0x3592925cf64e7c3c68d4911b2ebc722c2ea67052",
+                    details="Forensic memory dump exhibit sealed into custody enclave with client-side SHA-256 verification."
                 )
             ]
             for log in logs:

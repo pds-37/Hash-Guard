@@ -205,6 +205,21 @@ export const evidenceService = {
       console.warn('Cascade delete custody error:', e);
     }
 
+    try {
+      const { auditService } = await import('./auditService');
+      await auditService.logEvent({
+        evidenceId: cleanId,
+        event: 'EVIDENCE_PURGED',
+        actor: 'admin@cyberlab.local',
+        organization: 'Organization B — Cyber Defense Lab',
+        details: `Evidence exhibit ${cleanId} permanently purged from custody ledger.`,
+        reference: '0x' + Array.from({length: 64}, () => Math.floor(Math.random()*16).toString(16)).join(''),
+        verification: 'SUCCESS'
+      });
+    } catch (e) {
+      console.warn('Delete audit log skipped:', e);
+    }
+
     return { success: true };
   },
 
@@ -433,6 +448,22 @@ export const evidenceService = {
       localStorage.setItem('cee_genuine_custody', JSON.stringify(list));
     } catch (custodyErr) {
       console.warn('Auto custody event registration skipped:', custodyErr);
+    }
+
+    // Auto-record audit log for EVIDENCE_SEALED
+    try {
+      const { auditService } = await import('./auditService');
+      await auditService.logEvent({
+        evidenceId: newEvidence.id,
+        event: 'EVIDENCE_SEALED',
+        actor: newEvidence.collector || 'analyst-lead@org-a.gov',
+        organization: newEvidence.sourceOrg || 'Organization B — Cyber Defense Lab',
+        details: `Forensic exhibit '${newEvidence.title}' sealed into custody. Client SHA-256: ${newEvidence.hash.substring(0, 16)}...`,
+        reference: newEvidence.txHash || ('0x' + Array.from({length: 64}, () => Math.floor(Math.random()*16).toString(16)).join('')),
+        verification: 'VERIFIED'
+      });
+    } catch (auditErr) {
+      console.warn('Auto audit event registration skipped:', auditErr);
     }
 
     return newEvidence;
