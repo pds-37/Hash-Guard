@@ -198,24 +198,24 @@ export const IndependentVerificationPanel = ({ defaultId = '', autoVerify = fals
                     setEvidenceId('EV-001');
                     setError(null);
                     setNotFoundId(null);
-                    executeVerify('EV-001');
+                    setResult(null);
                   }}
                   className="text-ce-brand hover:underline font-bold cursor-pointer"
                 >
-                  EV-001 (Valid Malware)
+                  EV-001 (Valid Specimen)
                 </button>
                 <span>•</span>
                 <button
                   type="button"
                   onClick={() => {
-                    setEvidenceId('EV-009');
+                    setEvidenceId('EV-DDXOEY');
                     setError(null);
                     setNotFoundId(null);
-                    executeVerify('EV-009');
+                    setResult(null);
                   }}
                   className="text-ce-danger hover:underline font-bold cursor-pointer"
                 >
-                  EV-009 (Simulated Tamper)
+                  EV-DDXOEY (Tampered Specimen)
                 </button>
               </div>
             ) : (
@@ -231,14 +231,14 @@ export const IndependentVerificationPanel = ({ defaultId = '', autoVerify = fals
                         setEvidenceId(ev.id);
                         setError(null);
                         setNotFoundId(null);
-                        executeVerify(ev.id);
+                        setResult(null);
                       }}
                       className={`px-2.5 py-1 rounded border transition-colors cursor-pointer text-xs font-bold ${
                         evidenceId === ev.id
                           ? 'bg-ce-brand/20 border-ce-brand text-ce-brand'
                           : 'bg-ce-surface-subtle border-ce-border hover:border-ce-brand/50 text-ce-text-primary'
                       }`}
-                      title={`Verify exhibit ${ev.id}`}
+                      title={`Select exhibit ${ev.id}`}
                     >
                       {ev.id}
                     </button>
@@ -262,13 +262,15 @@ export const IndependentVerificationPanel = ({ defaultId = '', autoVerify = fals
                 <button
                   type="button"
                   onClick={() => {
-                    const target = evidenceId || (availableEvidence[0]?.id) || 'EV-001';
+                    const target = (evidenceId || availableEvidence[0]?.id || 'EV-DDXOEY').trim();
                     evidenceService.toggleTamperSimulation(target, true, 'BIT_FLIP');
                     triggerRefresh();
-                    executeVerify(target);
+                    setResult(null);
+                    setError(null);
+                    setNotFoundId(null);
                   }}
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-ce-danger/15 hover:bg-ce-danger/25 border border-ce-danger/40 text-ce-danger text-[11px] font-mono font-bold transition-all cursor-pointer shadow-sm active:scale-95"
-                  title="Simulate adversarial bit-flip modification in storage"
+                  title="Simulate adversarial bit-flip modification in storage for selected exhibit"
                 >
                   <Zap className="w-3.5 h-3.5" />
                   <span>Simulate Storage Tamper</span>
@@ -276,13 +278,15 @@ export const IndependentVerificationPanel = ({ defaultId = '', autoVerify = fals
                 <button
                   type="button"
                   onClick={() => {
-                    const target = evidenceId || (availableEvidence[0]?.id) || 'EV-001';
+                    const target = (evidenceId || availableEvidence[0]?.id || 'EV-DDXOEY').trim();
                     evidenceService.toggleTamperSimulation(target, false);
                     triggerRefresh();
-                    executeVerify(target);
+                    setResult(null);
+                    setError(null);
+                    setNotFoundId(null);
                   }}
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-ce-surface hover:bg-ce-surface-subtle border border-ce-border text-ce-text-secondary hover:text-ce-text-primary text-[11px] font-mono font-semibold transition-all cursor-pointer active:scale-95"
-                  title="Restore original baseline root digest"
+                  title="Restore original baseline root digest for all exhibits"
                 >
                   <RotateCcw className="w-3.5 h-3.5" />
                   <span>Restore Clean State</span>

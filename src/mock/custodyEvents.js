@@ -127,11 +127,11 @@ export const mockCustodyEvents = [
     organization: "Organization B (Cyber Lab)",
     timestamp: "2026-08-16 09:40:11 UTC",
     previousHash: "8f3a91bc72f4...5d6",
-    hash: "7a21f9c82e04192b47e301293840192830192840192830192830192830192830",
-    verification: "COMPROMISED",
-    signature: "INVALID_SIGNATURE_MISMATCH",
+    hash: "8f3a91bc72f4cd2a4e9b671a5c28e930f1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6",
+    verification: "VERIFIED",
+    signature: "30450221008899aabb...VALID",
     txRef: "0x9918230491820491820394810293840192830192",
-    notes: "SECURITY INCIDENT: Hash calculation failed match against on-chain block #482850 anchor. Tamper detected.",
+    notes: "Dynamic sandbox analysis completed. Cryptographic hash matched on-chain block #482850 anchor.",
     parentId: null
   }
 ];

@@ -469,13 +469,13 @@ export const evidenceService = {
     return newEvidence;
   },
 
-  // UNIVERSAL TAMPER SIMULATION HELPER (Supports any exhibit in Sandbox & Genuine modes)
-  toggleTamperSimulation(targetId = 'EV-001', shouldTamper = true, attackType = 'BIT_FLIP') {
-    const cleanId = (targetId || '').trim().toUpperCase();
-    if (!cleanId) return;
+  // UNIVERSAL TAMPER SIMULATION HELPER (Only tampers target EV-DDXOEY, keeping all other exhibits clean)
+  toggleTamperSimulation(targetId = 'EV-DDXOEY', shouldTamper = true, attackType = 'BIT_FLIP') {
+    const cleanId = (targetId || 'EV-DDXOEY').trim().toUpperCase();
 
     const mutateEvidence = (ev) => {
-      if ((ev.id || '').toUpperCase() === cleanId) {
+      const isTarget = (ev.id || '').toUpperCase() === cleanId;
+      if (isTarget) {
         if (shouldTamper) {
           const originalRoot = ev.expectedHash || ev.hash || '4a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b';
           // Compute altered hash to simulate avalanche effect
@@ -506,8 +506,20 @@ export const evidenceService = {
             }
           };
         }
+      } else {
+        // Keep all other exhibits in guaranteed clean verified state
+        return {
+          ...ev,
+          hash: ev.expectedHash || ev.hash,
+          status: 'VERIFIED',
+          isTamperedSimulated: false,
+          blockchainStatus: 'ON-CHAIN RECORD VERIFIED',
+          signature: {
+            ...(ev.signature || {}),
+            status: 'VALID'
+          }
+        };
       }
-      return ev;
     };
 
     if (isSandboxModeActive()) {

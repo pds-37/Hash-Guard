@@ -91,9 +91,9 @@ export const mockAuditLogs = [
     organization: "Organization B (Cyber Lab)",
     evidenceId: "EV-009",
     eventId: "EVT-8999",
-    verification: "COMPROMISED",
+    verification: "VERIFIED",
     reference: "Block #482850 (0x991823...)",
-    details: "TAMPER ALERT: Evidence EV-009 current bit hash failed match against sealed on-chain root."
+    details: "Dynamic sandbox analysis completed. Off-chain payload SHA-256 integrity verified against on-chain block #482850 anchor."
   },
   {
     id: "LOG-10920",
