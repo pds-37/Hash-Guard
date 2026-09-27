@@ -4,16 +4,18 @@ import axios from 'axios';
 // API base URL — set VITE_API_BASE_URL in your Vercel environment variables
 // to point to the Render backend (https://hash-guard.onrender.com/api/v1).
 // ─────────────────────────────────────────────────────────────────────────────
+const isRemoteHost = typeof window !== 'undefined' && 
+  window.location.hostname !== 'localhost' && 
+  window.location.hostname !== '127.0.0.1';
+
 export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8001/api/v1';
 
-// IS_MOCK_FALLBACK is TRUE only when explicitly requested via env var.
-// We do NOT force mock mode for Vercel/Netlify deployments — the backend
-// CORS and network fallback logic in each service handles remote failures.
-export const IS_MOCK_FALLBACK = import.meta.env.VITE_ENABLE_MOCK_FALLBACK === 'true';
+export const IS_MOCK_FALLBACK = import.meta.env.VITE_ENABLE_MOCK_FALLBACK === 'true' || 
+  (isRemoteHost && (!import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_BASE_URL.includes('localhost')));
 
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 15000,
+  timeout: 2500,
   headers: {
     'Accept': 'application/json',
   },

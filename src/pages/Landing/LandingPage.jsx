@@ -106,10 +106,10 @@ export const LandingPage = () => {
           {/* Navigation Links (Desktop) */}
           <nav className="hidden lg:flex items-center gap-5 xl:gap-8 text-xs font-mono tracking-wider text-slate-600 dark:text-slate-300 shrink-0">
             <button 
-              onClick={() => scrollToSection('architecture')}
+              onClick={() => navigate('/architecture')}
               className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors whitespace-nowrap cursor-pointer font-medium"
             >
-              Architecture
+              System Architecture
             </button>
             <button 
               onClick={() => scrollToSection('evidence-flow')}
@@ -173,10 +173,13 @@ export const LandingPage = () => {
           <div className="lg:hidden border-t border-slate-200 dark:border-slate-800/90 bg-white/98 dark:bg-[#040812]/98 backdrop-blur-xl px-4 py-4 space-y-3 shadow-2xl transition-all">
             <div className="flex flex-col space-y-1 text-xs font-mono uppercase tracking-wider">
               <button
-                onClick={() => scrollToSection('architecture')}
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  navigate('/architecture');
+                }}
                 className="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/60 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer text-left"
               >
-                <span>Architecture</span>
+                <span>System Architecture</span>
                 <ChevronRight className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
               </button>
 

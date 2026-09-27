@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import {
   Search,
   Bell,
-  Menu
+  Menu,
+  Layers
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { ThemeToggle } from '../common/ThemeToggle';
@@ -48,6 +50,15 @@ export const Topbar = ({ setMobileOpen }) => {
             <span>SANDBOX — EVALUATION MODE</span>
           </div>
         )}
+
+        <Link
+          to="/architecture"
+          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border border-ce-border hover:border-ce-brand bg-ce-surface hover:bg-ce-surface-subtle text-ce-text-secondary hover:text-ce-brand text-xs font-mono transition-colors"
+          title="Inspect System Architecture"
+        >
+          <Layers className="w-3.5 h-3.5" />
+          <span className="hidden md:inline">Architecture</span>
+        </Link>
 
         <ThemeToggle size="md" />
 
