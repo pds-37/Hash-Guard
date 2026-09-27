@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { Modal } from '../common/Modal';
-import { ShieldPlus, Hash, Upload, Loader2, Building2 } from 'lucide-react';
+import { ShieldPlus, Hash, Upload, Loader2, CheckCircle2, X, FileText } from 'lucide-react';
 import { evidenceService } from '../../services/evidenceService';
 import { BlockchainTerminalOverlay } from '../common/BlockchainTerminalOverlay';
 import { ethers } from 'ethers';
@@ -9,41 +9,72 @@ import { useApp } from '../../context/AppContext';
 
 export const NewEvidenceModal = ({ isOpen, onClose, onCreated }) => {
   const { currentOrg, currentRole } = useApp();
-  const [formData, setFormData] = useState({
+  const fileInputRef = useRef(null);
+
+  const getInitialFormData = useCallback(() => ({
     title: '',
     caseId: 'CASE-2026-9012',
     type: 'Malware Binary',
     fileSize: '',
-    collector: 'lead-investigator@consortium.gov',
+    collector: `${(currentRole?.id || 'officer').toLowerCase()}@${(currentOrg?.shortName || 'consortium').toLowerCase().replace(/\s+/g, '')}.gov`,
     description: '',
+    forensicNotes: '',
+    allocatedTo: '',
     sourceOrg: currentOrg?.name || 'Organization B — Cyber Defense Lab',
     currentCustodian: currentOrg?.name || 'Organization B — Cyber Defense Lab',
     retentionPolicyName: 'Active Investigation Evidence',
     retentionPeriodDays: 365,
-    parentEvidenceId: ''
-  });
+    parentEvidenceId: '',
+    assetCategory: 'FORENSIC_EVIDENCE'
+  }), [currentOrg, currentRole]);
 
-  useEffect(() => {
-    if (currentOrg?.name) {
-      setFormData(prev => ({
-        ...prev,
-        sourceOrg: currentOrg.name,
-        currentCustodian: currentOrg.name,
-        collector: `${(currentRole?.id || 'officer').toLowerCase()}@${(currentOrg?.shortName || 'consortium').toLowerCase().replace(/\s+/g, '')}.gov`
-      }));
-    }
-  }, [currentOrg, currentRole, isOpen]);
+  const [formData, setFormData] = useState(getInitialFormData);
   const [computingHash, setComputingHash] = useState(false);
   const [computedHash, setComputedHash] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const isSubmittingRef = useRef(false);
+  const [showTerminal, setShowTerminal] = useState(false);
+
+  const resetForm = useCallback(() => {
+    setFormData(getInitialFormData());
+    setSelectedFile(null);
+    setComputedHash('');
+    setComputingHash(false);
+    setIsSubmitting(false);
+    isSubmittingRef.current = false;
+    setShowTerminal(false);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  }, [getInitialFormData]);
+
+  // Reset form whenever modal closes or opens fresh so previous file data is never retained
+  useEffect(() => {
+    if (!isOpen) {
+      resetForm();
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        sourceOrg: currentOrg?.name || prev.sourceOrg,
+        currentCustodian: currentOrg?.name || prev.currentCustodian,
+        collector: `${(currentRole?.id || 'officer').toLowerCase()}@${(currentOrg?.shortName || 'consortium').toLowerCase().replace(/\s+/g, '')}.gov`
+      }));
+    }
+  }, [isOpen, resetForm, currentOrg, currentRole]);
+
+  const handleClose = () => {
+    resetForm();
+    onClose();
+  };
 
   const handleFileSelect = async (e) => {
-    const file = e.target.files[0];
+    const file = e.target.files?.[0];
     if (!file) return;
 
     setSelectedFile(file);
 
-    // Set file size (auto-format in KB for small files < 1 MB so it never shows 0.00 MB)
+    // Auto-format file size in KB for small files < 1 MB so it never displays 0.00 MB
     let formattedSize;
     if (file.size < 1024 * 1024) {
       formattedSize = `${(file.size / 1024).toFixed(2)} KB`;
@@ -52,12 +83,68 @@ export const NewEvidenceModal = ({ isOpen, onClose, onCreated }) => {
     } else {
       formattedSize = `${(file.size / (1024 * 1024 * 1024)).toFixed(2)} GB`;
     }
-    setFormData(prev => ({ ...prev, fileSize: formattedSize }));
-    
-    // Suggest a title if empty
-    if (!formData.title) {
-        setFormData(prev => ({ ...prev, title: file.name }));
+
+    // Determine evidence type and category from file extension
+    const ext = file.name.split('.').pop().toLowerCase();
+    let detectedType = 'Malware Binary';
+    let detectedCategory = 'FORENSIC_EVIDENCE';
+
+    if (['ps1', 'bat', 'sh', 'vbs', 'py'].includes(ext)) {
+      detectedType = 'Source Code';
+      detectedCategory = 'SECURITY_ARTIFACT';
+    } else if (['pcap', 'pcapng', 'cap'].includes(ext)) {
+      detectedType = 'Network Capture';
+      detectedCategory = 'FORENSIC_EVIDENCE';
+    } else if (['dmp', 'raw', 'vmem'].includes(ext)) {
+      detectedType = 'Memory Dump';
+      detectedCategory = 'FORENSIC_EVIDENCE';
+    } else if (['e01', 'dd', 'img'].includes(ext)) {
+      detectedType = 'Disk Image';
+      detectedCategory = 'FORENSIC_EVIDENCE';
+    } else if (['yar', 'yara'].includes(ext)) {
+      detectedType = 'IOC Set';
+      detectedCategory = 'SECURITY_ARTIFACT';
+    } else if (ext === 'json') {
+      detectedType = 'IOC Set';
+      detectedCategory = 'SECURITY_ARTIFACT';
+    } else if (ext === 'csv') {
+      detectedType = 'Dataset';
+      detectedCategory = 'DATASET';
+    } else if (ext === 'log') {
+      detectedType = 'Network Capture';
+      detectedCategory = 'FORENSIC_EVIDENCE';
+    } else if (['pdf', 'docx', 'doc', 'txt'].includes(ext)) {
+      detectedType = 'Digital Document';
+      detectedCategory = 'DOCUMENT';
+    } else if (['exe', 'dll', 'bin', 'elf'].includes(ext)) {
+      detectedType = 'Malware Binary';
+      detectedCategory = 'FORENSIC_EVIDENCE';
     }
+
+    // Always update title, scope, and notes to the actual selected file
+    let newDescription = `Forensic acquisition of ${file.name} (${formattedSize}). Preserved under ISO/IEC 27037 standards with WebCrypto SHA-256 verification.`;
+    let newForensicNotes = '';
+
+    // If it's a text-readable file < 512 KB, automatically load its actual content into Raw Sample / Forensic Notes!
+    const textExtensions = ['txt', 'log', 'csv', 'json', 'yar', 'yara', 'ps1', 'bat', 'sh', 'py'];
+    if (file.size < 512 * 1024 && textExtensions.includes(ext)) {
+      try {
+        newForensicNotes = await file.text();
+        newDescription = `Forensic exhibit extracted from ${file.name}. Raw telemetry and indicators loaded for automated AI neural triage.`;
+      } catch (readErr) {
+        console.warn('Could not read text from file:', readErr);
+      }
+    }
+
+    setFormData(prev => ({
+      ...prev,
+      title: file.name,
+      fileSize: formattedSize,
+      type: detectedType,
+      assetCategory: detectedCategory,
+      description: newDescription,
+      forensicNotes: newForensicNotes
+    }));
 
     setComputingHash(true);
     setComputedHash('Computing SHA-256...');
@@ -77,18 +164,6 @@ export const NewEvidenceModal = ({ isOpen, onClose, onCreated }) => {
       setComputingHash(false);
     }
   };
-
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const isSubmittingRef = useRef(false);
-  const [showTerminal, setShowTerminal] = useState(false);
-
-  useEffect(() => {
-    if (!isOpen) {
-      isSubmittingRef.current = false;
-      setIsSubmitting(false);
-      setShowTerminal(false);
-    }
-  }, [isOpen]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -179,6 +254,7 @@ export const NewEvidenceModal = ({ isOpen, onClose, onCreated }) => {
       }, selectedFile);
 
       if (onCreated) onCreated(created);
+      resetForm();
       onClose();
     } catch (error) {
       console.error("Failed to create evidence:", error);
@@ -203,7 +279,7 @@ export const NewEvidenceModal = ({ isOpen, onClose, onCreated }) => {
   return (
     <Modal
       isOpen={isOpen}
-      onClose={onClose}
+      onClose={handleClose}
       title="COLLECT & SEAL DIGITAL EVIDENCE"
       subtitle="Select a local file to client-side hash and anchor an immutable custody seal"
       maxWidth="max-w-2xl"
@@ -211,20 +287,56 @@ export const NewEvidenceModal = ({ isOpen, onClose, onCreated }) => {
       <form onSubmit={handleSubmit} className="space-y-4 text-sm font-sans">
         
         {/* Real-time File Selector */}
-        <div className="p-6 rounded-md bg-ce-surface-subtle border border-ce-border border-dashed hover:border-ce-brand/50 transition-colors text-center relative cursor-pointer group">
-           <input 
-             type="file" 
-             onChange={handleFileSelect} 
-             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-             title="Select physical file to hash"
-           />
-           <div className="flex flex-col items-center justify-center pointer-events-none">
-             <div className="w-10 h-10 rounded-full bg-ce-brand/10 border border-ce-brand/20 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-               <Upload className="w-5 h-5 text-ce-brand" />
-             </div>
-             <span className="font-semibold text-ce-text-primary text-sm">Select Physical File for Hashing</span>
-             <span className="text-xs text-ce-text-muted mt-1 max-w-sm">File never leaves your machine. Hashing is performed locally in browser via WebCrypto.</span>
-           </div>
+        <div className={`p-5 rounded-md border transition-all text-center relative ${
+          selectedFile 
+            ? 'bg-ce-brand/5 border-ce-brand/40 shadow-sm' 
+            : 'bg-ce-surface-subtle border-ce-border border-dashed hover:border-ce-brand/50 cursor-pointer group'
+        }`}>
+          <input 
+            ref={fileInputRef}
+            type="file" 
+            onChange={handleFileSelect} 
+            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+            title={selectedFile ? `Active: ${selectedFile.name} (Click to replace)` : "Select physical file to hash"}
+          />
+          
+          {selectedFile ? (
+            <div className="flex items-center justify-between pointer-events-none px-2">
+              <div className="flex items-center gap-3 text-left">
+                <div className="w-10 h-10 rounded-md bg-ce-brand/10 border border-ce-brand/30 flex items-center justify-center shrink-0">
+                  <FileText className="w-5 h-5 text-ce-brand" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-semibold text-ce-text-primary text-sm font-mono">{selectedFile.name}</span>
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-500 border border-emerald-500/30">
+                      <CheckCircle2 className="w-3 h-3" /> Loaded
+                    </span>
+                  </div>
+                  <span className="text-xs text-ce-text-muted font-mono">{formData.fileSize || `${(selectedFile.size / 1024).toFixed(2)} KB`} • Click or drag to replace</span>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  resetForm();
+                }}
+                className="pointer-events-auto p-1.5 rounded-md hover:bg-red-500/10 text-ce-text-muted hover:text-red-500 transition-colors z-20"
+                title="Remove file and reset form"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center pointer-events-none">
+              <div className="w-10 h-10 rounded-full bg-ce-brand/10 border border-ce-brand/20 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                <Upload className="w-5 h-5 text-ce-brand" />
+              </div>
+              <span className="font-semibold text-ce-text-primary text-sm">Select Physical File for Hashing</span>
+              <span className="text-xs text-ce-text-muted mt-1 max-w-sm">File never leaves your machine. Hashing is performed locally in browser via WebCrypto.</span>
+            </div>
+          )}
         </div>
 
         {/* Zero-Gas Cryptographic Sealing Banner */}
@@ -427,7 +539,7 @@ export const NewEvidenceModal = ({ isOpen, onClose, onCreated }) => {
         <div className="pt-4 mt-2 border-t border-ce-border flex items-center justify-end gap-3">
           <button
             type="button"
-            onClick={onClose}
+            onClick={handleClose}
             className="px-4 py-2 rounded-md bg-ce-surface-subtle text-ce-text-secondary hover:text-ce-text-primary hover:bg-ce-border transition-colors font-semibold text-xs"
           >
             Cancel
