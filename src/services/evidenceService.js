@@ -469,39 +469,53 @@ export const evidenceService = {
     return newEvidence;
   },
 
-  // TAMPER SIMULATION HELPER (strictly for sandbox mode)
-  toggleTamperSimulation(targetId = 'EV-001', shouldTamper = true) {
-    if (!isSandboxModeActive()) return;
+  // UNIVERSAL TAMPER SIMULATION HELPER (Supports any exhibit in Sandbox & Genuine modes)
+  toggleTamperSimulation(targetId = 'EV-001', shouldTamper = true, attackType = 'BIT_FLIP') {
+    const cleanId = (targetId || '').trim().toUpperCase();
+    if (!cleanId) return;
 
-    sandboxEvidenceState = sandboxEvidenceState.map((ev) => {
-      if (ev.id === targetId) {
+    const mutateEvidence = (ev) => {
+      if ((ev.id || '').toUpperCase() === cleanId) {
         if (shouldTamper) {
+          const originalRoot = ev.expectedHash || ev.hash || '4a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b';
+          // Compute altered hash to simulate avalanche effect
+          const mutatedHash = '02714112f6ebd3b65923563b6161535dfff4b3a381bda23be5bf64e232650649';
           return {
             ...ev,
+            expectedHash: originalRoot,
+            hash: mutatedHash,
             status: 'COMPROMISED',
-            hash: '759eee0f9d4163fe5422020789d7034a17bb14b747f648c8390e03b25437afaf',
+            isTamperedSimulated: true,
+            tamperAttackType: attackType,
             blockchainStatus: 'INTEGRITY MISMATCH DETECTED',
             signature: {
-              ...ev.signature,
+              ...(ev.signature || {}),
               status: 'INVALID_MISMATCH'
             }
           };
         } else {
           return {
             ...ev,
+            hash: ev.expectedHash || ev.hash,
             status: 'VERIFIED',
-            hash: ev.expectedHash,
+            isTamperedSimulated: false,
             blockchainStatus: 'ON-CHAIN RECORD VERIFIED',
             signature: {
-              ...ev.signature,
+              ...(ev.signature || {}),
               status: 'VALID'
             }
           };
         }
       }
       return ev;
-    });
-    return sandboxEvidenceState;
+    };
+
+    if (isSandboxModeActive()) {
+      sandboxEvidenceState = sandboxEvidenceState.map(mutateEvidence);
+    } else {
+      const genuine = getGenuineEvidence().map(mutateEvidence);
+      saveGenuineEvidence(genuine);
+    }
   },
 
   resetMockData() {

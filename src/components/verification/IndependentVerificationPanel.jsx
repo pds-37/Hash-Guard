@@ -9,7 +9,9 @@ import {
   AlertTriangle,
   AlertCircle,
   Plus,
-  ShieldAlert
+  ShieldAlert,
+  Zap,
+  RotateCcw
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { verificationService } from '../../services/verificationService';
@@ -247,6 +249,46 @@ export const IndependentVerificationPanel = ({ defaultId = '', autoVerify = fals
                 </div>
               )
             )}
+
+            {/* Live Interactive Adversarial Tamper Simulator for Live Demos */}
+            <div className="mt-5 pt-4 border-t border-ce-border flex flex-wrap items-center justify-between gap-3 bg-ce-surface-subtle/50 -mx-6 -mb-6 p-4 rounded-b-lg">
+              <div className="flex items-center gap-2">
+                <Zap className="w-4 h-4 text-amber-500 dark:text-amber-400" />
+                <span className="text-[11px] font-mono font-bold text-ce-text-primary uppercase tracking-wider">
+                  Live Adversarial Tamper Simulator:
+                </span>
+              </div>
+              <div className="flex flex-wrap items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const target = evidenceId || (availableEvidence[0]?.id) || 'EV-001';
+                    evidenceService.toggleTamperSimulation(target, true, 'BIT_FLIP');
+                    triggerRefresh();
+                    executeVerify(target);
+                  }}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-ce-danger/15 hover:bg-ce-danger/25 border border-ce-danger/40 text-ce-danger text-[11px] font-mono font-bold transition-all cursor-pointer shadow-sm active:scale-95"
+                  title="Simulate adversarial bit-flip modification in storage"
+                >
+                  <Zap className="w-3.5 h-3.5" />
+                  <span>Simulate Storage Tamper</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const target = evidenceId || (availableEvidence[0]?.id) || 'EV-001';
+                    evidenceService.toggleTamperSimulation(target, false);
+                    triggerRefresh();
+                    executeVerify(target);
+                  }}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-ce-surface hover:bg-ce-surface-subtle border border-ce-border text-ce-text-secondary hover:text-ce-text-primary text-[11px] font-mono font-semibold transition-all cursor-pointer active:scale-95"
+                  title="Restore original baseline root digest"
+                >
+                  <RotateCcw className="w-3.5 h-3.5" />
+                  <span>Restore Clean State</span>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}
