@@ -222,8 +222,15 @@ export function formatRelativeTime(value, compact = false) {
 /**
  * Canonical formatDateTime helper (forwards to formatISTTimestamp)
  */
-export function formatDateTime(isoString) {
-  return formatISTTimestamp(isoString);
+export function formatFileSize(bytes) {
+  if (bytes === null || bytes === undefined || isNaN(bytes)) return '—';
+  if (bytes < 1024 * 1024) {
+    return `${(bytes / 1024).toFixed(2)} KB`;
+  }
+  if (bytes < 1024 * 1024 * 1024) {
+    return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
+  }
+  return `${(bytes / (1024 * 1024 * 1024)).toFixed(2)} GB`;
 }
 
 export function truncateHash(hash, startLen = 8, endLen = 8) {

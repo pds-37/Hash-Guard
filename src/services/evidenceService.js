@@ -321,7 +321,9 @@ export const evidenceService = {
   },
 
   async createEvidence(evidencePayload, file) {
-    const rawSize = file ? (file.size / (1024 * 1024)).toFixed(2) + ' MB' : '1.0 MB';
+    const rawSize = file 
+      ? (file.size < 1024 * 1024 ? (file.size / 1024).toFixed(2) + ' KB' : (file.size / (1024 * 1024)).toFixed(2) + ' MB') 
+      : '1.0 KB';
     const sanitizedPayload = {
       id: evidencePayload.id || `EV-${Math.random().toString(36).substring(2, 7).toUpperCase()}`,
       caseId: evidencePayload.caseId || 'CASE-2026-9012',

@@ -165,7 +165,7 @@ app.post('/api/v1/evidence', upload.single('file'), async (req, res) => {
     expectedHash: calculatedHash,
     hashAlgorithm: 'SHA-256',
     status: 'VERIFIED',
-    fileSize: payload.fileSize || (req.file ? `${(req.file.size / (1024 * 1024)).toFixed(2)} MB` : '1.0 MB'),
+    fileSize: payload.fileSize || (req.file ? (req.file.size < 1024 * 1024 ? `${(req.file.size / 1024).toFixed(2)} KB` : `${(req.file.size / (1024 * 1024)).toFixed(2)} MB`) : '1.0 KB'),
     collector: payload.collector || 'admin@cyberlab.local',
     createdAt: nowIST,
     lastEvent: 'COLLECT',

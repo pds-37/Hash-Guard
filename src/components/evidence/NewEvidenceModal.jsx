@@ -43,9 +43,16 @@ export const NewEvidenceModal = ({ isOpen, onClose, onCreated }) => {
 
     setSelectedFile(file);
 
-    // Set file size
-    const sizeInMB = (file.size / (1024 * 1024)).toFixed(2);
-    setFormData(prev => ({ ...prev, fileSize: `${sizeInMB} MB` }));
+    // Set file size (auto-format in KB for small files < 1 MB so it never shows 0.00 MB)
+    let formattedSize;
+    if (file.size < 1024 * 1024) {
+      formattedSize = `${(file.size / 1024).toFixed(2)} KB`;
+    } else if (file.size < 1024 * 1024 * 1024) {
+      formattedSize = `${(file.size / (1024 * 1024)).toFixed(2)} MB`;
+    } else {
+      formattedSize = `${(file.size / (1024 * 1024 * 1024)).toFixed(2)} GB`;
+    }
+    setFormData(prev => ({ ...prev, fileSize: formattedSize }));
     
     // Suggest a title if empty
     if (!formData.title) {
@@ -307,7 +314,7 @@ export const NewEvidenceModal = ({ isOpen, onClose, onCreated }) => {
               type="text"
               value={formData.fileSize}
               onChange={(e) => setFormData({ ...formData, fileSize: e.target.value })}
-              placeholder="e.g. 14.8 MB"
+              placeholder="e.g. 512 KB or 14.8 MB"
               className="w-full bg-ce-bg border border-ce-border rounded-md px-3 py-2 text-ce-text-primary focus:outline-none focus:border-ce-brand focus:ring-1 focus:ring-ce-brand font-mono text-sm transition-colors"
             />
           </div>
