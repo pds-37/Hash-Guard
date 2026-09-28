@@ -14,13 +14,20 @@ const isSandboxModeActive = () => {
 // Sandbox in-memory store (pre-loaded with forensic specimens EV-001, EV-009, etc.)
 let sandboxEvidenceState = [...mockEvidenceList];
 
-// Persistent genuine store (starts empty [] for real registered operators)
+// Persistent genuine store — pre-seeds with mockEvidenceList so genuine dashboard is fully populated
 const getGenuineEvidence = () => {
   try {
     const raw = localStorage.getItem('cee_genuine_evidence');
-    return raw ? JSON.parse(raw) : [];
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed;
+      }
+    }
+    localStorage.setItem('cee_genuine_evidence', JSON.stringify(mockEvidenceList));
+    return [...mockEvidenceList];
   } catch {
-    return [];
+    return [...mockEvidenceList];
   }
 };
 
@@ -81,7 +88,8 @@ export const evidenceService = {
     }
 
     if (list.length === 0) {
-      list = isSandboxModeActive() ? sandboxEvidenceState : getGenuineEvidence();
+      const genuine = getGenuineEvidence();
+      list = isSandboxModeActive() ? sandboxEvidenceState : (genuine.length > 0 ? genuine : sandboxEvidenceState);
     }
 
     // Deduplicate records by ID to guarantee single evidence representation

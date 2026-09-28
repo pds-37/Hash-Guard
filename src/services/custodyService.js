@@ -15,9 +15,16 @@ let sandboxCustodyEventsState = [...mockCustodyEvents];
 const getGenuineCustodyEvents = () => {
   try {
     const raw = localStorage.getItem('cee_genuine_custody');
-    return raw ? JSON.parse(raw) : [];
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed;
+      }
+    }
+    localStorage.setItem('cee_genuine_custody', JSON.stringify(mockCustodyEvents));
+    return [...mockCustodyEvents];
   } catch {
-    return [];
+    return [...mockCustodyEvents];
   }
 };
 

@@ -9,7 +9,7 @@ export const HeroEvidenceDiagram = ({
   const [showDocDetails, setShowDocDetails] = useState(false);
 
   return (
-    <div className="relative w-full select-none">
+    <div className="relative w-full select-none rounded-2xl overflow-hidden bg-slate-950 border border-slate-300/80 dark:border-slate-800/80 shadow-2xl p-1 sm:p-2">
       {/* Hero illustration — borderless, blends into hero background */}
       <div className="relative w-full overflow-visible">
         {/* The diagram image with left-edge and bottom-edge fade via CSS mask */}

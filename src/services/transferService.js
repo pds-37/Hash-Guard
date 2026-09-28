@@ -16,9 +16,16 @@ let sandboxTransfersState = [...mockTransfers];
 const getGenuineTransfers = () => {
   try {
     const raw = localStorage.getItem('cee_genuine_transfers');
-    return raw ? JSON.parse(raw) : [];
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed;
+      }
+    }
+    localStorage.setItem('cee_genuine_transfers', JSON.stringify(mockTransfers));
+    return [...mockTransfers];
   } catch {
-    return [];
+    return [...mockTransfers];
   }
 };
 
