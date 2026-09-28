@@ -1,124 +1,150 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Fingerprint,
   KeyRound,
   ShieldCheck,
   History,
-  Boxes,
+  Layers,
   CheckCircle2,
-  Lock,
-  Layers
+  ChevronRight,
+  Shield
 } from 'lucide-react';
 
 export const SecurityPrinciplesSection = () => {
+  const [activePrinciple, setActivePrinciple] = useState(0);
+
   const principles = [
     {
-      number: '01',
-      title: 'Cryptographic Integrity',
-      subtitle: 'Bitstream Immutability',
+      num: '01',
+      title: 'CRYPTOGRAPHIC INTEGRITY',
+      subtitle: 'Deterministic Bitstream Sealing',
       icon: Fingerprint,
-      accent: 'emerald',
-      description: 'Digital evidence state is captured via deterministic SHA-256 digests. Any single-bit modification completely changes the resulting hash, enabling instant tamper discovery.'
+      color: 'emerald',
+      rule: 'FIPS 180-4 SHA-256 standard',
+      summary: 'Digital evidence is fingerprinted by deterministic SHA-256 digests. Any single-bit alteration changes the output hash entirely, producing immediate tamper detection across all audit nodes.'
     },
     {
-      number: '02',
-      title: 'Self-Sovereign Identity',
-      subtitle: 'W3C DID Specification',
+      num: '02',
+      title: 'DECENTRALIZED IDENTITY',
+      subtitle: 'Self-Sovereign W3C DIDs',
       icon: KeyRound,
-      accent: 'purple',
-      description: 'All forensic actions are bound to cryptographic Decentralized Identifiers (did:ethr) and secp256k1 keypairs, eliminating centralized IAM vulnerabilities and single points of failure.'
+      color: 'cyan',
+      rule: 'did:ethr + secp256k1 keys',
+      summary: 'Eliminates centralized Active Directory / LDAP single points of failure. Every forensic action is signed directly by the custodian’s private key and validated against on-chain DID Documents.'
     },
     {
-      number: '03',
-      title: 'Granular Authorization',
-      subtitle: 'Bytecode RBAC Modifiers',
-      icon: Lock,
-      accent: 'cyan',
-      description: 'Role-based access control (6 roles) and organization tenant isolation are enforced both at the application gateway and directly inside EVM smart contract execution boundaries.'
+      num: '03',
+      title: 'GRANULAR AUTHORIZATION',
+      subtitle: 'Dual-Layer RBAC Enclave',
+      icon: ShieldCheck,
+      color: 'purple',
+      rule: 'EVM AccessControl + API Matrix',
+      summary: 'Permissions for the 6 RBAC roles are validated at both the API gateway and directly inside EVM smart contract execution bytecode, preventing unauthorized state modification.'
     },
     {
-      number: '04',
-      title: 'Verifiable Custody History',
-      subtitle: 'Non-Repudiation Stream',
+      num: '04',
+      title: 'VERIFIABLE CUSTODY',
+      subtitle: 'Dual-Authorized Handover Chain',
       icon: History,
-      accent: 'amber',
-      description: 'Every custody handover, transformation, and retention action emits on-chain event logs and structured audit records, establishing an unbreakable chain of custody for court admissibility.'
+      color: 'amber',
+      rule: 'Atomic ERC-721 Transfers',
+      summary: 'Every custody transfer requires sender dispatch and receiver acceptance. Custody transitions emit permanent EVM block events, satisfying statutory court admissibility rules (ISO/IEC 27037).'
     },
     {
-      number: '05',
-      title: 'Separation of Data & Proof',
-      subtitle: 'Off-Chain Privacy Model',
+      num: '05',
+      title: 'DATA / PROOF SEPARATION',
+      subtitle: 'Zero Raw Evidence On-Chain',
       icon: Layers,
-      accent: 'indigo',
-      description: 'Heavy multi-gigabyte disk images and sensitive case metadata remain securely in encrypted off-chain storage enclaves (MinIO S3), while only 32-byte cryptographic digests are anchored on-chain.'
+      color: 'indigo',
+      rule: 'Off-Chain Storage / On-Chain Trust',
+      summary: 'Multi-gigabyte disk images and sensitive PII are isolated in encrypted MinIO S3 vaults off-chain. Only 32-byte cryptographic hashes and ownership tokens anchor to the public ledger.'
     },
     {
-      number: '06',
-      title: 'Independent Verification',
-      subtitle: 'Zero-Trust Auditability',
+      num: '06',
+      title: 'INDEPENDENT VERIFICATION',
+      subtitle: 'Mathematical Truth Over Trust',
       icon: CheckCircle2,
-      accent: 'rose',
-      description: 'Judges, defense counsel, and independent auditors can recompute cryptographic hashes and verify custody continuity against on-chain block roots without trusting any central database.'
+      color: 'emerald',
+      rule: '5-Point Zero-Trust Engine',
+      summary: 'Any defense counsel, judicial registrar, or auditor can independently recompute bitstream hashes and verify unbroken custody without trusting police servers or administrative credentials.'
     }
   ];
 
+  const current = principles[activePrinciple];
+
   return (
-    <div className="w-full bg-[#040812]/90 border border-slate-800 rounded-2xl p-4 sm:p-6 lg:p-8 backdrop-blur-xl shadow-2xl space-y-6">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-4 border-b border-slate-800">
+    <section id="security" className="relative py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-slate-800/80">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
         <div>
-          <div className="flex items-center gap-2 mb-1">
+          <div className="flex items-center gap-2 mb-2">
             <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
-            <span className="text-[10px] font-mono font-bold text-cyan-400 uppercase tracking-widest">
-              CORE TENETS
+            <span className="text-[11px] font-mono font-bold text-cyan-400 uppercase tracking-widest">
+              SYSTEM INVARIANTS & GUARANTEES
             </span>
           </div>
-          <h3 className="text-xl sm:text-2xl font-mono font-black text-white">
-            SECURITY PRINCIPLES
-          </h3>
-          <p className="text-xs text-slate-400 font-sans mt-0.5">
-            The foundational architectural guarantees engineered into every layer of HashGuard.
+          <h2 className="text-2xl sm:text-3xl font-mono font-black text-white">
+            SIX CORE SECURITY PRINCIPLES
+          </h2>
+          <p className="text-xs sm:text-sm text-slate-400 font-sans mt-1 max-w-3xl">
+            Mathematical, cryptographic, and operational axioms enforced across every layer of the HashGuard platform.
           </p>
+        </div>
+        <div className="text-xs font-mono text-cyan-400">
+          SELECT PRINCIPLE TO EXPAND
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {principles.map((p) => {
+      {/* Compact Horizontal Grid System */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 mb-6">
+        {principles.map((p, idx) => {
           const Icon = p.icon;
+          const isSelected = activePrinciple === idx;
+
           return (
-            <div
-              key={p.number}
-              className="p-5 rounded-xl bg-slate-950/80 border border-slate-800/90 hover:border-slate-700 transition-all flex flex-col justify-between space-y-3 group"
+            <button
+              key={p.num}
+              onClick={() => setActivePrinciple(idx)}
+              className={`p-3 rounded-xl border text-left font-mono transition-all cursor-pointer ${
+                isSelected
+                  ? 'bg-slate-900 border-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.25)] -translate-y-1'
+                  : 'bg-slate-950/70 border-slate-800 hover:border-slate-700 hover:bg-slate-900/60'
+              }`}
             >
-              <div>
-                <div className="flex items-center justify-between gap-2 mb-3">
-                  <span className="font-mono text-xs font-bold text-cyan-400">
-                    {p.number}
-                  </span>
-                  <div className="p-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 group-hover:text-cyan-400 group-hover:border-cyan-500/30 transition-colors">
-                    <Icon className="w-4 h-4" />
-                  </div>
-                </div>
-
-                <h4 className="text-sm font-mono font-bold text-white mb-0.5">
-                  {p.title}
-                </h4>
-                <span className="text-[10px] font-mono text-slate-400 block mb-2">
-                  {p.subtitle}
+              <div className="flex items-center justify-between mb-2">
+                <span className={`text-[10px] font-bold ${isSelected ? 'text-cyan-400' : 'text-slate-500'}`}>
+                  {p.num}
                 </span>
-
-                <p className="text-xs text-slate-300 font-sans leading-relaxed">
-                  {p.description}
-                </p>
+                <Icon className={`w-4 h-4 ${isSelected ? 'text-cyan-400' : 'text-slate-400'}`} />
               </div>
-
-              <div className="pt-2 border-t border-slate-800/60 flex items-center gap-1.5 text-[10px] font-mono text-emerald-400">
-                <CheckCircle2 className="w-3 h-3" />
-                <span>Implemented & Verified</span>
-              </div>
-            </div>
+              <h4 className="text-xs font-bold text-white leading-tight">
+                {p.title}
+              </h4>
+              <span className="text-[9px] text-slate-400 block mt-1 truncate">
+                {p.subtitle}
+              </span>
+            </button>
           );
         })}
       </div>
-    </div>
+
+      {/* Expanded Interactive Detail Strip */}
+      <div className="p-6 rounded-2xl bg-[#030712]/95 border border-slate-800 shadow-[0_0_30px_rgba(6,182,212,0.06)] font-mono text-xs">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-800 gap-2 mb-4">
+          <div className="flex items-center gap-3">
+            <span className="font-mono text-xs px-2.5 py-1 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 font-bold">
+              PRINCIPLE {current.num}: {current.title}
+            </span>
+            <span className="text-slate-300 font-bold">{current.subtitle}</span>
+          </div>
+          <span className="text-[11px] text-cyan-400 font-semibold">
+            Standard: {current.rule}
+          </span>
+        </div>
+
+        <p className="text-xs sm:text-sm text-slate-300 font-sans leading-relaxed">
+          {current.summary}
+        </p>
+      </div>
+    </section>
   );
 };

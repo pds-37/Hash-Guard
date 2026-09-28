@@ -1,157 +1,219 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
-  ShieldCheck,
   Building2,
-  Lock,
-  Database,
-  Boxes,
-  ArrowDown,
-  ArrowRight,
-  Sparkles,
   Layers,
-  Fingerprint,
-  FileCheck
+  Database,
+  Blocks,
+  Shield,
+  Lock,
+  CheckCircle2,
+  ArrowRight
 } from 'lucide-react';
 
 export const TrustBoundariesSection = () => {
-  const boundaries = [
-    {
-      id: 'boundary-user',
-      title: 'BOUNDARY 01: USER & ORGANIZATION CONTEXT',
-      actor: 'CERT-Alpha • Cyber Lab • Police LEA • Court • Auditor',
-      color: 'purple',
-      badge: 'Self-Sovereign Identity',
-      icon: Building2,
-      description: 'The outermost perimeter where external entities interact with the system. Each actor holds a unique W3C Decentralized Identifier (did:ethr) and secp256k1 keypair.',
-      isolationRules: [
-        'No centralized credential authority (LDAP/Active Directory)',
-        'Signatures generated locally by custodian private keys',
-        'Strict tenant enclave isolation per participating organization'
-      ]
+  const [selectedZone, setSelectedZone] = useState('zone1');
+
+  const zones = {
+    zone1: {
+      num: 'ZONE 1',
+      title: 'USER & ORGANIZATION BOUNDARY',
+      actor: 'CERT-Alpha, Cyber Defense Lab, Police LEA, Court Registry, Auditor',
+      color: 'blue',
+      whoTrustsWhom: 'Agencies do NOT trust each other’s internal databases. Trust is rooted in local secp256k1 private keys and W3C DIDs.',
+      whatIsProtected: 'Private keys, investigator workstations, and organizational enclave credentials.',
+      whereDataExists: 'In agency endpoints and local acquisition forensic hardware.',
+      whereProofExists: 'Local W3C DID document and cryptographic signature manifest.'
     },
-    {
-      id: 'boundary-app',
-      title: 'BOUNDARY 02: HASHGUARD APPLICATION ENCLAVE',
-      actor: 'React 19 Client • Node.js / FastAPI Service Layer',
+    zone2: {
+      num: 'ZONE 2',
+      title: 'HASHGUARD APPLICATION ENCLAVE',
+      actor: 'React 19 Client + FastAPI (8000) & Node.js Express (8001) Microservices',
       color: 'cyan',
-      badge: 'Zero-Trust Orchestration',
-      icon: Layers,
-      description: 'Coordinates forensic pipelines, API routing, RBAC authorization checks, and prepares tamper manifests before cryptographic anchoring.',
-      isolationRules: [
-        'Validates caller RBAC role before every sensitive operation',
-        'Enforces bitstream SHA-256 generation prior to transmission',
-        'Manages cross-agency transfer queues with mutual TLS'
-      ]
+      whoTrustsWhom: 'Application validates caller JWT/DID before execution; enforces RBAC permissions across all 6 roles.',
+      whatIsProtected: 'Forensic operator workflows, API endpoints, upload triage, and JSON-RPC dispatch channels.',
+      whereDataExists: 'Transient memory and secure buffer queues during acquisition.',
+      whereProofExists: 'Calculated 32-byte SHA-256 bitstream digests.'
     },
-    {
-      id: 'boundary-offchain',
-      title: 'BOUNDARY 03: OFF-CHAIN EVIDENCE REPOSITORY',
-      actor: 'MinIO S3 Bucket • Local Encrypted Vault • PostgreSQL',
-      color: 'indigo',
-      badge: 'Confidential Storage',
-      icon: Database,
-      description: 'Stores massive gigabyte-scale disk images (.E01), memory dumps, and PCAP captures. Zero raw evidence payload data ever touches the blockchain.',
-      isolationRules: [
-        'Confidential case data remains strictly inside agency storage enclaves',
-        'Access controlled via presigned expiring URLs and JWTs',
-        'Payloads encrypted at rest via AES-256-GCM enclave wrappers'
-      ]
+    zone3: {
+      num: 'ZONE 3',
+      title: 'OFF-CHAIN EVIDENCE REPOSITORY',
+      actor: 'MinIO S3 Object Store + PostgreSQL 15 / Local Encrypted Vault',
+      color: 'purple',
+      whoTrustsWhom: 'Storage layer only accepts authenticated, encrypted streams via presigned URLs and internal service credentials.',
+      whatIsProtected: 'Heavy multi-gigabyte disk images (.E01), memory dumps (.raw), PCAPs, and case notes.',
+      whereDataExists: 'AES-256-GCM encrypted object buckets and relational metadata tables.',
+      whereProofExists: 'Separated completely from on-chain state; only hash references leave this enclave.'
     },
-    {
-      id: 'boundary-blockchain',
-      title: 'BOUNDARY 04: BLOCKCHAIN TRUST LAYER',
-      actor: 'Ethereum Sepolia (0x3592...7052) • EVM Smart Contract',
+    zone4: {
+      num: 'ZONE 4',
+      title: 'BLOCKCHAIN TRUST LAYER',
+      actor: 'Ethereum Sepolia EVM Consensus + HASHGUARD.sol Smart Contract',
       color: 'amber',
-      badge: 'Immutable State Machine',
-      icon: Boxes,
-      description: 'A decentralized, tamper-proof state machine that anchors 32-byte SHA-256 digests, ERC-721 token ownership, and custody transfer receipts.',
-      isolationRules: [
-        'Only 32-byte cryptographic hashes and state proofs committed on-chain',
-        'Bytecode-level AccessControl prevents unauthorized ownership mutation',
-        'Mining/validation provides independent, cross-organization mathematical proof'
-      ]
+      whoTrustsWhom: 'Zero human trust required. EVM consensus guarantees tamper-evident state transitions and immutable event logs.',
+      whatIsProtected: 'Tokenized exhibit ownership (ERC-721), AccessControl state, and irreversible custody records.',
+      whereDataExists: 'Zero raw evidence data stored on-chain.',
+      whereProofExists: 'Immutable 32-byte contentHash, token nonces, and block transaction receipts.'
     }
-  ];
+  };
+
+  const current = zones[selectedZone];
 
   return (
-    <div className="w-full bg-[#040812]/90 border border-slate-800 rounded-2xl p-4 sm:p-6 lg:p-8 backdrop-blur-xl shadow-2xl space-y-6">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-4 border-b border-slate-800">
+    <section id="trust-boundaries" className="relative py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-slate-800/80">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
         <div>
-          <div className="flex items-center gap-2 mb-1">
+          <div className="flex items-center gap-2 mb-2">
             <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
-            <span className="text-[10px] font-mono font-bold text-cyan-400 uppercase tracking-widest">
-              SECURITY DOMAINS
+            <span className="text-[11px] font-mono font-bold text-cyan-400 uppercase tracking-widest">
+              ISOLATION ARCHITECTURE
             </span>
           </div>
-          <h3 className="text-xl sm:text-2xl font-mono font-black text-white">
-            TRUST BOUNDARY VISUALIZATION
-          </h3>
-          <p className="text-xs text-slate-400 font-sans mt-0.5">
-            How HashGuard intentionally isolates identity, application logic, confidential binary payloads, and blockchain consensus.
+          <h2 className="text-2xl sm:text-3xl font-mono font-black text-white">
+            FOUR CONCENTRIC TRUST BOUNDARIES
+          </h2>
+          <p className="text-xs sm:text-sm text-slate-400 font-sans mt-1 max-w-3xl">
+            A nested zero-trust perimeter isolating external organizations, application microservices, confidential evidence payloads, and decentralized consensus.
           </p>
         </div>
-      </div>
-
-      {/* Trust Boundaries Flow Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {boundaries.map((b, idx) => {
-          const Icon = b.icon;
-          return (
-            <div
-              key={b.id}
-              className="p-4 sm:p-5 rounded-xl bg-slate-950/80 border border-slate-800/90 flex flex-col justify-between space-y-4 relative group hover:border-slate-700 transition-colors"
-            >
-              <div className="space-y-3">
-                <div className="flex items-center justify-between gap-2">
-                  <div className="p-2 rounded-lg bg-slate-900 border border-slate-800 text-cyan-400">
-                    <Icon className="w-4 h-4" />
-                  </div>
-                  <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded border bg-cyan-500/10 text-cyan-300 border-cyan-500/30">
-                    {b.badge}
-                  </span>
-                </div>
-
-                <div>
-                  <h4 className="text-xs font-mono font-bold text-white leading-tight">
-                    {b.title}
-                  </h4>
-                  <span className="text-[10px] font-mono text-slate-400 mt-0.5 block truncate">
-                    {b.actor}
-                  </span>
-                </div>
-
-                <p className="text-xs text-slate-300 font-sans leading-relaxed">
-                  {b.description}
-                </p>
-              </div>
-
-              <div className="pt-3 border-t border-slate-800/80 space-y-1.5">
-                <span className="text-[10px] font-mono font-bold text-cyan-400 uppercase tracking-wider block">
-                  ISOLATION GUARANTEES
-                </span>
-                <ul className="space-y-1 text-[11px] text-slate-400 font-mono">
-                  {b.isolationRules.map((rule, rIdx) => (
-                    <li key={rIdx} className="flex items-start gap-1.5">
-                      <span className="text-cyan-400 mt-0.5">›</span>
-                      <span className="leading-tight">{rule}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      {/* Summary Banner */}
-      <div className="p-4 rounded-xl bg-gradient-to-r from-cyan-950/30 via-slate-900/60 to-blue-950/30 border border-cyan-500/20 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs font-mono">
-        <div className="flex items-center gap-2.5 text-slate-300">
-          <ShieldCheck className="w-5 h-5 text-cyan-400 shrink-0" />
-          <span>
-            Deliberate architectural separation: Application metadata and binary evidence remain private off-chain, while immutable proofs and ownership live on-chain.
-          </span>
+        <div className="text-xs font-mono text-cyan-400">
+          SELECT A ZONE TO INSPECT ITS TRUST INVARIANTS
         </div>
       </div>
-    </div>
+
+      {/* Concentric Nested Visual Presentation */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        {/* Left: Nested visual zones */}
+        <div className="lg:col-span-7">
+          <div className="relative p-6 rounded-3xl bg-[#02050e] border border-blue-500/30">
+            {/* Zone 1 Outer Ring */}
+            <div 
+              onClick={() => setSelectedZone('zone1')}
+              className={`p-5 rounded-2xl border transition-all cursor-pointer ${
+                selectedZone === 'zone1'
+                  ? 'bg-blue-950/40 border-blue-400 shadow-[0_0_20px_rgba(59,130,246,0.3)]'
+                  : 'bg-slate-950/60 border-slate-800 hover:border-blue-500/50'
+              }`}
+            >
+              <div className="flex items-center justify-between font-mono text-xs mb-3">
+                <span className="text-blue-400 font-bold uppercase tracking-wider">
+                  ZONE 1: USER / ORGANIZATION PERIMETER
+                </span>
+                <span className="text-[10px] text-slate-400">W3C DIDs & Local Keys</span>
+              </div>
+
+              {/* Zone 2 Ring */}
+              <div 
+                onClick={(e) => { e.stopPropagation(); setSelectedZone('zone2'); }}
+                className={`p-5 rounded-xl border transition-all cursor-pointer ${
+                  selectedZone === 'zone2'
+                    ? 'bg-cyan-950/40 border-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.3)]'
+                    : 'bg-slate-900/60 border-slate-800 hover:border-cyan-500/50'
+                }`}
+              >
+                <div className="flex items-center justify-between font-mono text-xs mb-3">
+                  <span className="text-cyan-400 font-bold uppercase tracking-wider">
+                    ZONE 2: HASHGUARD APPLICATION ENCLAVE
+                  </span>
+                  <span className="text-[10px] text-slate-400">FastAPI & Node.js</span>
+                </div>
+
+                {/* Split inner cores: Zone 3 and Zone 4 */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                  {/* Zone 3 */}
+                  <div
+                    onClick={(e) => { e.stopPropagation(); setSelectedZone('zone3'); }}
+                    className={`p-4 rounded-lg border transition-all cursor-pointer ${
+                      selectedZone === 'zone3'
+                        ? 'bg-purple-950/50 border-purple-400 shadow-[0_0_20px_rgba(168,85,247,0.3)]'
+                        : 'bg-slate-950/80 border-slate-800 hover:border-purple-500/50'
+                    }`}
+                  >
+                    <span className="text-[10px] font-mono font-bold text-purple-400 uppercase tracking-wider block">
+                      ZONE 3: OFF-CHAIN VAULT
+                    </span>
+                    <span className="font-mono text-xs text-white font-bold block mt-1">
+                      MinIO S3 / AES-GCM
+                    </span>
+                    <span className="text-[10px] font-mono text-slate-400 block mt-1">
+                      Confidential Evidence
+                    </span>
+                  </div>
+
+                  {/* Zone 4 */}
+                  <div
+                    onClick={(e) => { e.stopPropagation(); setSelectedZone('zone4'); }}
+                    className={`p-4 rounded-lg border transition-all cursor-pointer ${
+                      selectedZone === 'zone4'
+                        ? 'bg-amber-950/50 border-amber-400 shadow-[0_0_20px_rgba(245,158,11,0.3)]'
+                        : 'bg-slate-950/80 border-slate-800 hover:border-amber-500/50'
+                    }`}
+                  >
+                    <span className="text-[10px] font-mono font-bold text-amber-400 uppercase tracking-wider block">
+                      ZONE 4: TRUST LEDGER
+                    </span>
+                    <span className="font-mono text-xs text-white font-bold block mt-1">
+                      Ethereum Sepolia
+                    </span>
+                    <span className="text-[10px] font-mono text-slate-400 block mt-1">
+                      State & Proof Anchoring
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Right: Invariant Explainer Card */}
+        <div className="lg:col-span-5 p-6 rounded-2xl bg-[#030712]/95 border border-slate-800 shadow-[0_0_30px_rgba(6,182,212,0.06)] font-mono text-xs">
+          <div className="flex items-center justify-between pb-3 border-b border-slate-800 mb-4">
+            <span className="text-cyan-400 font-bold uppercase text-[11px]">
+              {current.num}: {current.title}
+            </span>
+            <span className="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-300">
+              ACTIVE INSPECTION
+            </span>
+          </div>
+
+          <div className="space-y-4">
+            <div className="p-3 rounded-xl bg-slate-900/90 border border-slate-800">
+              <span className="text-[10px] text-cyan-400 uppercase font-bold block mb-1">
+                WHO TRUSTS WHOM
+              </span>
+              <p className="text-xs text-slate-300 font-sans leading-relaxed">
+                {current.whoTrustsWhom}
+              </p>
+            </div>
+
+            <div className="p-3 rounded-xl bg-slate-900/90 border border-slate-800">
+              <span className="text-[10px] text-blue-400 uppercase font-bold block mb-1">
+                WHAT IS PROTECTED
+              </span>
+              <p className="text-xs text-slate-300 font-sans leading-relaxed">
+                {current.whatIsProtected}
+              </p>
+            </div>
+
+            <div className="p-3 rounded-xl bg-slate-900/90 border border-slate-800">
+              <span className="text-[10px] text-purple-400 uppercase font-bold block mb-1">
+                WHERE DATA EXISTS
+              </span>
+              <p className="text-xs text-slate-300 font-sans leading-relaxed">
+                {current.whereDataExists}
+              </p>
+            </div>
+
+            <div className="p-3 rounded-xl bg-slate-900/90 border border-slate-800">
+              <span className="text-[10px] text-amber-400 uppercase font-bold block mb-1">
+                WHERE PROOF EXISTS
+              </span>
+              <p className="text-xs text-slate-300 font-sans leading-relaxed">
+                {current.whereProofExists}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 };
