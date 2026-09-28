@@ -7,34 +7,38 @@ import {
   Fingerprint, 
   GitFork, 
   ArrowRight, 
-  ArrowLeftRight, 
   Database, 
   Sparkles, 
   Eye, 
-  Zap,
-  FileCheck2,
-  Clock,
-  AlertTriangle,
-  UserPlus,
-  LogIn,
-  ChevronRight,
-  PlayCircle,
-  Menu,
-  X
+  Zap, 
+  FileCheck2, 
+  Clock, 
+  AlertTriangle, 
+  UserPlus, 
+  LogIn, 
+  ChevronRight, 
+  PlayCircle, 
+  Menu, 
+  X,
+  ExternalLink,
+  Layers,
+  Server,
+  Activity,
+  Boxes
 } from 'lucide-react';
 import { useApp, ROLES } from '../../context/AppContext';
 import { Logo, LogoIcon } from '../../components/common/Logo';
 import { ThemeToggle } from '../../components/common/ThemeToggle';
-import { SystemArchitectureSection } from '../../components/landing/SystemArchitectureSection';
 import { HeroEvidenceDiagram } from '../../components/landing/HeroEvidenceDiagram';
 import { OnChainProofModal } from '../../components/landing/OnChainProofModal';
 import { TamperBreachModal } from '../../components/landing/TamperBreachModal';
 import { DemoWalkthroughModal } from '../../components/landing/DemoWalkthroughModal';
 
+const SYSTEM_ARCHITECTURE_URL = 'https://hash-guard-system-achitecture.vercel.app/';
+
 export const LandingPage = () => {
   const navigate = useNavigate();
   const { switchRole, setSandbox } = useApp();
-  const [activeTab, setActiveTab] = useState('segregation');
   const [interactiveTampered, setInteractiveTampered] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -42,15 +46,6 @@ export const LandingPage = () => {
   const [onChainModalOpen, setOnChainModalOpen] = useState(false);
   const [tamperModalOpen, setTamperModalOpen] = useState(false);
   const [demoModalOpen, setDemoModalOpen] = useState(false);
-
-  const scrollToTab = (tabKey) => {
-    setActiveTab(tabKey);
-    const element = document.getElementById('security-lab');
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-    setMobileMenuOpen(false);
-  };
 
   const scrollToSection = (sectionId) => {
     const element = document.getElementById(sectionId);
@@ -90,11 +85,10 @@ export const LandingPage = () => {
         <div className="absolute top-0 left-1/4 w-[700px] h-[550px] bg-cyan-500/10 rounded-full blur-[150px]" />
         <div className="absolute top-1/3 right-10 w-[600px] h-[600px] bg-blue-600/10 rounded-full blur-[170px]" />
         <div className="absolute bottom-10 left-1/3 w-[600px] h-[400px] bg-emerald-500/5 rounded-full blur-[150px]" />
-        {/* Fine grid pattern overlay */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b12_1px,transparent_1px),linear-gradient(to_bottom,#1e293b12_1px,transparent_1px)] bg-[size:32px_32px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]" />
       </div>
 
-      {/* TOP NAVBAR (Exact design matching Image 2) */}
+      {/* TOP NAVBAR */}
       <header className="sticky top-0 z-50 backdrop-blur-md bg-white/90 dark:bg-[#040812]/90 border-b border-slate-200 dark:border-slate-800/80 transition-all shadow-xs dark:shadow-none">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
           {/* Logo Branding */}
@@ -106,28 +100,22 @@ export const LandingPage = () => {
           {/* Navigation Links (Desktop) */}
           <nav className="hidden lg:flex items-center gap-5 xl:gap-8 text-xs font-mono tracking-wider text-slate-600 dark:text-slate-300 shrink-0">
             <button 
-              onClick={() => navigate('/architecture')}
-              className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors whitespace-nowrap cursor-pointer font-medium"
-            >
-              System Architecture
-            </button>
-            <button 
               onClick={() => scrollToSection('evidence-flow')}
               className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors whitespace-nowrap cursor-pointer font-medium"
             >
               Evidence Flow
             </button>
             <button 
-              onClick={() => scrollToTab('lineage')}
+              onClick={() => scrollToSection('demo-video')}
               className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors whitespace-nowrap cursor-pointer font-medium"
             >
-              Lineage DAG
+              Demo Video
             </button>
             <button 
-              onClick={() => scrollToTab('tamper')}
+              onClick={() => scrollToSection('tamper-testbed')}
               className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors whitespace-nowrap cursor-pointer font-medium"
             >
-              Tamper Detection
+              Tamper Testbed
             </button>
             <button 
               onClick={() => scrollToSection('roles')}
@@ -135,6 +123,15 @@ export const LandingPage = () => {
             >
               Agency Roles
             </button>
+            <a 
+              href={SYSTEM_ARCHITECTURE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 hover:text-cyan-500 dark:hover:text-cyan-300 border border-cyan-500/20 transition-all whitespace-nowrap cursor-pointer font-medium group"
+            >
+              <span>System Architecture</span>
+              <ExternalLink className="w-3 h-3 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+            </a>
           </nav>
 
           {/* Action CTAs + Theme Toggle */}
@@ -173,17 +170,6 @@ export const LandingPage = () => {
           <div className="lg:hidden border-t border-slate-200 dark:border-slate-800/90 bg-white/98 dark:bg-[#040812]/98 backdrop-blur-xl px-4 py-4 space-y-3 shadow-2xl transition-all">
             <div className="flex flex-col space-y-1 text-xs font-mono uppercase tracking-wider">
               <button
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  navigate('/architecture');
-                }}
-                className="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/60 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer text-left"
-              >
-                <span>System Architecture</span>
-                <ChevronRight className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
-              </button>
-
-              <button
                 onClick={() => scrollToSection('evidence-flow')}
                 className="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/60 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer text-left"
               >
@@ -192,18 +178,18 @@ export const LandingPage = () => {
               </button>
 
               <button
-                onClick={() => scrollToTab('lineage')}
+                onClick={() => scrollToSection('demo-video')}
                 className="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/60 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer text-left"
               >
-                <span>Lineage DAG</span>
+                <span>Demo Video</span>
                 <ChevronRight className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
               </button>
 
               <button
-                onClick={() => scrollToTab('tamper')}
+                onClick={() => scrollToSection('tamper-testbed')}
                 className="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/60 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer text-left"
               >
-                <span>Tamper Detection</span>
+                <span>Tamper Testbed</span>
                 <ChevronRight className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
               </button>
 
@@ -214,6 +200,16 @@ export const LandingPage = () => {
                 <span>Agency Roles</span>
                 <ChevronRight className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
               </button>
+
+              <a
+                href={SYSTEM_ARCHITECTURE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-between px-3 py-2 rounded-lg bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 font-bold transition-colors cursor-pointer text-left"
+              >
+                <span>System Architecture</span>
+                <ExternalLink className="w-3.5 h-3.5" />
+              </a>
             </div>
 
             <div className="pt-2 border-t border-slate-200 dark:border-slate-800/80 flex flex-col gap-2 font-mono">
@@ -222,29 +218,35 @@ export const LandingPage = () => {
                   setMobileMenuOpen(false);
                   navigate('/login');
                 }}
-                className="w-full flex items-center justify-center gap-2 py-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900/80 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white text-xs cursor-pointer shadow-xs"
+                className="w-full py-2 rounded-lg border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-xs flex items-center justify-center gap-1.5"
               >
-                <LogIn className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
+                <LogIn className="w-3.5 h-3.5" />
                 <span>Sign In / Register</span>
+              </button>
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  launchConsole('ORG_B', '/dashboard', true);
+                }}
+                className="w-full py-2.5 rounded-lg bg-gradient-to-r from-cyan-400 to-sky-500 text-slate-950 font-bold text-xs flex items-center justify-center gap-1.5 shadow-md"
+              >
+                <Zap className="w-3.5 h-3.5 fill-slate-950" />
+                <span>Launch Evaluation Sandbox</span>
               </button>
             </div>
           </div>
         )}
       </header>
 
-      {/* HERO SECTION — matched to IMAGE 1 */}
-      <section className="relative z-10 pt-8 pb-4 md:pt-10 md:pb-6 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-2 items-center">
-          {/* Left Column: Headline, Description & CTAs */}
-          <div className="lg:col-span-5 text-left lg:pr-4">
+      {/* HERO SECTION */}
+      <section className="relative z-10 pt-8 sm:pt-12 pb-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          {/* Left Column: Headlines & Primary Actions */}
+          <div className="lg:col-span-5 flex flex-col items-start text-left">
             {/* Pill Badge */}
-            <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-sm bg-transparent border border-slate-700/60 text-[10px] font-mono mb-4 tracking-wider">
-              <span className="flex items-center gap-1.5 text-emerald-400 font-bold">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                EVALUATION MODE
-              </span>
-              <span className="text-slate-600">|</span>
-              <span className="text-slate-400">LOCAL ANVIL EVM (CHAIN 31337)</span>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-cyan-400 text-xs font-mono mb-4 shadow-[0_0_15px_rgba(6,182,212,0.15)]">
+              <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+              <span className="font-bold tracking-wider">BLOCKCHAIN-ANCHORED DIGITAL FORENSICS</span>
             </div>
 
             {/* Main Headline */}
@@ -290,7 +292,7 @@ export const LandingPage = () => {
             </div>
           </div>
 
-          {/* Right Column: borderless hero illustration — bleeds to right edge */}
+          {/* Right Column: borderless hero illustration */}
           <div className="lg:col-span-7 flex items-center justify-end -mr-4 sm:-mr-6 lg:-mr-8">
             <div className="w-full">
               <HeroEvidenceDiagram 
@@ -303,9 +305,8 @@ export const LandingPage = () => {
         </div>
       </section>
 
-
-      {/* 4 PROCESS STEP CARDS — matched to IMAGE 1 */}
-      <section id="evidence-flow" className="relative z-10 pt-2 pb-6 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* 4 PROCESS STEP CARDS */}
+      <section id="evidence-flow" className="relative z-10 pt-2 pb-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           {/* CARD 01 */}
           <div 
@@ -337,7 +338,7 @@ export const LandingPage = () => {
             </div>
             <div className="w-full flex items-center justify-center flex-1 py-1">
               <img 
-                src="/assets/step-02-custody.png"
+                src="/assets/step-02-custody.png" 
                 alt="Track Custody"
                 className="h-20 object-contain filter drop-shadow-[0_0_14px_rgba(6,182,212,0.3)] group-hover:scale-105 transition-transform"
               />
@@ -347,26 +348,26 @@ export const LandingPage = () => {
 
           {/* CARD 03 */}
           <div 
-            onClick={() => launchConsole('AUDITOR', '/verification', true)}
+            onClick={() => launchConsole('ORG_B', '/lineage', true)}
             className="p-4 pt-5 rounded-xl border border-slate-800/70 bg-[#070e1c]/80 hover:border-cyan-500/40 hover:shadow-[0_0_20px_rgba(6,182,212,0.12)] transition-all cursor-pointer group flex flex-col items-start gap-3"
           >
             <div className="flex items-center gap-2">
               <span className="text-[11px] font-mono font-bold text-cyan-400">03</span>
-              <h4 className="text-sm font-bold text-white">Verify Integrity</h4>
+              <h4 className="text-sm font-bold text-white">Verify Lineage</h4>
             </div>
             <div className="w-full flex items-center justify-center flex-1 py-1">
               <img 
-                src="/assets/step-03-integrity.png"
-                alt="Verify Integrity"
+                src="/assets/step-03-lineage.png" 
+                alt="Verify Lineage"
                 className="h-20 object-contain filter drop-shadow-[0_0_14px_rgba(6,182,212,0.3)] group-hover:scale-105 transition-transform"
               />
             </div>
-            <p className="text-[11px] text-slate-400 leading-snug">Detect tampering with cryptographic proofs</p>
+            <p className="text-[11px] text-slate-400 leading-snug">Inspect artifact trees and parent derivations</p>
           </div>
 
           {/* CARD 04 */}
           <div 
-            onClick={() => launchConsole('AUDITOR', '/audit', true)}
+            onClick={() => launchConsole('AUDITOR', '/verification', true)}
             className="p-4 pt-5 rounded-xl border border-slate-800/70 bg-[#070e1c]/80 hover:border-cyan-500/40 hover:shadow-[0_0_20px_rgba(6,182,212,0.12)] transition-all cursor-pointer group flex flex-col items-start gap-3"
           >
             <div className="flex items-center gap-2">
@@ -386,7 +387,7 @@ export const LandingPage = () => {
       </section>
 
       {/* PLATFORM DEMO VIDEO SHOWCASE SECTION */}
-      <section id="demo-video" className="relative z-10 py-16 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section id="demo-video" className="relative z-10 py-12 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-8">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 font-mono text-xs font-bold mb-3 shadow-[0_0_15px_rgba(6,182,212,0.15)]">
             <PlayCircle className="w-3.5 h-3.5" />
@@ -454,265 +455,101 @@ export const LandingPage = () => {
         </div>
       </section>
 
-
-      {/* SYSTEM ARCHITECTURE BLUEPRINT SECTION */}
-      <SystemArchitectureSection onLaunchSandbox={launchConsole} />
-
-      {/* INTERACTIVE SECURITY CONSOLE & TAMPER LAB */}
-      <section id="security-lab" className="relative z-10 py-12 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* LIVE 1-BIT ADVERSARIAL TAMPER TESTBED */}
+      <section id="tamper-testbed" className="relative z-10 py-12 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-[#080e1c] border border-slate-800 rounded-2xl shadow-2xl overflow-hidden backdrop-blur-xl">
-          {/* Simulated Terminal Window Header */}
+          {/* Header */}
           <div className="bg-slate-900/90 px-4 py-3 border-b border-slate-800 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 rounded-full bg-rose-500/80" />
               <div className="w-3 h-3 rounded-full bg-amber-500/80" />
               <div className="w-3 h-3 rounded-full bg-emerald-500/80" />
-              <span className="text-xs font-mono text-slate-400 ml-2">hashguard-soc-node01.enclave.gov</span>
+              <span className="text-xs font-mono text-slate-400 ml-2">hashguard-tamper-containment.soc</span>
             </div>
             <div className="flex items-center gap-1.5 bg-slate-950 px-2.5 py-1 rounded border border-slate-800 text-[11px] font-mono text-cyan-400">
               <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping" />
-              <span>LIVE EVIDENCE ENCLAVE</span>
+              <span>LIVE INTEGRITY TESTBED</span>
             </div>
           </div>
 
-          {/* Interactive Showcase Tabs */}
-          <div className="flex border-b border-slate-800 bg-slate-950/60 px-4 pt-2 gap-2 overflow-x-auto">
-            <button
-              onClick={() => setActiveTab('segregation')}
-              className={`px-4 py-2.5 text-xs font-mono rounded-t-lg transition-all flex items-center gap-2 cursor-pointer border-t-2 ${
-                activeTab === 'segregation'
-                  ? 'border-cyan-400 bg-[#080e1c] text-cyan-400 font-bold'
-                  : 'border-transparent text-slate-400 hover:text-slate-200'
-              }`}
-            >
-              <Database className="w-3.5 h-3.5" />
-              <span>Off-Chain Vault vs On-Chain Proof</span>
-            </button>
-            <button
-              onClick={() => setActiveTab('lineage')}
-              className={`px-4 py-2.5 text-xs font-mono rounded-t-lg transition-all flex items-center gap-2 cursor-pointer border-t-2 ${
-                activeTab === 'lineage'
-                  ? 'border-cyan-400 bg-[#080e1c] text-cyan-400 font-bold'
-                  : 'border-transparent text-slate-400 hover:text-slate-200'
-              }`}
-            >
-              <GitFork className="w-3.5 h-3.5" />
-              <span>Interactive Lineage DAG</span>
-            </button>
-            <button
-              onClick={() => setActiveTab('tamper')}
-              className={`px-4 py-2.5 text-xs font-mono rounded-t-lg transition-all flex items-center gap-2 cursor-pointer border-t-2 ${
-                activeTab === 'tamper'
-                  ? 'border-cyan-400 bg-[#080e1c] text-cyan-400 font-bold'
-                  : 'border-transparent text-slate-400 hover:text-slate-200'
-              }`}
-            >
-              <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
-              <span>Live Bit Tamper Simulator</span>
-            </button>
+          <div className="p-6 md:p-8 space-y-6">
+            <div className="text-center max-w-2xl mx-auto space-y-2">
+              <h3 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
+                Live 1-Bit Adversary Tamper Demonstration
+              </h3>
+              <p className="text-xs text-slate-400 font-mono leading-relaxed">
+                Simulate an adversary modifying a single byte in off-chain evidence storage. Observe how on-chain mathematical invariants instantly trigger an automated breach containment revert.
+              </p>
+            </div>
+
+            {/* Interactive Specimen Box */}
+            <div className={`p-5 rounded-xl border transition-all ${
+              interactiveTampered 
+                ? 'bg-rose-950/20 border-rose-500/50 shadow-[0_0_30px_rgba(244,63,94,0.2)]' 
+                : 'bg-slate-900/50 border-slate-800'
+            }`}>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-800">
+                <div>
+                  <span className="text-xs font-mono text-slate-400">Target Exhibit: </span>
+                  <span className="text-xs font-mono font-bold text-white">EV-001 (LockBit 3.0 Ransomware Encryptor Payload - 4.2 GB)</span>
+                </div>
+                <button
+                  onClick={() => setInteractiveTampered(!interactiveTampered)}
+                  className={`px-4 py-2 rounded-lg text-xs font-mono font-bold transition-all cursor-pointer flex items-center gap-2 ${
+                    interactiveTampered
+                      ? 'bg-rose-500 hover:bg-rose-400 text-white shadow-lg shadow-rose-500/30'
+                      : 'bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700'
+                  }`}
+                >
+                  <AlertTriangle className="w-3.5 h-3.5" />
+                  <span>{interactiveTampered ? 'Reset to Clean State' : '🚨 Simulate 1-Bit Tamper'}</span>
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 text-xs font-mono">
+                {/* On-Chain Sealed Hash */}
+                <div className="p-3.5 bg-slate-950 rounded-lg border border-slate-800/80">
+                  <div className="text-slate-500 uppercase tracking-wider text-[10px]">On-Chain Sealed Cryptographic Root:</div>
+                  <div className="text-emerald-400 font-bold break-all mt-1">{sampleOriginalHash}</div>
+                  <div className="text-[10px] text-slate-500 mt-1">Immutable Root Sealed in Block #1845201</div>
+                </div>
+
+                {/* Off-Chain Computed Hash */}
+                <div className={`p-3.5 bg-slate-950 rounded-lg border ${interactiveTampered ? 'border-rose-500/60' : 'border-slate-800/80'}`}>
+                  <div className="text-slate-500 uppercase tracking-wider text-[10px]">Current Off-Chain Specimen Hash:</div>
+                  <div className={`font-bold break-all mt-1 ${interactiveTampered ? 'text-rose-400 animate-pulse' : 'text-emerald-400'}`}>
+                    {interactiveTampered ? sampleTamperedHash : sampleOriginalHash}
+                  </div>
+                  <div className={`text-[10px] mt-1 font-bold ${interactiveTampered ? 'text-rose-400' : 'text-emerald-400'}`}>
+                    {interactiveTampered ? '✕ INTEGRITY MISMATCH DETECTED: SMART CONTRACT REVERT' : '✓ 100% BIT-LEVEL MATCH CONFIRMED'}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2 border-t border-slate-800/80">
+              <span className="text-xs text-slate-400 font-mono">
+                Adversary modified byte 0x00FF in off-chain disk image. WebCrypto recomputation triggers immediate smart contract revert.
+              </span>
+              <button
+                onClick={() => launchConsole('AUDITOR', '/verification', true)}
+                className="px-5 py-2.5 rounded-lg bg-cyan-400 hover:bg-cyan-300 text-slate-950 font-mono font-bold text-xs transition-all cursor-pointer flex items-center gap-2 shadow-md shrink-0"
+              >
+                <span>Test Live Verification in Sandbox</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
           </div>
-
-          {/* TAB 1: OFF-CHAIN VS ON-CHAIN SEGREGATION */}
-          {activeTab === 'segregation' && (
-            <div className="p-6 md:p-8 space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Off-Chain Card */}
-                <div className="p-5 rounded-xl bg-slate-900/50 border border-slate-800 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-mono text-cyan-400 uppercase tracking-wider font-semibold">1. Off-Chain Storage (Vault)</span>
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-blue-500/10 text-blue-300 border border-blue-500/20">ENCRYPTED ENCLAVE</span>
-                  </div>
-                  <h4 className="text-base font-bold text-white">Heavyweight Raw Artifacts</h4>
-                  <p className="text-xs text-slate-400 leading-relaxed font-sans">
-                    GB-scale disk images (.E01, .raw), PCAP captures, malware binaries, and memory dumps never touch the public blockchain. They reside in air-gapped, AES-256-GCM encrypted object enclaves.
-                  </p>
-                  <div className="p-3 bg-slate-950 rounded border border-slate-800/80 font-mono text-xs space-y-1 text-slate-300">
-                    <div><span className="text-slate-500">Asset:</span> ev-001.bin.enc (4.8 MB LockBit Payload)</div>
-                    <div><span className="text-slate-500">Vault:</span> s3-vault://org-b-forensics/vault/ev-001.bin.enc</div>
-                    <div><span className="text-slate-500">Encryption:</span> AES-256-GCM (Enclave Wrapped Key)</div>
-                  </div>
-                </div>
-
-                {/* On-Chain Card */}
-                <div className="p-5 rounded-xl bg-slate-900/50 border border-slate-800 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-mono text-emerald-400 uppercase tracking-wider font-semibold">2. On-Chain Ledger (Tamper-Evident Proof)</span>
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">LOCAL EVM / BESU CONSENSUS</span>
-                  </div>
-                  <h4 className="text-base font-bold text-white">Cryptographic State Machine</h4>
-                  <p className="text-xs text-slate-400 leading-relaxed font-sans">
-                    Only deterministic SHA-256 bit digests, digital signatures, RFC 3161 timestamps, and parent derivation hashes are committed to the audit smart contract.
-                  </p>
-                  <div className="p-3 bg-slate-950 rounded border border-slate-800/80 font-mono text-xs space-y-1 text-slate-300">
-                    <div><span className="text-slate-500">Digest:</span> 8f3a91bc72f4cd2a...c5d6</div>
-                    <div><span className="text-slate-500">Contract:</span> 0x3592...7052 (HASHGUARD.sol)</div>
-                    <div><span className="text-slate-500">State:</span> VERIFIED_SEALED (Block #1845201)</div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="p-4 bg-cyan-950/20 border border-cyan-500/30 rounded-xl flex items-center justify-between flex-wrap gap-3">
-                <div className="flex items-center gap-3">
-                  <Lock className="w-5 h-5 text-cyan-400 shrink-0" />
-                  <span className="text-xs font-mono text-slate-300">
-                    Independent auditors can mathematically verify evidence integrity without exposing classified payload data.
-                  </span>
-                </div>
-                <button
-                  onClick={() => launchConsole('AUDITOR', '/verification', true)}
-                  className="text-xs font-mono text-cyan-400 hover:text-cyan-300 font-bold flex items-center gap-1 cursor-pointer"
-                >
-                  <span>Launch Auditor Verification Portal</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* TAB 2: INTERACTIVE LINEAGE DAG */}
-          {activeTab === 'lineage' && (
-            <div className="p-6 md:p-8 space-y-6">
-              <div className="text-center max-w-2xl mx-auto space-y-2">
-                <h4 className="text-lg font-bold text-white">Mathematical Derivation Graph</h4>
-                <p className="text-xs text-slate-400 font-mono">
-                  Every forensic artifact mathematically commits to its parent source hash. Any alteration in a child report or parent dump breaks the entire cryptographic chain.
-                </p>
-              </div>
-
-              {/* Graphical Lineage Flow */}
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-3 py-4">
-                {/* Node 1 */}
-                <div className="p-4 rounded-xl bg-slate-900 border border-cyan-500/40 relative">
-                  <div className="text-[10px] font-mono text-cyan-400 uppercase font-semibold">ROOT EXHIBIT</div>
-                  <div className="text-sm font-bold text-white mt-1">EV-001 (Malware Binary)</div>
-                  <div className="text-[11px] font-mono text-slate-400 truncate mt-1">Seized by CERT-Alpha</div>
-                  <div className="mt-3 text-[10px] font-mono bg-slate-950 p-2 rounded border border-slate-800 text-slate-400 truncate">
-                    Hash: 8f3a91...c5d6
-                  </div>
-                </div>
-
-                {/* Node 2 */}
-                <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 relative">
-                  <div className="text-[10px] font-mono text-blue-400 uppercase font-semibold">DERIVATION #1</div>
-                  <div className="text-sm font-bold text-white mt-1">DER-012 (Mem Dump)</div>
-                  <div className="text-[11px] font-mono text-slate-400 truncate mt-1">Extracted RAM artifact</div>
-                  <div className="mt-3 text-[10px] font-mono bg-slate-950 p-2 rounded border border-slate-800 text-slate-400 truncate">
-                    Parent: EV-001
-                  </div>
-                </div>
-
-                {/* Node 3 */}
-                <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 relative">
-                  <div className="text-[10px] font-mono text-purple-400 uppercase font-semibold">DERIVATION #2</div>
-                  <div className="text-sm font-bold text-white mt-1">DER-045 (LockBit.bin)</div>
-                  <div className="text-[11px] font-mono text-slate-400 truncate mt-1">Extracted Payload</div>
-                  <div className="mt-3 text-[10px] font-mono bg-slate-950 p-2 rounded border border-slate-800 text-slate-400 truncate">
-                    Parent: DER-012
-                  </div>
-                </div>
-
-                {/* Node 4 */}
-                <div className="p-4 rounded-xl bg-slate-900 border border-emerald-500/40 relative">
-                  <div className="text-[10px] font-mono text-emerald-400 uppercase font-semibold">FINAL ARTIFACT</div>
-                  <div className="text-sm font-bold text-white mt-1">RPT-081 (YARA / IOCs)</div>
-                  <div className="text-[11px] font-mono text-slate-400 truncate mt-1">Courtroom Evidence Dossier</div>
-                  <div className="mt-3 text-[10px] font-mono bg-slate-950 p-2 rounded border border-slate-800 text-slate-400 truncate">
-                    Parent: DER-045
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex justify-center">
-                <button
-                  onClick={() => launchConsole('ORG_B', '/lineage', true)}
-                  className="px-5 py-2.5 rounded-lg bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 text-cyan-300 text-xs font-mono transition-all flex items-center gap-2 cursor-pointer"
-                >
-                  <GitFork className="w-3.5 h-3.5 text-cyan-400" />
-                  <span>Explore Evidence Lineage in Console</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* TAB 3: LIVE BIT TAMPER SIMULATOR */}
-          {activeTab === 'tamper' && (
-            <div className="p-6 md:p-8 space-y-6">
-              <div className="text-center max-w-2xl mx-auto space-y-2">
-                <h4 className="text-lg font-bold text-white">Live Tamper Demonstration Testbed</h4>
-                <p className="text-xs text-slate-400 font-mono">
-                  Toggle the specimen below to simulate an adversary modifying 1 single bit in off-chain evidence storage. Watch how on-chain verification immediately triggers a breach alert.
-                </p>
-              </div>
-
-              {/* Interactive Specimen Box */}
-              <div className={`p-5 rounded-xl border transition-all ${
-                interactiveTampered 
-                  ? 'bg-rose-950/20 border-rose-500/50 shadow-[0_0_20px_rgba(244,63,94,0.15)]' 
-                  : 'bg-slate-900/40 border-slate-800'
-              }`}>
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-800">
-                  <div>
-                    <span className="text-xs font-mono text-slate-400">Specimen ID: </span>
-                    <span className="text-xs font-mono font-bold text-white">EV-001 (LockBit 3.0 Ransomware Encryptor Payload - 4.2 GB)</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <button
-                      onClick={() => setInteractiveTampered(!interactiveTampered)}
-                      className={`px-3 py-1.5 rounded text-xs font-mono font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-                        interactiveTampered
-                          ? 'bg-rose-500 text-white shadow-lg'
-                          : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700'
-                      }`}
-                    >
-                      <AlertTriangle className="w-3.5 h-3.5" />
-                      <span>{interactiveTampered ? 'Reset to Clean State' : '🚨 Simulate Bit Tamper'}</span>
-                    </button>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 text-xs font-mono">
-                  {/* Expected Hash */}
-                  <div className="p-3 bg-slate-950 rounded border border-slate-800">
-                    <div className="text-slate-500 uppercase tracking-wider text-[10px]">On-Chain Sealed Cryptographic Root:</div>
-                    <div className="text-emerald-400 font-bold break-all mt-1">{sampleOriginalHash}</div>
-                    <div className="text-[10px] text-slate-500 mt-1">Anchored in Block #1845201</div>
-                  </div>
-
-                  {/* Off-Chain Computed Hash */}
-                  <div className={`p-3 bg-slate-950 rounded border ${interactiveTampered ? 'border-rose-500/60' : 'border-slate-800'}`}>
-                    <div className="text-slate-500 uppercase tracking-wider text-[10px]">Current Off-Chain Specimen Hash:</div>
-                    <div className={`font-bold break-all mt-1 ${interactiveTampered ? 'text-rose-400 animate-pulse' : 'text-emerald-400'}`}>
-                      {interactiveTampered ? sampleTamperedHash : sampleOriginalHash}
-                    </div>
-                    <div className={`text-[10px] mt-1 font-bold ${interactiveTampered ? 'text-rose-400' : 'text-slate-500'}`}>
-                      {interactiveTampered ? '✕ INTEGRITY MISMATCH DETECTED' : '✓ 100% BIT-LEVEL MATCH'}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex justify-center">
-                <button
-                  onClick={() => launchConsole('ORG_B', '/dashboard', true)}
-                  className="px-5 py-2.5 rounded-lg bg-cyan-400 hover:bg-cyan-300 text-slate-950 font-mono font-bold text-xs transition-all cursor-pointer flex items-center gap-2 shadow-md"
-                >
-                  <span>Launch Evaluation Sandbox (Test Full Tamper System)</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </button>
-              </div>
-            </div>
-          )}
         </div>
       </section>
 
-      {/* THE PROBLEM VS THE SOLUTION SECTION */}
-      <section className="relative z-10 py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* THE FORENSIC CHALLENGE: LEGACY VS HASHGUARD */}
+      <section id="challenge" className="relative z-10 py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-slate-200 dark:border-slate-800/80">
         <div className="text-center max-w-3xl mx-auto mb-12">
           <h2 className="text-xs font-mono uppercase tracking-widest text-cyan-600 dark:text-cyan-400 font-semibold mb-2">The Forensic Challenge</h2>
           <h3 className="text-2xl sm:text-4xl font-extrabold text-slate-900 dark:text-white">Why Existing Chain-of-Custody Fails in Court</h3>
           <p className="mt-3 text-sm text-slate-600 dark:text-slate-400 font-sans">
-            Digital evidence cross-organization exchange between police forces, CERT teams, defense labs, and judicial courts is vulnerable to tampering disputes and lack of mathematical provenance.
+            Cross-organization evidence transfers between law enforcement, CERT teams, defense labs, and courts remain vulnerable to tampering disputes and lack of mathematical provenance.
           </p>
         </div>
 
@@ -764,85 +601,71 @@ export const LandingPage = () => {
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-emerald-500 font-bold">✓</span>
-                <span>1-click courtroom attestation certificates with cryptographic verification proofs.</span>
+                <span>1-click Section 65B certified evidence dossiers with full block verification proofs.</span>
               </li>
             </ul>
           </div>
         </div>
       </section>
 
-      {/* CORE ARCHITECTURE GRID */}
-      <section id="features" className="relative z-10 py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-slate-200 dark:border-slate-800/80">
-        <div className="text-center max-w-3xl mx-auto mb-12">
-          <h2 className="text-xs font-mono uppercase tracking-widest text-cyan-600 dark:text-cyan-400 font-semibold mb-2">Technical Capabilities</h2>
-          <h3 className="text-2xl sm:text-4xl font-extrabold text-slate-900 dark:text-white">Engineered for Cross-Organization Trust</h3>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Card 1 */}
-          <div className="p-6 rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 hover:border-cyan-500/40 shadow-xs transition-all space-y-3">
-            <div className="w-10 h-10 rounded-lg bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-500 dark:text-cyan-400">
-              <Fingerprint className="w-5 h-5" />
+      {/* SYSTEM ARCHITECTURE TEASER CARD */}
+      <section id="architecture" className="relative z-10 py-16 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-slate-200 dark:border-slate-800/80">
+        <div className="p-8 rounded-2xl bg-gradient-to-br from-slate-900 via-[#070e1c] to-[#0c1324] text-white border border-cyan-500/40 shadow-2xl space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-800">
+            <div>
+              <div className="flex items-center gap-2 text-cyan-400 font-mono text-xs uppercase font-bold">
+                <Layers className="w-4 h-4 text-cyan-400" />
+                <span>4-TIER SECURITY BLUEPRINT</span>
+              </div>
+              <h3 className="text-xl sm:text-2xl font-bold text-white mt-1">Enterprise System Architecture</h3>
+              <p className="text-xs text-slate-400 font-mono mt-1">
+                Air-Gapped Off-Chain Enclaves • EVM Smart Contracts • Permissioned Consensus
+              </p>
             </div>
-            <h4 className="text-base font-bold text-slate-900 dark:text-white">SHA-256 Bit Attestation</h4>
-            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed font-sans">
-              Every digital exhibit is deterministically hashed upon physical seizure. Continuous off-chain vs on-chain comparison guarantees bit-level integrity.
-            </p>
+            <a
+              href={SYSTEM_ARCHITECTURE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-5 py-2.5 rounded-lg bg-gradient-to-r from-cyan-400 to-sky-500 hover:from-cyan-300 hover:to-sky-400 text-slate-950 font-mono font-bold text-xs transition-all shadow-[0_0_20px_rgba(6,182,212,0.3)] cursor-pointer flex items-center gap-2 self-start sm:self-auto shrink-0 group"
+            >
+              <span>Explore Detailed Architecture</span>
+              <ExternalLink className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+            </a>
           </div>
 
-          {/* Card 2 */}
-          <div className="p-6 rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 hover:border-cyan-500/40 shadow-xs transition-all space-y-3">
-            <div className="w-10 h-10 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-500 dark:text-blue-400">
-              <ArrowLeftRight className="w-5 h-5" />
+          {/* 4 Tier Overview Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 font-mono text-xs">
+            <div className="p-4 rounded-xl bg-slate-950/70 border border-slate-800 space-y-2">
+              <span className="text-[10px] text-cyan-400 font-bold">TIER 01</span>
+              <h5 className="font-bold text-white text-sm">Client Tier</h5>
+              <p className="text-slate-400 text-[11px] leading-relaxed font-sans">
+                Deterministic client-side WebCrypto SHA-256 hashing. Zero raw payload transmission before sealing.
+              </p>
             </div>
-            <h4 className="text-base font-bold text-slate-900 dark:text-white">Cryptographic Transfers</h4>
-            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed font-sans">
-              Inter-agency custody handoffs require mTLS mutual authentication, recipient acceptance signatures, and automated block confirmation.
-            </p>
-          </div>
 
-          {/* Card 3 */}
-          <div className="p-6 rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 hover:border-cyan-500/40 shadow-xs transition-all space-y-3">
-            <div className="w-10 h-10 rounded-lg bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-500 dark:text-purple-400">
-              <GitFork className="w-5 h-5" />
+            <div className="p-4 rounded-xl bg-slate-950/70 border border-slate-800 space-y-2">
+              <span className="text-[10px] text-blue-400 font-bold">TIER 02</span>
+              <h5 className="font-bold text-white text-sm">Storage Enclave</h5>
+              <p className="text-slate-400 text-[11px] leading-relaxed font-sans">
+                Air-gapped MinIO S3 object storage with AES-256-GCM envelope encryption isolating multi-GB disk images.
+              </p>
             </div>
-            <h4 className="text-base font-bold text-slate-900 dark:text-white">Lineage Provenance DAG</h4>
-            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed font-sans">
-              Decompiled modules, memory carvings, and YARA IOCs inherit parent specimen signatures in an interactive mathematical derivation graph.
-            </p>
-          </div>
 
-          {/* Card 4 */}
-          <div className="p-6 rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 hover:border-cyan-500/40 shadow-xs transition-all space-y-3">
-            <div className="w-10 h-10 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-500 dark:text-emerald-400">
-              <Eye className="w-5 h-5" />
+            <div className="p-4 rounded-xl bg-slate-950/70 border border-slate-800 space-y-2">
+              <span className="text-[10px] text-purple-400 font-bold">TIER 03</span>
+              <h5 className="font-bold text-white text-sm">Custody Engine</h5>
+              <p className="text-slate-400 text-[11px] leading-relaxed font-sans">
+                Solidity smart contracts executing on EVM. Enforces custody handoffs and parent-child derivation DAGs.
+              </p>
             </div>
-            <h4 className="text-base font-bold text-slate-900 dark:text-white">Independent Cryptographic Auditing</h4>
-            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed font-sans">
-              Independent auditors can mathematically verify evidence integrity using cryptographic proofs without gaining access to classified raw payloads.
-            </p>
-          </div>
 
-          {/* Card 5 */}
-          <div className="p-6 rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 hover:border-cyan-500/40 shadow-xs transition-all space-y-3">
-            <div className="w-10 h-10 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-500 dark:text-amber-400">
-              <Clock className="w-5 h-5" />
+            <div className="p-4 rounded-xl bg-slate-950/70 border border-slate-800 space-y-2">
+              <span className="text-[10px] text-emerald-400 font-bold">TIER 04</span>
+              <h5 className="font-bold text-white text-sm">Consensus &amp; Audit</h5>
+              <p className="text-slate-400 text-[11px] leading-relaxed font-sans">
+                Permissioned validator nodes with zero-knowledge proof verification and Section 65B court attestation exports.
+              </p>
             </div>
-            <h4 className="text-base font-bold text-slate-900 dark:text-white">Automated Retention Policies</h4>
-            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed font-sans">
-              Regulatory lifecycles, automated secure wiping, and cold-storage time-locks adhere to statutory retention guidelines with signed proof.
-            </p>
-          </div>
-
-          {/* Card 6 */}
-          <div className="p-6 rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 hover:border-cyan-500/40 shadow-xs transition-all space-y-3">
-            <div className="w-10 h-10 rounded-lg bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-500 dark:text-cyan-400">
-              <FileCheck2 className="w-5 h-5" />
-            </div>
-            <h4 className="text-base font-bold text-slate-900 dark:text-white">Courtroom Attestation PDF/JSON</h4>
-            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed font-sans">
-              Export cryptographic attestation certificates with 5-point verification checkmarks, block heights, and ECDSA digital signatures designed for Section 65B legal submission.
-            </p>
           </div>
         </div>
       </section>
@@ -920,54 +743,6 @@ export const LandingPage = () => {
         </div>
       </section>
 
-      {/* EVALUATOR RUNBOOK */}
-      <section id="judges-tour" className="relative z-10 py-16 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="p-8 rounded-2xl bg-gradient-to-br from-slate-900 via-[#070e1c] to-[#0c1324] text-white border border-cyan-500/40 shadow-2xl space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-800">
-            <div>
-              <div className="flex items-center gap-2 text-cyan-400 font-mono text-xs uppercase font-bold">
-                <Sparkles className="w-4 h-4 text-cyan-400" />
-                <span>Forensic Architecture SOP</span>
-              </div>
-              <h3 className="text-xl sm:text-2xl font-bold text-white mt-1">Evaluator Runbook: Architecture Verification Protocol</h3>
-            </div>
-            <button
-              onClick={() => launchConsole('ORG_B', '/dashboard', true)}
-              className="px-5 py-2.5 rounded-lg bg-cyan-400 hover:bg-cyan-300 text-slate-950 font-mono font-bold text-xs transition-all shadow-[0_0_15px_rgba(6,182,212,0.3)] cursor-pointer self-start sm:self-auto flex items-center gap-1.5"
-            >
-              <span>Launch Evaluation Sandbox</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </button>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 font-mono text-xs">
-            <div className="p-4 rounded-xl bg-slate-950/70 border border-slate-800 space-y-2">
-              <span className="text-cyan-400 font-bold">STEP 1</span>
-              <h5 className="font-bold text-white text-sm">Evidence Dossier</h5>
-              <p className="text-slate-400 text-[11px] leading-relaxed font-sans">
-                Open <span className="text-slate-200 font-bold">EV-001</span> to inspect the off-chain SHA-256 hash vs on-chain sealed root and the vertical custody timeline.
-              </p>
-            </div>
-
-            <div className="p-4 rounded-xl bg-slate-950/70 border border-slate-800 space-y-2">
-              <span className="text-amber-400 font-bold">STEP 2</span>
-              <h5 className="font-bold text-white text-sm">Adversary Tamper Drill</h5>
-              <p className="text-slate-400 text-[11px] leading-relaxed font-sans">
-                Trigger the <span className="text-amber-300 font-bold">"Simulate Byte Tamper"</span> drill to witness instant cryptographic breach containment across all validator nodes.
-              </p>
-            </div>
-
-            <div className="p-4 rounded-xl bg-slate-950/70 border border-slate-800 space-y-2">
-              <span className="text-emerald-400 font-bold">STEP 3</span>
-              <h5 className="font-bold text-white text-sm">Independent Audit Verification</h5>
-              <p className="text-slate-400 text-[11px] leading-relaxed font-sans">
-                Navigate to <span className="text-emerald-300 font-bold">/verification</span>, run the 5-point cryptographic check, and export the official attestation report.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* BOTTOM CTA BANNER */}
       <section className="relative z-10 py-16 text-center max-w-4xl mx-auto px-4">
         <h3 className="text-2xl sm:text-4xl font-extrabold text-slate-900 dark:text-white">
@@ -1005,7 +780,7 @@ export const LandingPage = () => {
             <span className="text-slate-600 dark:text-slate-400">Cyber Evidence Exchange Platform</span>
           </div>
 
-          <div className="flex items-center gap-4 text-[11px] text-slate-500">
+          <div className="flex items-center gap-4 text-[11px] text-slate-500 flex-wrap">
             <span className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
               <span>Local EVM Nodes Synced</span>
@@ -1031,7 +806,7 @@ export const LandingPage = () => {
         isOpen={tamperModalOpen} 
         onClose={() => setTamperModalOpen(false)}
         onLaunchSandbox={launchConsole}
-        onScrollToTamperEngine={() => scrollToTab('tamper')}
+        onScrollToTamperEngine={() => scrollToSection('tamper-testbed')}
       />
 
       <DemoWalkthroughModal 

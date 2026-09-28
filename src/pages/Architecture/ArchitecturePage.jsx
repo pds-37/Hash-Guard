@@ -32,6 +32,11 @@ import {
 
 export const ArchitecturePage = () => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    window.location.replace('https://hash-guard-system-achitecture.vercel.app/');
+  }, []);
+
   const { switchRole, setSandbox } = useApp();
   const [selectedNode, setSelectedNode] = useState(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
