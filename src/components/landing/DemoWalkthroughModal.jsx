@@ -89,7 +89,7 @@ export const DemoWalkthroughModal = ({ isOpen, onClose, onLaunchSandbox }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md animate-in fade-in">
-      <div className="relative w-full max-w-3xl rounded-2xl bg-[#080f1e] border border-cyan-500/40 shadow-[0_0_60px_rgba(6,182,212,0.25)] p-6 text-white font-sans overflow-hidden">
+      <div className="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-2xl bg-[#080f1e] border border-cyan-500/40 shadow-[0_0_60px_rgba(6,182,212,0.25)] p-6 text-white font-sans">
         {/* Glow ambient */}
         <div className="absolute top-0 right-0 w-80 h-80 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
 
@@ -105,11 +105,11 @@ export const DemoWalkthroughModal = ({ isOpen, onClose, onLaunchSandbox }) => {
                   HASHGUARD ARCHITECTURAL DEMO
                 </h3>
                 <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 font-bold">
-                  2-MINUTE WALKTHROUGH
+                  DEMO VIDEO & WALKTHROUGH
                 </span>
               </div>
               <p className="text-xs text-slate-400 font-mono mt-0.5">
-                4-Stage Cryptographic Evidence Life Cycle Simulation
+                Watch full product walkthrough or explore the 4-stage lifecycle simulation
               </p>
             </div>
           </div>
@@ -120,7 +120,7 @@ export const DemoWalkthroughModal = ({ isOpen, onClose, onLaunchSandbox }) => {
               className="p-1.5 rounded-lg border border-slate-700 bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors cursor-pointer text-xs font-mono flex items-center gap-1 px-2.5"
             >
               {isPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
-              <span>{isPlaying ? 'Pause' : 'Play'}</span>
+              <span>{isPlaying ? 'Pause Steps' : 'Play Steps'}</span>
             </button>
             <button
               onClick={onClose}
@@ -131,8 +131,20 @@ export const DemoWalkthroughModal = ({ isOpen, onClose, onLaunchSandbox }) => {
           </div>
         </div>
 
+        {/* Embedded YouTube Demo Video */}
+        <div className="mt-4 rounded-xl overflow-hidden border border-cyan-500/30 aspect-video w-full bg-slate-950 shadow-2xl">
+          <iframe
+            className="w-full h-full"
+            src="https://www.youtube-nocookie.com/embed/jQ7otleJOcU?rel=0&modestbranding=1"
+            title="HashGuard - Cyber Evidence Exchange Demo Video"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerPolicy="strict-origin-when-cross-origin"
+            allowFullScreen
+          />
+        </div>
+
         {/* Step Progress Indicators */}
-        <div className="mt-4 grid grid-cols-4 gap-2">
+        <div className="mt-5 grid grid-cols-4 gap-2">
           {steps.map((s, idx) => (
             <button
               key={s.id}

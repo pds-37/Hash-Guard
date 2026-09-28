@@ -274,7 +274,14 @@ export const LandingPage = () => {
               </button>
 
               <button
-                onClick={() => setDemoModalOpen(true)}
+                onClick={() => {
+                  const el = document.getElementById('demo-video');
+                  if (el) {
+                    el.scrollIntoView({ behavior: 'smooth' });
+                  } else {
+                    setDemoModalOpen(true);
+                  }
+                }}
                 className="px-4 py-2.5 rounded-lg border border-slate-700 text-slate-300 font-mono text-xs transition-all flex items-center gap-2 cursor-pointer hover:border-slate-500 hover:text-white group"
               >
                 <PlayCircle className="w-3.5 h-3.5 group-hover:text-cyan-400 transition-colors" />
@@ -374,6 +381,75 @@ export const LandingPage = () => {
               />
             </div>
             <p className="text-[11px] text-slate-400 leading-snug">Support legal, audit, and judicial oversight</p>
+          </div>
+        </div>
+      </section>
+
+      {/* PLATFORM DEMO VIDEO SHOWCASE SECTION */}
+      <section id="demo-video" className="relative z-10 py-16 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center max-w-3xl mx-auto mb-8">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 font-mono text-xs font-bold mb-3 shadow-[0_0_15px_rgba(6,182,212,0.15)]">
+            <PlayCircle className="w-3.5 h-3.5" />
+            <span>PLATFORM DEMO VIDEO</span>
+          </div>
+          <h2 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
+            See HashGuard in Action
+          </h2>
+          <p className="mt-2 text-xs sm:text-sm text-slate-400 font-mono">
+            Watch the full walkthrough of cryptographic evidence sealing, inter-agency custody transfers, and zero-trust independent verification.
+          </p>
+        </div>
+
+        {/* Video Player Card */}
+        <div className="relative rounded-2xl bg-gradient-to-b from-slate-900 via-[#070e1c] to-[#040812] border border-cyan-500/40 p-2 sm:p-4 shadow-[0_0_50px_rgba(6,182,212,0.2)] overflow-hidden">
+          {/* Top Bar / Terminal style header */}
+          <div className="flex items-center justify-between px-3 py-2 border-b border-slate-800/90 mb-3 bg-slate-950/60 rounded-t-xl">
+            <div className="flex items-center gap-2">
+              <div className="w-2.5 h-2.5 rounded-full bg-rose-500/80" />
+              <div className="w-2.5 h-2.5 rounded-full bg-amber-500/80" />
+              <div className="w-2.5 h-2.5 rounded-full bg-emerald-500/80" />
+              <span className="text-[11px] font-mono text-slate-400 ml-2">hashguard-demo-walkthrough.mp4</span>
+            </div>
+            <div className="flex items-center gap-2 text-[10px] font-mono text-cyan-400">
+              <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+              <span>OFFICIAL PRODUCT DEMO</span>
+            </div>
+          </div>
+
+          {/* YouTube Video Embed */}
+          <div className="relative aspect-video w-full rounded-xl overflow-hidden bg-slate-950 border border-slate-800/80 shadow-inner">
+            <iframe
+              className="w-full h-full"
+              src="https://www.youtube-nocookie.com/embed/jQ7otleJOcU?rel=0&modestbranding=1"
+              title="HashGuard - Cyber Evidence Exchange Platform Demo"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerPolicy="strict-origin-when-cross-origin"
+              allowFullScreen
+            />
+          </div>
+
+          {/* Quick Info & Sandbox CTA Below Video */}
+          <div className="mt-4 pt-3 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-3 px-2">
+            <div className="flex items-center gap-2 text-xs font-mono text-slate-400">
+              <span className="w-2 h-2 rounded-full bg-emerald-400" />
+              <span>Demonstration covers: Seizure • Sealing • Lineage DAG • Adversarial Tamper Containment</span>
+            </div>
+            <div className="flex items-center gap-2.5">
+              <button
+                onClick={() => setDemoModalOpen(true)}
+                className="px-3.5 py-2 rounded-lg border border-slate-700 bg-slate-800/60 hover:bg-slate-700 text-slate-300 hover:text-white font-mono text-xs transition-all flex items-center gap-1.5 cursor-pointer"
+              >
+                <span>4-Stage Breakdown</span>
+              </button>
+              <button
+                onClick={() => launchConsole('ORG_B', '/dashboard', true)}
+                className="px-4 py-2 rounded-lg bg-gradient-to-r from-cyan-400 to-sky-500 hover:from-cyan-300 hover:to-sky-400 text-slate-950 font-mono font-bold text-xs shadow-md transition-all flex items-center gap-1.5 cursor-pointer shrink-0"
+              >
+                <Zap className="w-3.5 h-3.5 fill-slate-950" />
+                <span>Launch Sandbox</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
           </div>
         </div>
       </section>
