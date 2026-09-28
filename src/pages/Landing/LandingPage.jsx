@@ -41,6 +41,7 @@ export const LandingPage = () => {
   const { switchRole, setSandbox } = useApp();
   const [interactiveTampered, setInteractiveTampered] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [videoPlaying, setVideoPlaying] = useState(false);
 
   // Modals state
   const [onChainModalOpen, setOnChainModalOpen] = useState(false);
@@ -417,16 +418,37 @@ export const LandingPage = () => {
             </div>
           </div>
 
-          {/* YouTube Video Embed */}
-          <div className="relative aspect-video w-full rounded-xl overflow-hidden bg-slate-950 border border-slate-800/80 shadow-inner">
-            <iframe
-              className="w-full h-full"
-              src="https://www.youtube-nocookie.com/embed/jQ7otleJOcU?rel=0&modestbranding=1"
-              title="HashGuard - Cyber Evidence Exchange Platform Demo"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              referrerPolicy="strict-origin-when-cross-origin"
-              allowFullScreen
-            />
+          {/* YouTube Video Embed with Custom SIH 2026 Thumbnail */}
+          <div className="relative aspect-video w-full rounded-xl overflow-hidden bg-slate-950 border border-slate-800/80 shadow-inner group">
+            {videoPlaying ? (
+              <iframe
+                className="w-full h-full"
+                src="https://www.youtube-nocookie.com/embed/jQ7otleJOcU?autoplay=1&rel=0&modestbranding=1"
+                title="HashGuard - Cyber Evidence Exchange Platform Demo"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerPolicy="strict-origin-when-cross-origin"
+                allowFullScreen
+              />
+            ) : (
+              <div
+                onClick={() => setVideoPlaying(true)}
+                className="relative w-full h-full cursor-pointer overflow-hidden flex items-center justify-center select-none"
+              >
+                <img
+                  src="/assets/video-thumbnail.jpg"
+                  alt="HashGuard Demonstration Video Thumbnail (SIH 2026)"
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.015]"
+                />
+                {/* Subtle vignette on hover */}
+                <div className="absolute inset-0 bg-slate-950/15 group-hover:bg-transparent transition-colors duration-300" />
+                
+                {/* Corner indicator badge */}
+                <div className="absolute bottom-3 left-3 sm:bottom-4 sm:left-4 px-3 py-1.5 rounded-lg bg-slate-950/85 backdrop-blur-md border border-slate-700/80 text-xs font-mono text-slate-200 flex items-center gap-2 shadow-lg group-hover:border-cyan-500/50 transition-colors">
+                  <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
+                  <span>Click anywhere to play demo</span>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Quick Info & Sandbox CTA Below Video */}

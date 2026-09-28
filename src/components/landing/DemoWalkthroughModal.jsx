@@ -14,6 +14,7 @@ import {
 export const DemoWalkthroughModal = ({ isOpen, onClose, onLaunchSandbox }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
+  const [modalVideoPlaying, setModalVideoPlaying] = useState(false);
 
   const steps = [
     {
@@ -131,16 +132,34 @@ export const DemoWalkthroughModal = ({ isOpen, onClose, onLaunchSandbox }) => {
           </div>
         </div>
 
-        {/* Embedded YouTube Demo Video */}
-        <div className="mt-4 rounded-xl overflow-hidden border border-cyan-500/30 aspect-video w-full bg-slate-950 shadow-2xl">
-          <iframe
-            className="w-full h-full"
-            src="https://www.youtube-nocookie.com/embed/jQ7otleJOcU?rel=0&modestbranding=1"
-            title="HashGuard - Cyber Evidence Exchange Demo Video"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            referrerPolicy="strict-origin-when-cross-origin"
-            allowFullScreen
-          />
+        {/* Embedded YouTube Demo Video with Custom Thumbnail */}
+        <div className="mt-4 rounded-xl overflow-hidden border border-cyan-500/30 aspect-video w-full bg-slate-950 shadow-2xl group">
+          {modalVideoPlaying ? (
+            <iframe
+              className="w-full h-full"
+              src="https://www.youtube-nocookie.com/embed/jQ7otleJOcU?autoplay=1&rel=0&modestbranding=1"
+              title="HashGuard - Cyber Evidence Exchange Demo Video"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerPolicy="strict-origin-when-cross-origin"
+              allowFullScreen
+            />
+          ) : (
+            <div
+              onClick={() => setModalVideoPlaying(true)}
+              className="relative w-full h-full cursor-pointer overflow-hidden flex items-center justify-center select-none"
+            >
+              <img
+                src="/assets/video-thumbnail.jpg"
+                alt="HashGuard Demonstration Video Thumbnail"
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.015]"
+              />
+              <div className="absolute inset-0 bg-slate-950/15 group-hover:bg-transparent transition-colors duration-300" />
+              <div className="absolute bottom-3 left-3 px-3 py-1.5 rounded-lg bg-slate-950/85 backdrop-blur-md border border-slate-700/80 text-xs font-mono text-slate-200 flex items-center gap-2 shadow-lg group-hover:border-cyan-500/50 transition-colors">
+                <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
+                <span>Click anywhere to play demo</span>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Step Progress Indicators */}
