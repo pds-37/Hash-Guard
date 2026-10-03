@@ -257,5 +257,85 @@ export const transferService = {
       localStorage.removeItem('cee_genuine_transfers');
     }
     return { success: true };
+  },
+
+  async approveCriticalTransfer(transferId, approverDid, approverName, approverRole) {
+    const cleanId = (transferId || '').toUpperCase();
+    let updatedTransfer = null;
+
+    const updater = (trf) => {
+      if ((trf.id || '').toUpperCase() === cleanId) {
+        const existingApprovals = trf.approvals || [];
+        const alreadyApproved = existingApprovals.some(
+          a => a.approverDid?.toLowerCase() === approverDid?.toLowerCase()
+        );
+
+        let newApprovals = [...existingApprovals];
+        if (!alreadyApproved) {
+          newApprovals.push({
+            approverDid,
+            approverName: approverName || 'Consortium Signer',
+            approverRole: approverRole || 'Consortium Stakeholder',
+            signedAt: new Date().toISOString()
+          });
+        }
+
+        const quorumMet = newApprovals.length >= 2;
+        updatedTransfer = {
+          ...trf,
+          approvals: newApprovals,
+          requiresQuorum: !quorumMet,
+          status: quorumMet ? 'APPROVED_READY_FOR_DISPATCH' : 'AWAITING_APPROVAL'
+        };
+        return updatedTransfer;
+      }
+      return trf;
+    };
+
+    if (isSandboxModeActive()) {
+      sandboxTransfersState = sandboxTransfersState.map(updater);
+    } else {
+      const current = getGenuineTransfers().map(updater);
+      saveGenuineTransfers(current);
+    }
+
+    try {
+      const { auditService } = await import('./auditService');
+      await auditService.logEvent({
+        evidenceId: updatedTransfer?.evidenceId || 'TRANSFER',
+        event: 'APPLICATION_QUORUM_APPROVAL',
+        actor: approverName || approverDid,
+        details: `Application-Level Quorum Gate approval cast for transfer ${cleanId}. Total approvals: ${updatedTransfer?.approvals?.length || 1}/2.`,
+        reference: `QUORUM-${cleanId}-${Date.now().toString(16)}`,
+        verification: 'VERIFIED'
+      });
+    } catch (e) {
+      console.warn('Audit log for quorum approval failed:', e);
+    }
+
+    return updatedTransfer;
+  },
+
+  async cascadeRevokeTransferByDid(revokedDid) {
+    const cleanDid = (revokedDid || '').toLowerCase();
+    const updater = (trf) => {
+      if ((trf.fromActor || '').toLowerCase().includes(cleanDid) || (trf.toActor || '').toLowerCase().includes(cleanDid)) {
+        return {
+          ...trf,
+          status: 'CANCELED_REVOKED_IDENTITY',
+          notes: 'Transfer permanently terminated due to Consortium Revocation Cascade.'
+        };
+      }
+      return trf;
+    };
+
+    if (isSandboxModeActive()) {
+      sandboxTransfersState = sandboxTransfersState.map(updater);
+    } else {
+      const current = getGenuineTransfers().map(updater);
+      saveGenuineTransfers(current);
+    }
+
+    return { success: true };
   }
 };

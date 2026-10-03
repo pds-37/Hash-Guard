@@ -136,5 +136,31 @@ export const mockTransfers = [
       { step: "INTEGRITY_VERIFY", org: "Organization B", timestamp: "09:40:11", status: "FAILED" }
     ],
     notes: "TRANSFER REJECTED: Hash verification failed upon receipt. Off-chain payload compromised."
+  },
+  {
+    id: "TR-010-CRITICAL",
+    evidenceId: "EV-001",
+    evidenceTitle: "LockBit 3.0 Ransomware Encryptor Payload",
+    evidenceType: "Malware Binary",
+    fromOrg: "Organization A (CERT-Alpha)",
+    fromActor: "Cmdr. Rajesh Kumar (Org A)",
+    toOrg: "Organization B (Cyber Lab)",
+    toActor: "Dr. Sarah Chen (Org B)",
+    status: "AWAITING_APPROVAL",
+    requiresQuorum: true,
+    approvals: [
+      {
+        approverDid: "did:ethr:0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+        approverName: "Cmdr. Rajesh Kumar",
+        approverRole: "CERT-Alpha Commander (Org A)",
+        signedAt: "2026-09-28 10:15:00 IST"
+      }
+    ],
+    transferProtocol: "Consortium Quorum Protocol + mTLS Dispatch",
+    manifestHash: "8f3a91bc72f4cd2a4e9b671a5c28e930f1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6",
+    initiatedAt: "2026-09-28 10:15:00 IST",
+    completedAt: null,
+    blockchainTx: "0xpending_application_quorum_gate",
+    notes: "CRITICAL ASSET: Transfer requires 2-of-3 consortium signers before state transition to DISPATCHED."
   }
 ];

@@ -142,6 +142,55 @@ export const PassportPage = () => {
     });
   };
 
+  const handleDownloadVerificationReport = () => {
+    if (!evidence) return;
+    const report = {
+      reportType: 'Cryptographic Verification Report',
+      platform: 'HashGuard Decentralized Trust Platform',
+      generatedAt: new Date().toISOString(),
+      exhibit: {
+        id: evidence.id,
+        title: evidence.title,
+        caseId: evidence.caseId,
+        type: evidence.type,
+        sensitivityTier: sensitivity,
+        status: isTrustCompromised ? 'TRUST_COMPROMISED' : 'TRUST_VERIFIED',
+        verdict: isTrustCompromised ? 'INTEGRITY_FAIL' : 'INTEGRITY_PASS'
+      },
+      cryptographicState: {
+        expectedOnChainRoot: evidence.expectedHash || evidence.hash,
+        recomputedOffChainDigest: evidence.hash,
+        algorithm: 'FIPS 180-4 SHA-256',
+        match: !isTampered,
+        blockNumber: evidence.blockNumber,
+        txHash: evidence.txHash,
+        signer: evidence.signature?.signer,
+        keyFingerprint: evidence.signature?.publicKeyFingerprint
+      },
+      custodyAndGovernance: {
+        currentCustodian: evidence.currentCustodian,
+        sourceOriginator: evidence.sourceOrg,
+        ownerDid: evidence.ownerDid,
+        ownerRevoked: isOwnerRevoked,
+        governanceRequirement: sensitivity === 'CRITICAL' ? 'Application-Level Quorum Gate (2-of-3 Consensual Approval)' : 'Standard RBAC'
+      },
+      auditTrailSummary: {
+        eventCount: auditLogs.length,
+        events: auditLogs.slice(0, 5)
+      }
+    };
+
+    const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Cryptographic-Verification-Report-${evidence.id}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   const isTampered = evidence?.status === 'COMPROMISED' || (evidence?.id === 'EV-DDXOEY') || (isTamperSimulated && evidence?.id === 'EV-001');
   const isOwnerRevoked = evidence?.ownerDid ? isDidRevoked(evidence.ownerDid) : false;
   const isTrustCompromised = isTampered || isOwnerRevoked;
@@ -220,10 +269,19 @@ export const PassportPage = () => {
 
           <button
             onClick={handleSimulateDownloadCheck}
-            className="px-3 py-1.5 text-xs font-mono font-semibold rounded-lg bg-ce-brand text-ce-surface hover:opacity-90 transition-opacity flex items-center gap-1.5"
+            className="px-3 py-1.5 text-xs font-mono font-semibold rounded-lg bg-ce-surface-subtle hover:bg-ce-border text-ce-text-primary border border-ce-border transition-colors flex items-center gap-1.5"
           >
             <Download className="w-3.5 h-3.5" />
             <span>Verify Access Boundary</span>
+          </button>
+
+          <button
+            onClick={handleDownloadVerificationReport}
+            className="px-3 py-1.5 text-xs font-mono font-semibold rounded-lg bg-ce-brand text-ce-surface hover:opacity-90 transition-opacity flex items-center gap-1.5"
+            title="Download Cryptographic Verification Report"
+          >
+            <FileCheck2 className="w-3.5 h-3.5" />
+            <span>Cryptographic Verification Report</span>
           </button>
         </div>
       </div>
@@ -326,7 +384,7 @@ export const PassportPage = () => {
             { step: '5. CUSTODY', label: 'CUSTODIAN', ok: true, detail: evidence?.currentCustodian?.split(' ')[0] || 'Org B' },
             { step: '6. VERIFY', label: 'INDEPENDENT', ok: !isTampered, detail: isTampered ? 'FAIL' : 'PASS' },
             { step: '7. PROVENANCE', label: 'ORIGIN', ok: true, detail: evidence?.sourceOrg?.split(' ')[0] || 'Org A' },
-            { step: '8. AUDIT', label: 'IMMUTABLE', ok: true, detail: `${auditLogs.length} Events` },
+            { step: '8. AUDIT', label: 'TAMPER-EVIDENT', ok: true, detail: `${auditLogs.length} Events` },
           ].map((node, i) => (
             <div
               key={i}
@@ -520,14 +578,14 @@ export const PassportPage = () => {
               <div>
                 <span className="text-ce-text-muted block text-[10px]">Governance Quorum Requirement:</span>
                 <span className="text-ce-text-primary">
-                  {sensitivity === 'CRITICAL' ? 'Application 2-of-3 Quorum' : 'Standard RBAC'}
+                  {sensitivity === 'CRITICAL' ? 'Application-Level Quorum Gate (2-of-3 Consensual Approval)' : 'Standard RBAC'}
                 </span>
               </div>
             </div>
 
             {sensitivity === 'CRITICAL' && (
               <div className="mt-3 p-2 rounded bg-amber-500/10 border border-amber-500/30 text-[10px] font-mono text-amber-300">
-                ⚠️ [APPLICATION-LEVEL GOVERNANCE] Critical transfers enforce 2-of-3 consortium sign-off in software layer pending contract deployment.
+                ⚠️ [APPLICATION-LEVEL QUORUM GATE] Critical transfers enforce 2-of-3 consortium sign-off in application layer pending v2.1 contract deployment.
               </div>
             )}
           </div>

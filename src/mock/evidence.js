@@ -1,6 +1,10 @@
 export const mockEvidenceList = [
   {
     id: "EV-001",
+    sensitivity: "CRITICAL",
+    ownerDid: "did:ethr:0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+    accessList: ["did:ethr:0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", "did:ethr:0x70997970C51812dc3A010C7d01b50e0d17dc79B1"],
+    temporaryAccess: [],
     caseId: "CASE-2026-9012",
     title: "LockBit 3.0 Ransomware Encryptor Payload",
     type: "Malware Binary",
@@ -42,6 +46,10 @@ export const mockEvidenceList = [
   },
   {
     id: "EV-002",
+    sensitivity: "RESTRICTED",
+    ownerDid: "did:ethr:0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+    accessList: ["did:ethr:0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", "did:ethr:0x70997970C51812dc3A010C7d01b50e0d17dc79B1"],
+    temporaryAccess: [],
     caseId: "CASE-2026-9012",
     title: "CobaltStrike C2 Traffic Capture (pcapng)",
     type: "Network Capture",
@@ -77,6 +85,10 @@ export const mockEvidenceList = [
   },
   {
     id: "EV-003",
+    sensitivity: "CRITICAL",
+    ownerDid: "did:ethr:0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+    accessList: ["did:ethr:0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", "did:ethr:0x70997970C51812dc3A010C7d01b50e0d17dc79B1"],
+    temporaryAccess: [],
     caseId: "CASE-2026-4410",
     title: "Domain Controller Host Memory Acquisition",
     type: "Memory Dump",
@@ -112,6 +124,10 @@ export const mockEvidenceList = [
   },
   {
     id: "EV-004",
+    sensitivity: "RESTRICTED",
+    ownerDid: "did:ethr:0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+    accessList: ["did:ethr:0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", "did:ethr:0x70997970C51812dc3A010C7d01b50e0d17dc79B1"],
+    temporaryAccess: [],
     caseId: "CASE-2026-9012",
     title: "Endpoint WS-104 BitLocker Encrypted Disk Image",
     type: "Disk Image",
@@ -147,6 +163,10 @@ export const mockEvidenceList = [
   },
   {
     id: "EV-005",
+    sensitivity: "STANDARD",
+    ownerDid: "did:ethr:0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+    accessList: ["did:ethr:0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", "did:ethr:0x70997970C51812dc3A010C7d01b50e0d17dc79B1"],
+    temporaryAccess: [],
     caseId: "CASE-2026-9012",
     title: "YARA Rules & Extracted IOC Telemetry Set",
     type: "IOC Set",
@@ -182,6 +202,10 @@ export const mockEvidenceList = [
   },
   {
     id: "EV-006",
+    sensitivity: "STANDARD",
+    ownerDid: "did:ethr:0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+    accessList: ["did:ethr:0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", "did:ethr:0x70997970C51812dc3A010C7d01b50e0d17dc79B1"],
+    temporaryAccess: [],
     caseId: "CASE-2026-9012",
     title: "Reverse Engineering Technical Forensics Report",
     type: "Malware Analysis Report",
@@ -217,6 +241,10 @@ export const mockEvidenceList = [
   },
   {
     id: "EV-009",
+    sensitivity: "CRITICAL",
+    ownerDid: "did:ethr:0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+    accessList: ["did:ethr:0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", "did:ethr:0x70997970C51812dc3A010C7d01b50e0d17dc79B1"],
+    temporaryAccess: [],
     caseId: "CASE-2026-4410",
     title: "Suspicious Ransomware Artifact (Forensic Sample)",
     type: "Malware Binary",
@@ -261,6 +289,10 @@ export const mockEvidenceList = [
   },
   {
     id: "EV-010",
+    sensitivity: "STANDARD",
+    ownerDid: "did:ethr:0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+    accessList: ["did:ethr:0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", "did:ethr:0x70997970C51812dc3A010C7d01b50e0d17dc79B1"],
+    temporaryAccess: [],
     caseId: "CASE-2026-1102",
     title: "Firewall Syslog Stream from Core Switch 01",
     type: "Syslog Archive",

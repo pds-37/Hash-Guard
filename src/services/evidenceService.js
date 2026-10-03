@@ -570,5 +570,218 @@ export const evidenceService = {
 
   resetMockData() {
     sandboxEvidenceState = [...mockEvidenceList];
+  },
+
+  async grantTemporaryAccess(evidenceId, { did, durationHours = 2, reason = 'Forensic investigation lease' }) {
+    const cleanId = (evidenceId || '').toUpperCase();
+    const durationMs = Number(durationHours) * 3600 * 1000;
+    const now = Date.now();
+    const expiresAt = now + durationMs;
+
+    const newLease = {
+      id: `LEASE-${Math.floor(1000 + Math.random() * 9000)}`,
+      did,
+      durationHours: Number(durationHours),
+      grantedAt: new Date(now).toISOString(),
+      expiresAt,
+      reason,
+      status: 'ACTIVE'
+    };
+
+    const updater = (ev) => {
+      if ((ev.id || '').toUpperCase() === cleanId) {
+        const existingLeases = (ev.temporaryAccess || []).filter(l => l.did !== did);
+        const accessList = ev.accessList ? [...ev.accessList] : [];
+        if (!accessList.includes(did)) accessList.push(did);
+
+        return {
+          ...ev,
+          accessList,
+          temporaryAccess: [newLease, ...existingLeases]
+        };
+      }
+      return ev;
+    };
+
+    if (isSandboxModeActive()) {
+      sandboxEvidenceState = sandboxEvidenceState.map(updater);
+    } else {
+      const current = getGenuineEvidence().map(updater);
+      saveGenuineEvidence(current);
+    }
+
+    try {
+      const { auditService } = await import('./auditService');
+      await auditService.logEvent({
+        evidenceId: cleanId,
+        event: 'TEMPORARY_ACCESS_GRANTED',
+        actor: did,
+        details: `Granted ${durationHours}h temporary lease for exhibit ${cleanId}. Expires: ${new Date(expiresAt).toLocaleTimeString()}`,
+        reference: `LEASE-${newLease.id}`,
+        verification: 'VERIFIED'
+      });
+    } catch (e) {
+      console.warn('Audit log for lease grant failed:', e);
+    }
+
+    return newLease;
+  },
+
+  async updateAssetSensitivity(evidenceId, sensitivity) {
+    const cleanId = (evidenceId || '').toUpperCase();
+    const updater = (ev) => {
+      if ((ev.id || '').toUpperCase() === cleanId) {
+        return {
+          ...ev,
+          sensitivity
+        };
+      }
+      return ev;
+    };
+
+    if (isSandboxModeActive()) {
+      sandboxEvidenceState = sandboxEvidenceState.map(updater);
+    } else {
+      const current = getGenuineEvidence().map(updater);
+      saveGenuineEvidence(current);
+    }
+
+    try {
+      const { auditService } = await import('./auditService');
+      await auditService.logEvent({
+        evidenceId: cleanId,
+        event: 'SENSITIVITY_UPDATED',
+        actor: 'Consortium Governance',
+        details: `Updated asset sensitivity to ${sensitivity} classification.`,
+        reference: `SENS-${cleanId}-${Date.now().toString(16)}`,
+        verification: 'VERIFIED'
+      });
+    } catch (e) {
+      console.warn('Audit log for sensitivity update failed:', e);
+    }
+
+    return { id: cleanId, sensitivity };
+  },
+
+  async cascadeRevokeDid(didToRevoke, reason = 'Consortium credential revocation protocol') {
+    const updater = (ev) => {
+      const updatedAccessList = (ev.accessList || []).filter(d => d.toLowerCase() !== didToRevoke.toLowerCase());
+      const updatedLeases = (ev.temporaryAccess || []).map(l => {
+        if (l.did?.toLowerCase() === didToRevoke.toLowerCase()) {
+          return { ...l, status: 'REVOKED' };
+        }
+        return l;
+      });
+
+      return {
+        ...ev,
+        accessList: updatedAccessList,
+        temporaryAccess: updatedLeases
+      };
+    };
+
+    if (isSandboxModeActive()) {
+      sandboxEvidenceState = sandboxEvidenceState.map(updater);
+    } else {
+      const current = getGenuineEvidence().map(updater);
+      saveGenuineEvidence(current);
+    }
+
+    try {
+      const { auditService } = await import('./auditService');
+      await auditService.logEvent({
+        evidenceId: 'CONSORTIUM',
+        event: 'REVOCATION_CASCADE_ENFORCED',
+        actor: didToRevoke,
+        details: `Revocation cascade executed for DID ${didToRevoke}. Downstream access leases invalidated. Reason: ${reason}`,
+        reference: `REV-${Date.now().toString(16)}`,
+        verification: 'VERIFIED'
+      });
+    } catch (e) {
+      console.warn('Audit log for cascade revocation failed:', e);
+    }
+
+    return { revokedDid: didToRevoke, status: 'REVOKED' };
+  },
+
+  checkAssetAccess(evidence, userDid, userRole, revokedDids = []) {
+    if (!evidence) {
+      return { allowed: false, code: 'NOT_FOUND', message: 'Asset not found' };
+    }
+
+    const cleanUserDid = (userDid || '').toLowerCase();
+    const isRevoked = revokedDids.some(d => (d || '').toLowerCase() === cleanUserDid);
+    if (isRevoked) {
+      return {
+        allowed: false,
+        code: 'REVOKED_IDENTITY',
+        message: 'Identity has been revoked via Consortium Revocation Cascade. All permissions zeroed.'
+      };
+    }
+
+    // Check if asset is cryptographically compromised
+    if (evidence.status === 'COMPROMISED' || (evidence.id || '').toUpperCase() === 'EV-DDXOEY') {
+      return {
+        allowed: false,
+        code: 'INTEGRITY_COMPROMISED',
+        message: 'CRITICAL ALERT: Off-chain payload hash does not match sealed on-chain reference. Download prohibited.'
+      };
+    }
+
+    // Check temporary access leases
+    const leases = (evidence.temporaryAccess || []).filter(l => (l.did || '').toLowerCase() === cleanUserDid);
+    for (const lease of leases) {
+      if (lease.status === 'REVOKED') {
+        return {
+          allowed: false,
+          code: 'REVOKED_LEASE',
+          message: 'Temporary access lease for this DID has been revoked.'
+        };
+      }
+      if (lease.expiresAt < Date.now()) {
+        return {
+          allowed: false,
+          code: 'EXPIRED_TEMPORARY_ACCESS',
+          message: `Temporary access lease expired at ${new Date(lease.expiresAt).toLocaleTimeString()}. Access cutoff enforced.`
+        };
+      }
+      if (lease.status === 'ACTIVE' && lease.expiresAt >= Date.now()) {
+        return {
+          allowed: true,
+          code: 'ACTIVE_LEASE',
+          message: `Access granted via active time-bound lease (${lease.durationHours}h window).`
+        };
+      }
+    }
+
+    // Check explicit on-chain whitelist
+    const isOwner = (evidence.ownerDid || '').toLowerCase() === cleanUserDid;
+    const isWhitelisted = (evidence.accessList || []).some(d => (d || '').toLowerCase() === cleanUserDid);
+    if (isOwner || isWhitelisted) {
+      return {
+        allowed: true,
+        code: 'AUTHORIZED_WHITELIST',
+        message: 'Access granted: DID verified on-chain in authorized stakeholder whitelist.'
+      };
+    }
+
+    // Role-based check based on sensitivity
+    const sensitivity = evidence.sensitivity || 'STANDARD';
+    if (sensitivity === 'STANDARD') {
+      const allowedRoles = ['FIRST_RESPONDER', 'FORENSIC_ANALYST', 'EVIDENCE_CUSTODIAN', 'INVESTIGATOR', 'ADMINISTRATOR'];
+      if (allowedRoles.includes(userRole)) {
+        return {
+          allowed: true,
+          code: 'STANDARD_RBAC_PERMITTED',
+          message: 'Access granted via standard organizational RBAC role permissions.'
+        };
+      }
+    }
+
+    return {
+      allowed: false,
+      code: 'FORBIDDEN',
+      message: `Asset classified as ${sensitivity}. Requires explicit DID authorization, 2-of-3 consortium approval, or valid temporary lease.`
+    };
   }
 };

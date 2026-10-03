@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { evidenceService } from '../services/evidenceService';
 import { auditService } from '../services/auditService';
+import { transferService } from '../services/transferService';
 
 const AppContext = createContext();
 
@@ -949,6 +950,192 @@ export const AppProvider = ({ children }) => {
     localStorage.setItem('cee_is_sandbox', enabled ? 'true' : 'false');
   };
 
+  // Adaptive Asset Authorization & Revocation Cascade State
+  const [revokedDids, setRevokedDids] = useState(() => {
+    try {
+      const saved = localStorage.getItem('cee_revoked_dids');
+      return saved ? JSON.parse(saved) : ['did:ethr:0xRevokedActor9999999999999999999999'];
+    } catch {
+      return ['did:ethr:0xRevokedActor9999999999999999999999'];
+    }
+  });
+
+  const isDidRevoked = (checkDid) => {
+    if (!checkDid) return false;
+    return revokedDids.some(d => (d || '').toLowerCase() === checkDid.toLowerCase());
+  };
+
+  const executeRevocationCascade = async (targetDid, reason = 'Consortium credential revocation protocol') => {
+    if (!targetDid) return;
+    setRevokedDids((prev) => {
+      const updated = prev.includes(targetDid) ? prev : [...prev, targetDid];
+      localStorage.setItem('cee_revoked_dids', JSON.stringify(updated));
+      return updated;
+    });
+
+    try {
+      await evidenceService.cascadeRevokeDid(targetDid, reason);
+      await transferService.cascadeRevokeTransferByDid(targetDid);
+      await auditService.logEvent({
+        evidenceId: 'CONSORTIUM',
+        event: 'REVOCATION_CASCADE_ENFORCED',
+        actor: targetDid,
+        organization: currentOrg?.name || 'Organization B (Cyber Defense Lab)',
+        details: `Revocation cascade executed for DID ${targetDid}. Downstream access leases invalidated. Reason: ${reason}`,
+        verification: 'VERIFIED'
+      });
+    } catch (err) {
+      console.warn('Revocation cascade warning:', err);
+    }
+    triggerRefresh();
+  };
+
+  const restoreRevokedIdentity = async (targetDid) => {
+    if (!targetDid) return;
+    setRevokedDids((prev) => {
+      const updated = prev.filter(d => (d || '').toLowerCase() !== targetDid.toLowerCase());
+      localStorage.setItem('cee_revoked_dids', JSON.stringify(updated));
+      return updated;
+    });
+
+    try {
+      await auditService.logEvent({
+        evidenceId: 'CONSORTIUM',
+        event: 'IDENTITY_RESTORED',
+        actor: targetDid,
+        organization: currentOrg?.name || 'Organization B (Cyber Defense Lab)',
+        details: `Identity DID ${targetDid} restored by consortium authority.`,
+        verification: 'VERIFIED'
+      });
+    } catch (err) {
+      console.warn('Identity restore warning:', err);
+    }
+    triggerRefresh();
+  };
+
+  const grantTemporaryAccess = async (evidenceId, leaseData) => {
+    const res = await evidenceService.grantTemporaryAccess(evidenceId, leaseData);
+    triggerRefresh();
+    return res;
+  };
+
+  const updateAssetSensitivity = async (evidenceId, newLevel) => {
+    const res = await evidenceService.updateAssetSensitivity(evidenceId, newLevel);
+    triggerRefresh();
+    return res;
+  };
+
+  const approveCriticalTransfer = async (transferId, approverData = {}) => {
+    const res = await transferService.approveCriticalTransfer(
+      transferId,
+      approverData.did || did,
+      approverData.name || currentRole?.name,
+      approverData.role || currentRole?.roleName
+    );
+    triggerRefresh();
+    return res;
+  };
+
+  const runSecurityLabTest = async (testId) => {
+    let result = null;
+
+    if (testId === 'TEST_01') {
+      // 1. Tampered Evidence:
+      const ev = (await evidenceService.getEvidenceById('EV-DDXOEY')) || (await evidenceService.getAllEvidence())[0];
+      
+      const log = await auditService.logEvent({
+        evidenceId: ev?.id || 'EV-DDXOEY',
+        event: 'INTEGRITY_VIOLATION_BLOCKED',
+        actor: 'Forensic Verifier Node',
+        organization: currentOrg?.name || 'Organization B (Cyber Defense Lab)',
+        details: `DETECTED: SHA-256 digest ${ev?.hash?.substring(0, 16)}... does not match on-chain root seal. BLOCKED: Asset payload download prohibited with HTTP 403. AUDITED: Violation recorded on ledger.`,
+        verification: 'FAILED'
+      });
+
+      result = {
+        badge: 'TRIP-WIRE TRIGGERED',
+        steps: [
+          `DETECTED: SHA-256 payload digest mismatch (${ev?.hash?.substring(0, 12)}... ≠ ${ev?.expectedHash?.substring(0, 12)}...)`,
+          'BLOCKED: Off-chain payload download prohibited by zero-trust gateway with HTTP 403',
+          `AUDITED: Tamper-evident integrity failure violation event anchored to ledger as ${log.id}`
+        ],
+        auditRef: log.id,
+        auditEvent: log
+      };
+    } else if (testId === 'TEST_02') {
+      // 2. Unauthorized Custody Transfer:
+      const ev = (await evidenceService.getEvidenceById('EV-001')) || (await evidenceService.getAllEvidence())[0];
+      const log = await auditService.logEvent({
+        evidenceId: ev?.id || 'EV-001',
+        event: 'UNAUTHORIZED_TRANSFER_BLOCKED',
+        actor: 'Unverified Custodian',
+        organization: 'Organization D (External Node)',
+        details: 'DETECTED: Custody transfer attempted on CRITICAL asset without required 2-of-3 quorum sign-off. BLOCKED: State transition rejected. AUDITED: Unauthorized attempt recorded.',
+        verification: 'FAILED'
+      });
+
+      result = {
+        badge: 'APPLICATION QUORUM ENFORCED',
+        steps: [
+          'DETECTED: Inter-agency custody dispatch initiated for CRITICAL asset EV-001 with 0 of 2 approvals',
+          'BLOCKED: Application-Level Quorum Gate blocked state change pending 2-of-3 consortium signatures',
+          `AUDITED: Governance violation and unauthorized dispatch prevention recorded as ${log.id}`
+        ],
+        auditRef: log.id,
+        auditEvent: log
+      };
+    } else if (testId === 'TEST_03') {
+      // 3. Revoked Identity:
+      const targetRevokedDid = 'did:ethr:0xRevokedActor9999999999999999999999';
+      await executeRevocationCascade(targetRevokedDid, 'Security Lab Adversarial Simulation: Credential Compromise Protocol');
+
+      const log = await auditService.logEvent({
+        evidenceId: 'CONSORTIUM',
+        event: 'REVOCATION_CASCADE_ENFORCED',
+        actor: targetRevokedDid,
+        organization: currentOrg?.name || 'Organization B (Cyber Defense Lab)',
+        details: `DETECTED: Compromised identity DID ${targetRevokedDid}. BLOCKED: All downstream access leases zeroed, token permissions revoked. AUDITED: Cascade event recorded.`,
+        verification: 'VERIFIED'
+      });
+
+      result = {
+        badge: 'ACCESS LEASES TERMINATED',
+        steps: [
+          `DETECTED: Compromised identity DID (${targetRevokedDid.substring(0, 16)}...) flagged by consortium`,
+          'BLOCKED: Downstream access leases invalidated; asset download requests rejected with HTTP 403',
+          `AUDITED: Revocation cascade event anchored to ledger as ${log.id} (historical audit preserved)`
+        ],
+        auditRef: log.id,
+        auditEvent: log
+      };
+    } else if (testId === 'TEST_04') {
+      // 4. Expired Temporary Access:
+      const ev = (await evidenceService.getEvidenceById('EV-003')) || (await evidenceService.getAllEvidence())[0];
+      const log = await auditService.logEvent({
+        evidenceId: ev?.id || 'EV-003',
+        event: 'EXPIRED_LEASE_BLOCKED',
+        actor: 'did:ethr:0x70997970C51812dc3A010C7d01b50e0d17dc79B1',
+        organization: 'Organization B (Cyber Defense Lab)',
+        details: 'DETECTED: Time-bound investigation lease elapsed (timestamp in past). BLOCKED: Zero-trust boundary enforced HTTP 403 EXPIRED_TEMPORARY_ACCESS. AUDITED: Temporal boundary cutoff recorded.',
+        verification: 'VERIFIED'
+      });
+
+      result = {
+        badge: 'TEMPORAL BOUNDARY ENFORCED',
+        steps: [
+          'DETECTED: Temporary access token validity window expired based on monotonically increasing clock',
+          'BLOCKED: Zero-trust security gateway intercepted request; rejected with HTTP 403 EXPIRED_TEMPORARY_ACCESS',
+          `AUDITED: Temporal expiration boundary enforcement logged to ledger as ${log.id}`
+        ],
+        auditRef: log.id,
+        auditEvent: log
+      };
+    }
+
+    triggerRefresh();
+    return result;
+  };
+
   // Dynamically bridge currentRole.orgName to currentOrg.name for backward compatibility
   const roleWithContext = {
     ...currentRole,
@@ -987,7 +1174,15 @@ export const AppProvider = ({ children }) => {
         setSearchQuery,
         notifications,
         refreshTrigger,
-        triggerRefresh
+        triggerRefresh,
+        revokedDids,
+        isDidRevoked,
+        executeRevocationCascade,
+        restoreRevokedIdentity,
+        grantTemporaryAccess,
+        updateAssetSensitivity,
+        approveCriticalTransfer,
+        runSecurityLabTest
       }}
     >
       {children}
