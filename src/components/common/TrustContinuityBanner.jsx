@@ -67,8 +67,8 @@ export const TRUST_CONTINUITY_STAGES = [
   {
     id: 'transfer',
     title: 'TRANSFER',
-    subtitle: 'Inter-Agency Quorum Dispatch',
-    description: 'Monotonic custody handoff. Critical assets require application-level 2-of-3 consortium approval.',
+    subtitle: 'Application-Level Quorum Gate',
+    description: 'Monotonic custody handoff. Critical assets require Application-Level Quorum Gate (2-of-3) consortium approval.',
     icon: ArrowLeftRight,
     color: 'text-orange-400 border-orange-500/30 bg-orange-500/10'
   },
@@ -91,8 +91,8 @@ export const TRUST_CONTINUITY_STAGES = [
   {
     id: 'audit',
     title: 'AUDIT',
-    subtitle: 'Append-Only Ledger',
-    description: 'Complete chronological history of transitions preserved immutably with cryptographic block receipts.',
+    subtitle: 'Tamper-Evident Audit Trail',
+    description: 'Complete chronological history of transitions preserved in tamper-evident ledger with cryptographic block receipts.',
     icon: FileSpreadsheet,
     color: 'text-sky-400 border-sky-500/30 bg-sky-500/10'
   },

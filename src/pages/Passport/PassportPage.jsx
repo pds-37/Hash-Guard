@@ -677,13 +677,13 @@ export const PassportPage = () => {
           </div>
         </div>
 
-        {/* Pillar 6: Immutable Cryptographic Audit */}
+        {/* Pillar 6: Tamper-Evident Audit Trail */}
         <div className="p-5 rounded-xl bg-ce-surface border border-ce-border flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between mb-3">
               <span className="text-[10px] font-mono text-ce-brand font-bold uppercase tracking-wider flex items-center gap-1.5">
                 <FileSpreadsheet className="w-3.5 h-3.5" />
-                Pillar 6: Cryptographic Audit Ledger
+                Pillar 6: Tamper-Evident Audit Trail
               </span>
               <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-ce-brand/10 text-ce-brand border border-ce-brand/30">
                 {auditLogs.length} RECORDS
@@ -708,7 +708,7 @@ export const PassportPage = () => {
 
           <div className="pt-4 border-t border-ce-border mt-4">
             <p className="text-[11px] text-ce-text-muted">
-              Append-only ledger maintains unbroken chronological history. Revocation cascades preserve prior historical records intact.
+              Tamper-evident audit trail maintains unbroken chronological history. Revocation cascades preserve prior historical records intact.
             </p>
           </div>
         </div>

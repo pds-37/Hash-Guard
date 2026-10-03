@@ -42,8 +42,8 @@ export const SecurityLabPage = () => {
       targetAsset: 'EV-001 (LockBit 3.0 Encryptor)',
       icon: ArrowRightLeft,
       color: 'amber',
-      description: 'Simulates unauthenticated actor attempting custody transfer dispatch on Critical asset without required multi-signature consortium quorum.',
-      invariants: 'Critical assets require explicit 2-of-3 quorum sign-off before custody dispatch status transition is permitted.'
+      description: 'Simulates unauthenticated actor attempting custody transfer dispatch on Critical asset without required Application-Level Quorum Gate approval.',
+      invariants: 'Critical assets require explicit Application-Level Quorum Gate (2-of-3) sign-off before custody dispatch status transition is permitted.'
     },
     {
       id: 'TEST_03',

@@ -221,7 +221,7 @@ export const AssetTrustPassport = ({ evidence, verificationResult = null, onVeri
             <div>
               <span className="text-[10px] text-ce-text-muted uppercase block">Governance Requirement:</span>
               <span className="text-ce-text-secondary text-[11px]">
-                {sensitivity === 'CRITICAL' ? '2-of-3 Quorum + Time-Bound Leases' : sensitivity === 'RESTRICTED' ? 'Explicit Whitelist or Lease' : 'Standard RBAC Matrix'}
+                {sensitivity === 'CRITICAL' ? 'Application-Level Quorum Gate (2-of-3) + Time-Bound Leases' : sensitivity === 'RESTRICTED' ? 'Explicit Whitelist or Lease' : 'Standard RBAC Matrix'}
               </span>
             </div>
             <div>
@@ -297,11 +297,11 @@ export const AssetTrustPassport = ({ evidence, verificationResult = null, onVeri
             <div className="flex items-center gap-2">
               <FileSpreadsheet className="w-4 h-4 text-sky-400" />
               <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-ce-text-primary">
-                6. Audit
+                6. Tamper-Evident Audit
               </h4>
             </div>
             <span className="text-[9px] font-mono text-sky-400 font-bold px-1.5 py-0.5 rounded bg-sky-500/10">
-              IMMUTABLE TRAIL
+              TAMPER-EVIDENT TRAIL
             </span>
           </div>
           <div className="space-y-2 text-xs font-mono">
