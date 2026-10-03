@@ -1,21 +1,32 @@
 <div align="center">
-  <img src="public/cyber_evidence_logo.jpg" alt="HashGuard Cyber Evidence Exchange Logo" width="300" style="border-radius: 16px; box-shadow: 0 8px 32px rgba(0,0,0,0.3); margin-bottom: 20px;" />
 
-  # 🛡️ HASHGUARD : Cyber Evidence Exchange (CEE)
-  ### Immutable Digital Forensic Custody, Decentralized Identity (DID) & Zero-Trust Lineage Ledger
+  # 🛡️ HASHGUARD
+  ### Enterprise Digital Asset Trust Layer • W3C Decentralized Identity • Smart Contract Governance
 
-  [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
-  [![React](https://img.shields.io/badge/React-19.2-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
-  [![Vite](https://img.shields.io/badge/Vite-8.2-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
-  [![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3.4-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
-  [![Solidity](https://img.shields.io/badge/Solidity-^0.8.20-363636?style=for-the-badge&logo=solidity&logoColor=white)](https://soliditylang.org/)
-  [![FastAPI](https://img.shields.io/badge/FastAPI-0.110-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
-  [![Python](https://img.shields.io/badge/Python-3.11+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
-  [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
-  [![MinIO](https://img.shields.io/badge/MinIO-S3_Compatible-C72C48?style=for-the-badge&logo=minio&logoColor=white)](https://min.io/)
-  [![Ethers.js](https://img.shields.io/badge/Ethers.js-v6-2535A0?style=for-the-badge&logo=ethereum&logoColor=white)](https://docs.ethers.org/v6/)
-  [![W3C DID](https://img.shields.io/badge/W3C-DID_v1.0-4A90E2?style=for-the-badge)](https://www.w3.org/TR/did-core/)
-  [![ISO Standard](https://img.shields.io/badge/ISO%2FIEC-27037_Forensics-4caf50?style=for-the-badge)](https://www.iso.org/standard/44381.html)
+  <p align="center">
+    <b>Smart India Hackathon (SIH) 2026 • Problem Statement 26125</b><br>
+    <i>"Blockchain-Based Secure Platform for Identity, Access Control, and Digital Asset Management"</i>
+  </p>
+
+  <p align="center">
+    <a href="https://www.sih.gov.in/"><img src="https://img.shields.io/badge/SIH_2026-Problem_Statement_26125-FF6F00?style=for-the-badge&logo=target&logoColor=white" alt="SIH 2026 PS 26125"></a>
+    <a href="#-the-core-philosophy-trust-continuity-across-the-asset-lifecycle"><img src="https://img.shields.io/badge/Security_Axiom-Trust_Continuity-00C853?style=for-the-badge&logo=shield&logoColor=white" alt="Trust Continuity"></a>
+    <a href="https://www.w3.org/TR/did-core/"><img src="https://img.shields.io/badge/W3C-DID_v1.0-4361EE?style=for-the-badge&logo=w3c&logoColor=white" alt="W3C DID"></a>
+    <a href="contracts/HASHGUARD.sol"><img src="https://img.shields.io/badge/Smart_Contract-ERC--721_%2B_RBAC-6366F1?style=for-the-badge&logo=solidity&logoColor=white" alt="ERC-721 + RBAC"></a>
+    <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-00B4D8?style=for-the-badge" alt="License: MIT"></a>
+  </p>
+
+  <p align="center">
+    <a href="https://react.dev/"><img src="https://img.shields.io/badge/React-19.2-20232A?style=flat-square&logo=react&logoColor=61DAFB" alt="React 19"></a>
+    <a href="https://vitejs.dev/"><img src="https://img.shields.io/badge/Vite-8.2-1E1E2E?style=flat-square&logo=vite&logoColor=646CFF" alt="Vite"></a>
+    <a href="https://tailwindcss.com/"><img src="https://img.shields.io/badge/TailwindCSS-3.4-111827?style=flat-square&logo=tailwind-css&logoColor=38B2AC" alt="TailwindCSS"></a>
+    <a href="https://fastapi.tiangolo.com/"><img src="https://img.shields.io/badge/FastAPI-0.110-064E3B?style=flat-square&logo=fastapi&logoColor=009688" alt="FastAPI"></a>
+    <a href="https://www.postgresql.org/"><img src="https://img.shields.io/badge/PostgreSQL-15-1E293B?style=flat-square&logo=postgresql&logoColor=4169E1" alt="PostgreSQL"></a>
+    <a href="https://min.io/"><img src="https://img.shields.io/badge/MinIO-S3_Compatible-881337?style=flat-square&logo=minio&logoColor=C72C48" alt="MinIO"></a>
+    <a href="https://docs.ethers.org/v6/"><img src="https://img.shields.io/badge/Ethers.js-v6-18181B?style=flat-square&logo=ethereum&logoColor=627EEA" alt="Ethers.js"></a>
+    <a href="https://www.iso.org/standard/44381.html"><img src="https://img.shields.io/badge/ISO%2FIEC-27037-14532D?style=flat-square" alt="ISO 27037"></a>
+    <a href="https://csrc.nist.gov/publications/detail/sp/800-88/rev-1/final"><img src="https://img.shields.io/badge/NIST-SP_800--88_R1-312E81?style=flat-square" alt="NIST SP 800-88"></a>
+  </p>
 
   <br />
 
@@ -23,18 +34,18 @@
 
   <br />
 
-  *Built for Smart India Hackathon (SIH) 2026 • Problem Statement 26125*<br />
-  **"Don't just trust the digital asset. Verify it." — Trust Continuity across the asset lifecycle.**
+  > *"Don't just trust the digital asset. Verify it."*  
+  > **Trust Continuity across the complete digital asset lifecycle.**
 
   <br />
 
-  [Asset Trust Passport](#-asset-trust-passport-primary-product-view) •
-  [Security Validation Lab](#-hashguard-security-validation-lab) •
-  [System Architecture](#-system-architecture--data-segregation) •
-  [Route Directory](#-platform-showcase--route-directory) •
-  [Smart Contracts](#-smart-contract-deep-dive) •
-  [Testing Guide](#-step-by-step-verification--testing-guide) •
-  [Quickstart Guide](#-quickstart--deployment-guide)
+  **[ 🪪 Asset Trust Passport ](#-asset-trust-passport-primary-product-view)** &nbsp;•&nbsp; 
+  **[ 🧪 Security Validation Lab ](#-hashguard-security-validation-lab)** &nbsp;•&nbsp; 
+  **[ 🏗️ System Architecture ](#-system-architecture--data-segregation)** &nbsp;•&nbsp; 
+  **[ 🧭 Route Directory ](#-platform-showcase--route-directory)** &nbsp;•&nbsp; 
+  **[ 📜 Smart Contracts ](#-smart-contract-deep-dive)** &nbsp;•&nbsp; 
+  **[ 🔬 Testing Guide ](#-step-by-step-verification--testing-guide)** &nbsp;•&nbsp; 
+  **[ ⚡ Quickstart ](#-quickstart--deployment-guide)**
 
 </div>
 
@@ -117,11 +128,12 @@ The core problem challenges engineering teams to design an enterprise-grade, dec
 - **Mitigating Centralized Trust**: Removing single points of administrative compromise across multi-organization operational exchanges.
 
 ### Platform Positioning: Generalized Digital Asset Trust
-**HashGuard is NOT merely a digital forensics utility.**
 
-Digital forensic evidence is our **primary, high-stakes demonstration use case**—because cyber forensic exhibits (disk images, memory captures, malware binaries, encrypted logs) represent the absolute extreme of digital asset risk: any bit-level modification or broken custody link destroys judicial admissibility.
+> [!IMPORTANT]
+> **Not Just Digital Forensics — A Generalized Digital Asset Trust Engine**  
+> While cyber forensic evidence serves as our primary demonstration use case due to its extreme chain-of-custody and admissibility requirements, HashGuard is architected as a **generalized digital-asset trust layer** for any high-assurance enterprise, financial, defense, or judicial consortium.
 
-At its core, HashGuard is a **generalized digital-asset trust layer** engineered for any domain where digital assets demand:
+The platform provides a unified trust foundation across 7 foundational requirements:
 1. **Verifiable Identity (WHO)**: W3C Decentralized Identifiers (DIDs) cryptographically bound to institutional actors.
 2. **Adaptive Authorization (PERMISSIONS)**: Role-Based Access Control, asset sensitivity tiers, and time-bound temporary leases.
 3. **Cryptographic Integrity (SEAL)**: Deterministic SHA-256 bitstream hashing with off-chain/on-chain segregation.
@@ -131,12 +143,10 @@ At its core, HashGuard is a **generalized digital-asset trust layer** engineered
 7. **Tamper-Evident Audit Trail (AUDIT)**: Sequentially indexed event logs anchored to the blockchain.
 
 ### The Core Philosophy: Trust Continuity Across the Asset Lifecycle
-In modern security architectures, a static checklist of buzzwords (*"we have a blockchain, DIDs, and SHA-256"*) is no longer sufficient. Real-world adversaries exploit the seams *between* systems. 
 
-HashGuard's guiding principle is:
-> **"Don't just trust the digital asset. Verify it."**
-
-The underlying architectural imperative is **Trust Continuity**: verifying the complete causal chain across the entire digital asset lifecycle:
+> [!TIP]
+> **"Don't just trust the digital asset. Verify it."**  
+> In modern security architectures, a static checklist of buzzwords (*"we have a blockchain, DIDs, and SHA-256"*) is no longer sufficient. Real-world adversaries exploit the seams *between* systems. HashGuard guarantees **Trust Continuity**: verifying the complete causal chain across the entire digital asset lifecycle:
 
 ```
 WHO IS ACTING? (W3C DID)
