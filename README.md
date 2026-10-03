@@ -19,16 +19,22 @@
 
   <br />
 
-  **A military-grade, cross-organization cyber forensic evidence exchange platform engineered to guarantee bit-level non-repudiation, tamper-evident chain of custody, and cryptographic lineage tracking across incident response teams, law enforcement, defense laboratories, and judicial bodies.**
+  **A high-assurance, cross-organization digital asset trust platform engineered to guarantee verifiable identity, adaptive authorization, cryptographic integrity, chain of custody, and provenance tracking across enterprise consortia, law enforcement, defense laboratories, and judicial bodies.**
 
   <br />
 
-  [Explore Live Features](#-platform-showcase--route-directory) •
-  [Architecture & Design](#-system-architecture--data-segregation) •
-  [Quickstart Guide](#-quickstart--deployment-guide) •
+  *Built for Smart India Hackathon (SIH) 2026 • Problem Statement 26125*<br />
+  **"Don't just trust the digital asset. Verify it." — Trust Continuity across the asset lifecycle.**
+
+  <br />
+
+  [Asset Trust Passport](#-asset-trust-passport-primary-product-view) •
+  [Security Validation Lab](#-hashguard-security-validation-lab) •
+  [System Architecture](#-system-architecture--data-segregation) •
+  [Route Directory](#-platform-showcase--route-directory) •
   [Smart Contracts](#-smart-contract-deep-dive) •
-  [API Contract](#-backend-api-reference) •
-  [Compliance & Admissibility](#-legal-regulatory--standards-admissibility)
+  [Testing Guide](#-step-by-step-verification--testing-guide) •
+  [Quickstart Guide](#-quickstart--deployment-guide)
 
 </div>
 
@@ -36,10 +42,22 @@
 
 ## 📌 Table of Contents
 
-- [Executive Summary](#-executive-summary)
+- [Executive Summary & Problem Statement 26125](#-executive-summary--problem-statement-26125)
+  - [The SIH 2026 Problem Statement Context](#the-sih-2026-problem-statement-context)
+  - [Platform Positioning: Generalized Digital Asset Trust](#platform-positioning-generalized-digital-asset-trust)
+  - [The Core Philosophy: Trust Continuity Across the Asset Lifecycle](#the-core-philosophy-trust-continuity-across-the-asset-lifecycle)
 - [Key Features & Innovations](#-key-features--innovations)
+  - [Asset Trust Passport (Primary Product View)](#-asset-trust-passport-primary-product-view)
+  - [Adaptive Asset Authorization & Sensitivity Tiers](#-adaptive-asset-authorization--sensitivity-tiers)
+  - [Time-Bound Temporary Leases](#-time-bound-temporary-leases)
+  - [Application-Level Quorum Gate (2-of-3 Consensual Approval)](#-application-level-quorum-gate-2-of-3-consensual-approval)
+  - [Consortium Revocation Cascade](#-consortium-revocation-cascade)
+  - [HashGuard Security Validation Lab](#-hashguard-security-validation-lab)
+  - [Core Platform Baseline Capabilities](#-core-platform-baseline-capabilities)
 - [System Architecture & Data Segregation](#-system-architecture--data-segregation)
   - [Off-Chain vs. On-Chain Segregation Model](#off-chain-vs-on-chain-segregation-model)
+  - [Trust Continuity Lifecycle Pipeline](#trust-continuity-lifecycle-pipeline)
+  - [Architectural Boundary & Enforcement Matrix](#architectural-boundary--enforcement-matrix)
   - [System Flow & Layered Architecture](#system-flow--layered-architecture)
   - [Custody State Machine Lifecycle](#custody-state-machine-lifecycle)
   - [Cross-Organization Transfer Protocol](#cross-organization-transfer-protocol)
@@ -48,23 +66,34 @@
 - [Retention Management & Legal Hold Preservation](#-retention-management--legal-hold-preservation)
   - [Retention Policy Architecture & Presets](#retention-policy-architecture--presets)
   - [Legal Hold Preservation Orders & Deletion Guards](#legal-hold-preservation-orders--deletion-guards)
-  - [Immutable Audit Ledger Retention Events](#immutable-audit-ledger-retention-events)
+  - [Tamper-Evident Audit Ledger Retention Events](#tamper-evident-audit-ledger-retention-events)
 - [Organization vs. RBAC Role Separation Architecture](#-organization-vs-rbac-role-separation-architecture)
   - [The 5 Participating Organizations (WHERE)](#the-5-participating-organizations-where)
   - [The 6 Distinct RBAC Roles (WHAT)](#the-6-distinct-rbac-roles-what)
   - [Granular RBAC Permissions Matrix](#granular-rbac-permissions-matrix)
-- [Smart Contract Deep Dive (`HASHGUARD.sol`)](#-smart-contract-deep-dive)
-  - [Decentralized Identifiers (W3C DID v1.0)](#1-decentralized-identifiers-w3c-did-v10)
-  - [NFT-Based Asset Ownership (ERC-721)](#2-nft-based-asset-ownership-erc-721)
-  - [On-Chain Role-Based Access Control (RBAC)](#3-on-chain-role-based-access-control-rbac)
-  - [On-Chain Audit Events](#4-on-chain-audit-events)
+- [Smart Contract Deep Dive](#-smart-contract-deep-dive)
+  - [Active Deployed Contract (`HASHGUARD.sol` v1.0)](#1-active-deployed-contract-hashguardsol-v10)
+    - [Decentralized Identifiers (W3C DID v1.0)](#decentralized-identifiers-w3c-did-v10)
+    - [NFT-Based Asset Ownership (ERC-721)](#nft-based-asset-ownership-erc-721)
+    - [On-Chain Role-Based Access Control (RBAC)](#on-chain-role-based-access-control-rbac)
+    - [On-Chain Audit Events](#on-chain-audit-events)
+  - [Versioned Extension Proposal (`HashGuard_v2_1_Proposal.sol`)](#2-versioned-extension-proposal-hashguard_v2_1_proposalsol)
+    - [Architectural Motivation & Specification](#architectural-motivation--specification)
+    - [Native On-Chain Quorum Gate (2-of-3 Multisig)](#native-on-chain-quorum-gate-2-of-3-multisig)
+    - [Phased Migration Protocol (v1.0 → v2.1)](#phased-migration-protocol-v10--v21)
 - [Backend API Reference](#-backend-api-reference)
 - [Quickstart & Deployment Guide](#-quickstart--deployment-guide)
   - [Prerequisites](#prerequisites)
   - [Method 1: Instant Evaluation (Frontend + Zero-Config Offline Sandbox)](#method-1-instant-evaluation-frontend--zero-config-offline-sandbox)
   - [Method 2: Standalone Node.js Microservice Backend](#method-2-standalone-nodejs-microservice-backend)
   - [Method 3: Production Docker Compose Enterprise Stack](#method-3-production-docker-compose-enterprise-stack)
-- [Step-by-Step Verification & Testing Guide (TEST 1 – TEST 7)](#-step-by-step-verification--testing-guide-test-1--test-7)
+- [Step-by-Step Verification & Testing Guide](#-step-by-step-verification--testing-guide)
+  - [Security Validation Lab Protocol (Scenarios 1–4)](#security-validation-lab-protocol-scenarios-14)
+    - [Scenario 1: Tampered Evidence Injection](#scenario-1-tampered-evidence-injection)
+    - [Scenario 2: Unauthorized Custody Transfer](#scenario-2-unauthorized-custody-transfer)
+    - [Scenario 3: Revoked Identity Operation](#scenario-3-revoked-identity-operation)
+    - [Scenario 4: Expired Temporary Access](#scenario-4-expired-temporary-access)
+  - [Platform Integrity & Governance Verification (TEST 1 – TEST 7)](#platform-integrity--governance-verification-test-1--test-7)
 - [Interactive Tamper Simulation & Verification](#-interactive-tamper-simulation--verification)
 - [AI Threat Triage Integration](#-ai-threat-triage-integration)
 - [Legal, Regulatory & Standards Admissibility](#-legal-regulatory--standards-admissibility)
@@ -74,30 +103,120 @@
 
 ---
 
-## 📖 Executive Summary
+## 📖 Executive Summary & Problem Statement 26125
 
-During cyber incident investigations, digital evidence (disk images, memory dumps, network PCAPs, malware binaries, mobile extractions) frequently transitions across multiple organizational boundaries—from corporate Security Operations Centers (SOCs) to Computer Emergency Response Teams (CERTs), external forensic consultants, intelligence agencies, and courtroom tribunals.
+### The SIH 2026 Problem Statement Context
+**Smart India Hackathon 2026 — Problem Statement 26125**:  
+*"Blockchain-Based Secure Platform for Identity, Access Control, and Digital Asset Management."*
 
-### The Problem
-Conventional evidence management relies on centralized databases (Active Directory, LDAP, cloud storage buckets, or paper forms). These legacy practices introduce critical systemic risks:
-- **Single Points of Failure (SPOF)**: Centralized root admins can tamper with evidence files or delete audit logs without detection.
-- **Inter-Agency Trust Deficits**: Receiving agencies cannot mathematically verify whether seized media underwent alteration during transit.
-- **Broken Lineage**: Derived evidence (decompilations, carved files, extracted memory payloads, IOCs) loses its mathematical link to the original physical seizure.
-- **Inadmissibility in Court**: Failure to meet stringent electronic evidence admissibility statutes (e.g., Section 65B of the Indian Evidence Act, NIST SP 800-88, ISO/IEC 27037, and Federal Rules of Evidence Rule 902(13)/(14)).
+The core problem challenges engineering teams to design an enterprise-grade, decentralized architecture that guarantees:
+- **Decentralized Identity**: Cryptographic verification of human and system actors without single-point IAM dependencies.
+- **Granular Access Control & RBAC**: Strict separation of duties, least-privilege enforcement, and verifiable access policies.
+- **Digital Asset Ownership & Governance**: Cryptographically non-fungible asset representation, transparent provenance, and auditable custody transfers.
+- **Smart Contract Execution**: Autonomous, deterministic enforcement of lifecycle rules and audit records anchored to a blockchain ledger.
+- **Mitigating Centralized Trust**: Removing single points of administrative compromise across multi-organization operational exchanges.
 
-### The HASHGUARD Solution
-**HASHGUARD** provides an authoritative, cryptographically verified solution that marries **Self-Sovereign Identity (W3C DIDs)**, **ERC-721 Non-Fungible Tokens**, **EVM Smart Contract RBAC**, and **Off-Chain Cryptographic Enclaves**. Every custody transfer, bitstream hash, and forensic transformation is anchored in an immutable ledger—delivering an unbreakable chain of custody and instant zero-knowledge audit verification.
+### Platform Positioning: Generalized Digital Asset Trust
+**HashGuard is NOT merely a digital forensics utility.**
+
+Digital forensic evidence is our **primary, high-stakes demonstration use case**—because cyber forensic exhibits (disk images, memory captures, malware binaries, encrypted logs) represent the absolute extreme of digital asset risk: any bit-level modification or broken custody link destroys judicial admissibility.
+
+At its core, HashGuard is a **generalized digital-asset trust layer** engineered for any domain where digital assets demand:
+1. **Verifiable Identity (WHO)**: W3C Decentralized Identifiers (DIDs) cryptographically bound to institutional actors.
+2. **Adaptive Authorization (PERMISSIONS)**: Role-Based Access Control, asset sensitivity tiers, and time-bound temporary leases.
+3. **Cryptographic Integrity (SEAL)**: Deterministic SHA-256 bitstream hashing with off-chain/on-chain segregation.
+4. **Ownership & Custody (TRACKING)**: ERC-721 tokenized asset ownership and audited custody transitions across organizational boundaries.
+5. **Continuous Provenance (LINEAGE)**: Mathematical derivation DAGs mapping root assets to derived analytical artifacts.
+6. **Independent Verification (ZERO-TRUST)**: Public, verifiable mathematical proofs that allow external third parties to validate authenticity without accessing raw sensitive bytes.
+7. **Tamper-Evident Audit Trail (AUDIT)**: Sequentially indexed event logs anchored to the blockchain.
+
+### The Core Philosophy: Trust Continuity Across the Asset Lifecycle
+In modern security architectures, a static checklist of buzzwords (*"we have a blockchain, DIDs, and SHA-256"*) is no longer sufficient. Real-world adversaries exploit the seams *between* systems. 
+
+HashGuard's guiding principle is:
+> **"Don't just trust the digital asset. Verify it."**
+
+The underlying architectural imperative is **Trust Continuity**: verifying the complete causal chain across the entire digital asset lifecycle:
+
+```
+WHO IS ACTING? (W3C DID)
+       ↓
+WHAT ARE THEY AUTHORIZED TO DO? (RBAC + Sensitivity Tiers + Temporary Leases)
+       ↓
+WHAT ASSET ARE THEY HANDLING? (ERC-721 Token ID & Metadata)
+       ↓
+WHAT WAS THE ORIGINAL CRYPTOGRAPHIC STATE? (Sealed SHA-256 On-Chain Root)
+       ↓
+WHO HAD CUSTODY? (Deterministic Custody State Machine)
+       ↓
+WAS THE ASSET CHANGED? (Off-Chain Bitstream Digest vs. On-Chain Seal)
+       ↓
+WHAT WAS DERIVED FROM IT? (Interactive Provenance DAG)
+       ↓
+CAN ANOTHER PARTY VERIFY THE HISTORY? (Independent Verification & Tamper-Evident Audit Trail)
+```
 
 ---
 
 ## ⚡ Key Features & Innovations
 
+### 🪪 Asset Trust Passport (Primary Product View)
+The **Asset Trust Passport** (`/passport`, `/passport/:id`) is HashGuard's central operational view, providing a comprehensive, single-pane-of-glass evaluation of any digital asset's health across the **6 Trust Pillars**:
+- **Pillar 1: Identity (WHO)** — Owner DID, current custodian organization, and originating entity.
+- **Pillar 2: Integrity (SEAL)** — Side-by-side SHA-256 comparison between the immutable on-chain root seal and the observed off-chain bitstream digest.
+- **Pillar 3: Authorization (POLICY)** — Sensitivity tier classification, required governance threshold, and active temporary leases.
+- **Pillar 4: Custody (CHAIN OF CUSTODY)** — Current custodian node, transfer status, and historical handover sequence.
+- **Pillar 5: Provenance (LINEAGE DAG)** — Parent-to-child derivation linkages, carved sub-artifacts, and lineage integrity.
+- **Pillar 6: Audit (TAMPER-EVIDENT TRAIL)** — Block height anchor, genesis timestamp, and verifiable transaction proofs.
+
+The Passport features a **3-level progressive disclosure architecture**:
+1. **Level 1 (Verdict Hero)**: Immediate binary trust assessment (`TRUST VERIFIED` vs. `TRUST COMPROMISED`) with clear status rationale and off-chain/on-chain trust boundary indicators.
+2. **Level 2 (Six Pillar Cards)**: Comprehensive architectural breakdown of identity, cryptographic state, access rules, custody lifecycle, provenance, and audit logs.
+3. **Level 3 (Progressive Disclosure Technical Panel)**: Collapsible deep-dive showing storage URIs, off-chain enclave parameters, public key fingerprints, and raw smart contract references.
+4. **Cryptographic Verification Report Export**: 1-click generation of a court-ready, timestamped JSON verification dossier detailing all 6 pillars and signed proofs.
+
+### 🛡️ Adaptive Asset Authorization & Sensitivity Tiers
+Rather than treating all assets identically, HashGuard implements adaptive risk classification via **Access & Governance** (`/access-governance`):
+- **`STANDARD`**: Normal operational assets governed by baseline RBAC permissions.
+- **`RESTRICTED`**: Confidential assets requiring explicit identity whitelisting or temporary authorization leases.
+- **`CRITICAL`**: High-impact assets (e.g., weaponized malware source, national security exhibits) requiring time-bound leases and consensual multi-party sign-off.
+
+### ⏱️ Time-Bound Temporary Leases
+Allows administrators and custodians to grant emergency or short-term operational access to investigators and external defense labs:
+- **Monotonic Expiry**: Configurable lease duration (e.g., 2, 4, 8, 24 hours) enforced against monotonically increasing timestamps.
+- **Auto-Expiration**: Leases automatically expire without requiring manual revocation commands. Expired leases trigger immediate access denials.
+- **Audited Issuance**: Every lease grant is anchored with the grantee's DID, justified reason, and expiration timestamp.
+
+### 🏛️ Application-Level Quorum Gate (2-of-3 Consensual Approval)
+To prevent rogue insiders or compromised administrative keys from unilaterally transferring sensitive exhibits, HashGuard enforces an **Application-Level Quorum Gate**:
+- **Critical Asset Custody Protection**: Any custody transfer dispatch for `CRITICAL` assets is locked in a `PENDING_APPROVAL` holding state.
+- **Consensual Threshold**: Requires 2 distinct authorized institutional nodes (e.g., CERT-Alpha + Cyber Defense Lab) to review and approve the transfer manifest before physical and ledger custody dispatch is permitted.
+- **Transparent Status**: Real-time progress visualizer shows current approval counts and pending signatories.
+*(Explicitly documented and enforced as application-level consortium governance in the current v1.0 architecture).*
+
+### ⚡ Consortium Revocation Cascade
+When an investigator key or agency node is compromised, revocation must be immediate and systemic:
+- **Zero-Trust Cascade**: Revoking an entity's DID immediately cascades through the state layer—instantly invalidating all active role bindings, voiding all active temporary leases across all assets, and blocking any pending custody transfers.
+- **Deterministic Enforcement**: Subsequent requests by the revoked identity are rejected with HTTP 403 Forbidden.
+- **Preserved History**: While future actions are strictly blocked, all prior historical actions and evidence seals created before the revocation remain cryptographically intact in the tamper-evident audit trail.
+
+### 🧪 HashGuard Security Validation Lab
+Located at `/security-lab`, the **Security Validation Lab** provides evaluators with a deterministic adversarial test bench executing 4 core security failure and attack scenarios against the live state machine:
+1. **Test 01: Tampered Evidence Injection** (Bitstream digest mismatch detection & download blocking).
+2. **Test 02: Unauthorized Custody Transfer** (Critical transfer attempt without 2-of-3 Quorum Gate sign-off blocked).
+3. **Test 03: Revoked Identity Operation** (Revoked DID attempting custody operations rejected via Revocation Cascade).
+4. **Test 04: Expired Temporary Access** (Elapsed lease token rejected at temporal boundary).
+
+Each test executes real underlying state and cryptographic validations, advancing through a clear tri-state lifecycle:  
+**`1. DETECTED` ➔ `2. BLOCKED` ➔ `3. AUDITED`**.
+
+### 🌟 Core Platform Baseline Capabilities
 - **🔐 Privacy-Preserving Off-Chain Enclave Architecture**: Sensitive gigabyte-scale disk images, malware binaries, and memory dumps remain securely in encrypted off-chain object storage (MinIO / S3). Only deterministic SHA-256 digests, ECDSA signatures, and state proofs are anchored on-chain.
 - **🆔 Self-Sovereign Decentralized Identifiers (W3C DID v1.0)**: Eliminates centralized IAM dependencies. Custodians, analysts, and auditors are bound to cryptographic DIDs (`did:ethr:<address>`) with on-chain DID Document hash anchoring.
 - **🪙 NFT-Backed Evidence Ownership (ERC-721)**: Unique forensic exhibits are minted as on-chain non-fungible tokens, providing non-duplicable, transparent ownership and strictly serialized transfer receipts.
 - **🛡️ Bytecode-Enforced RBAC**: Granular roles (`ROLE_ADMIN`, `ROLE_MANAGER`, `ROLE_AUDITOR`, `ROLE_USER`) are strictly enforced at the EVM smart contract execution level with zero-trust privilege boundaries.
 - **🌐 Interactive Forensic Lineage DAG**: Powered by `@xyflow/react`, this interactive directed acyclic graph visualizes the entire life cycle of derived evidence—from primary seized payloads to decompilations, carved files, YARA/Sigma rules, and courtroom executive summaries.
-- **🔍 5-Point Zero-Trust Auditor Suite**: Independent zero-knowledge verification engine that validates bit-level **Hash Integrity**, **ECDSA Signatures**, **Custody Continuity**, **Sequential Monotonicity**, and **DAG Lineage** without leaking file contents. Generates exportable, court-ready JSON/PDF audit certificates.
+- **🔍 5-Point Zero-Trust Auditor Suite**: Independent verification engine that validates bit-level **Hash Integrity**, **ECDSA Signatures**, **Custody Continuity**, **Sequential Monotonicity**, and **DAG Lineage** without leaking file contents. Generates exportable, court-ready verification reports.
 - **🚨 Real-Time Bit-Level Tamper Simulator**: Interactive top-bar toggle that simulates a bit-level specimen modification in real time. Instantly flips system-wide statuses to `✕ INTEGRITY COMPROMISED` and exposes the failure cascade in the auditor portal.
 - **🤖 Gen-AI Forensic Threat Triage**: Embedded neural triage powered by Google Gemini (`gemini-1.5-flash` / `gemini-pro`) to analyze Shannon entropy, identify binary packing, extract MITRE ATT&CK indicators, and parse IOCs from investigator notes.
 - **⏳ NIST SP 800-88 Compliant Retention & Shredding**: Automated life cycle retention schedules, administrative legal hold lockdowns, and verifiable cryptographic media eradication logging.
@@ -159,6 +278,56 @@ flowchart TD
         EVENTS -->|Cryptographic Proof| CERT
     end
 ```
+
+> **Key Architectural Axiom**: **RAW DATA STAYS OFF-CHAIN. TRUST IS ANCHORED ON-CHAIN.**  
+> Sensitive gigabyte-scale disk images, malware binaries, and memory dumps remain securely in local/cloud enclaves. The blockchain functions exclusively as a trust anchor recording cryptographic hashes, digital signatures, identity bindings, and state transitions.
+
+---
+
+### Trust Continuity Lifecycle Pipeline
+
+HashGuard replaces fragmented access logs and isolated verification checks with an unbroken causal pipeline:
+
+```mermaid
+flowchart LR
+    A["👤 1. WHO<br/>(W3C DID)"] --> B["🔑 2. AUTHORIZATION<br/>(RBAC + Leases + Quorum)"]
+    B --> C["📦 3. ASSET<br/>(ERC-721 + Sensitivity)"]
+    C --> D["🔒 4. CRYPTO STATE<br/>(Sealed SHA-256 Digest)"]
+    D --> E["🤝 5. CUSTODY<br/>(State Handover)"]
+    E --> F["🔍 6. VERIFICATION<br/>(Bitstream vs Seal)"]
+    F --> G["🌳 7. PROVENANCE<br/>(Lineage DAG)"]
+    G --> H["📜 8. AUDIT<br/>(Tamper-Evident Trail)"]
+```
+
+| Lifecycle Stage | Architectural Question | System Guarantee & Implementation Mechanism |
+|---|---|---|
+| **1. WHO** | Who is acting? | W3C Decentralized Identifiers (`did:ethr:<address>`) with on-chain DID Document registry. |
+| **2. AUTHORIZATION** | What are they authorized to do? | On-chain RBAC roles combined with application-level adaptive sensitivity tiers, time-bound temporary leases, and multi-party quorum gates. |
+| **3. ASSET** | What asset are they handling? | Unique ERC-721 tokenized digital exhibits with bound acquisition metadata and classification tags. |
+| **4. CRYPTO STATE** | What was the original cryptographic state? | Deterministic SHA-256 bitstream digest sealed on-chain during genesis ingestion. |
+| **5. CUSTODY** | Who holds physical & legal custody? | Deterministic custody state machine tracking cross-organization transfers with sender/receiver attestation. |
+| **6. VERIFICATION** | Was the asset modified or corrupted? | Client-side chunked hash recomputation compared against the immutable on-chain sealed root. |
+| **7. PROVENANCE** | What sub-artifacts were derived? | Directed Acyclic Graph (DAG) preserving cryptographic links between parents and carved artifacts. |
+| **8. AUDIT** | Can external parties verify the history? | Tamper-evident, indexed EVM transaction event logs providing mathematical non-repudiation. |
+
+---
+
+### Architectural Boundary & Enforcement Matrix
+
+To ensure absolute technical transparency during evaluation, HashGuard strictly demarcates which guarantees are enforced at the smart-contract bytecode layer versus the application/gateway layer:
+
+| Capability / Mechanism | Enforcement Level | Architectural Implementation | Production Rationale |
+|---|---|---|---|
+| **Asset Tokenization & Ownership** | **On-Chain (Smart Contract)** | `contracts/HASHGUARD.sol` (`ERC721`) | Provides non-fungible, non-duplicable asset ownership anchored to EVM consensus. |
+| **Bitstream SHA-256 Root Seal** | **On-Chain (Smart Contract)** | `contentHash` mapping in `HASHGUARD.sol` | Guarantees tamper-evident, permanent root reference that cannot be altered by root admins. |
+| **Actor Identity Binding** | **On-Chain (Smart Contract)** | `didRegistry` mapping in `HASHGUARD.sol` | W3C DID Document hash anchor ensuring cryptographically verifiable actors. |
+| **Role-Based Access Control (RBAC)** | **On-Chain (Smart Contract)** | OpenZeppelin `AccessControl` bytecode | Core operational permissions (`ROLE_ADMIN`, `ROLE_MANAGER`, `ROLE_AUDITOR`, `ROLE_USER`) enforced on-chain. |
+| **Audit Ledger Event Emission** | **On-Chain (Smart Contract)** | Indexed EVM events (`CustodyTransferred`, etc.) | Creates permanent, chronological transaction logs for external blockchain explorers. |
+| **Asset Sensitivity Tiers** | **Application-Level Enforced** | `src/services/evidenceService.js` | Classifies exhibits (`STANDARD`, `RESTRICTED`, `CRITICAL`) to gate operational pipelines without contract redeployment. |
+| **Time-Bound Temporary Leases** | **Application-Level Enforced** | `evidenceService.js` & `AppContext.jsx` | Issues temporary leases evaluated against monotonic timestamps for auto-expiry. |
+| **Consortium Revocation Cascade** | **Application-Level Enforced** | `AppContext.jsx` & `transferService.js` | Instantly zeroes downstream roles/leases and blocks pending transfers upon DID revocation. |
+| **Quorum Gate (2-of-3 Approval)** | **Application-Level Enforced** | `transferService.js` (`TR-010-CRITICAL`) | Enforces consensual multi-party sign-off on Critical custody transfers before execution. |
+| **Native On-Chain Multisig Quorum** | **Versioned Proposal (v2.1)** | `contracts/HashGuard_v2_1_Proposal.sol` | Formal specification for compiling multi-party quorum and dynamic leases directly into EVM bytecode. |
 
 ---
 
@@ -273,13 +442,16 @@ The platform provides a responsive, single-page application built on React 19, m
 | `/login` | **Unified Authentication & DID Portal** | Multi-persona authentication portal supporting traditional credentials or Web3 DID wallet identity binding. | Public |
 | `/sandbox` | **1-Click Reviewer Sandbox** | Automatically provisions a Lead Forensic Investigator session, seeds realistic forensic datasets, and opens the SOC Dashboard. | Public / Evaluators |
 | `/dashboard` | **Forensic SOC Operations Dashboard** | High-level situational awareness: KPI counters (Total Evidence, Intact Seals, Active Transfers, Tamper Alerts), active custody pipeline, and quick actions. | Admin, Manager, Auditor, Custodian |
-| `/evidence` | **Evidence Repository** | Multi-attribute filtering (Status, Organization, Exhibit Type), instant SHA-256 hash copy, and drag-and-drop evidence registration modal. | Admin, Manager, Custodian |
-| `/evidence/:id` | **Forensic Dossier Details** | Deep specimen inspection: side-by-side SHA-256 hash comparison, HSM ECDSA signature breakdown, off-chain isolation badge, vertical custody event logs, and Gemini AI Threat Triage. | Admin, Manager, Auditor, Custodian |
-| `/transfers` | **Cross-Agency Transfer Pipeline** | Active transfer queue, interactive mTLS handshake pipeline visualizer, initiate transfer modal, and verify-on-receipt cryptographic attestation. | Admin, Manager, Custodian |
-| `/custody` | **Global Custody Explorer** | Searchable, chronological audit explorer detailing all custody transitions, actor emails, digital signatures, and transaction roots. | Admin, Manager, Auditor, Custodian |
-| `/lineage` | **Evidence Lineage DAG** | Interactive node-based provenance graph (`@xyflow/react`) mapping parent-to-child relationships (e.g., Raw Payload → Decompiled Source → YARA Rules → Final Report). | Admin, Manager, Auditor, Custodian |
-| `/verification` | **Zero-Trust Auditor Suite** | Independent forensic verification interface executing a 5-point verification checklist (`HASH`, `SIGNATURE`, `CUSTODY`, `SEQUENCE`, `LINEAGE`) and generating exportable court certificates. | Admin, Auditor |
-| `/audit` | **Immutable Audit Logs Ledger** | Tabular raw on-chain transaction stream with block height references, sender DIDs, activity types, and CSV export. | Admin, Auditor |
+| `/passport`, `/passport/:id` | **Asset Trust Passport (Primary View)** | Unified 6-pillar trust passport (Identity, Integrity, Authorization, Custody, Provenance, Audit) with 3-level progressive disclosure and Cryptographic Verification Report export. | Admin, Manager, Auditor, Custodian |
+| `/security-lab` | **Security Validation Lab** | Deterministic adversarial testing suite executing 4 live failure/attack tests with real-time `DETECTED` ➔ `BLOCKED` ➔ `AUDITED` status indicators. | Admin, Manager, Auditor, Custodian |
+| `/evidence`, `/evidence/:id` | **Digital Asset Repository & Dossier** | Multi-attribute filtering, drag-and-drop ingestion, side-by-side SHA-256 hash comparison, HSM signatures, off-chain isolation badge, and Gemini AI Threat Triage. | Admin, Manager, Auditor, Custodian |
+| `/access-governance` | **Access & Governance Hub** | Sensitivity tier configuration (Standard/Restricted/Critical), time-bound temporary lease grants with monotonic expiry, and consortium revocation cascade controls. | Admin, Manager |
+| `/transfers` | **Cross-Agency Transfer Pipeline** | Active transfer queue, interactive mTLS handshake visualizer, initiate transfer modal, and Application-Level Quorum Gate (2-of-3 Consensual Approval) status. | Admin, Manager, Custodian |
+| `/custody` | **Global Custody Explorer** | Searchable chronological audit explorer detailing all custody transitions, actor emails, digital signatures, and transaction roots. | Admin, Manager, Auditor, Custodian |
+| `/lineage` | **Evidence Lineage DAG** | Interactive node-based provenance graph (`@xyflow/react`) mapping parent-to-child relationships (Raw Payload → Decompiled Source → YARA Rules → Final Report). | Admin, Manager, Auditor, Custodian |
+| `/verification` | **Zero-Trust Auditor Suite** | Independent forensic verification interface executing 5-point verification checklist (`HASH`, `SIGNATURE`, `CUSTODY`, `SEQUENCE`, `LINEAGE`) and generating exportable court certificates. | Admin, Auditor |
+| `/audit` | **Tamper-Evident Audit Logs Ledger** | Tabular raw on-chain transaction stream with block height references, sender DIDs, activity types, and CSV export. | Admin, Auditor |
+| `/architecture` | **System Architecture Explorer** | Interactive architectural walkthrough detailing off-chain vs on-chain segregation, data flows, and security principles. | Admin, Manager, Auditor, Custodian |
 | `/retention` | **Lifecycle Retention & Shredding** | ISO/NIST compliant retention policy manager, legal hold freeze controls, and NIST SP 800-88 cryptographic shredding logs. | Admin, Manager |
 | `/settings` | **System & Network Configuration** | Switch active organization context, inspect blockchain node RPC connectivity, configure RBAC roles, and toggle dark/light theme mode. | Admin, Manager, Auditor, Custodian |
 
@@ -374,9 +546,9 @@ A **Legal Hold** (also known as a litigation preservation order) is an urgent le
 
 ---
 
-### Immutable Audit Ledger Retention Events
+### Tamper-Evident Audit Ledger Retention Events
 
-Every retention configuration, state change, and legal hold intervention is recorded into the immutable audit ledger with actor DID, timestamp, and transaction proof:
+Every retention configuration, state change, and legal hold intervention is recorded into the tamper-evident audit ledger (with blockchain-indexed immutability) containing actor DID, timestamp, and transaction proof:
 
 - `RETENTION_POLICY_CREATED`: Emitted when a new lifecycle policy is published.
 - `RETENTION_POLICY_UPDATED`: Emitted when retention duration or expiry actions are updated.
@@ -458,9 +630,17 @@ A core architectural principle of HASHGUARD is the strict separation between **O
 
 ## 📜 Smart Contract Deep Dive
 
-The contract [`contracts/HASHGUARD.sol`](contracts/HASHGUARD.sol) is written in Solidity `^0.8.20` and extends OpenZeppelin's `ERC721` and `AccessControl`.
+HashGuard's smart contract architecture balances battle-tested, gas-efficient on-chain execution with modular extensibility.
 
-### 1. Decentralized Identifiers (W3C DID v1.0)
+---
+
+### 1. Active Deployed Contract (`HASHGUARD.sol` v1.0)
+
+The active deployed contract [`contracts/HASHGUARD.sol`](contracts/HASHGUARD.sol) is compiled in Solidity `^0.8.20` and extends OpenZeppelin's `ERC721` and `AccessControl`. It serves as the live trust anchor across all integration tests, local Anvil DevNets, and production deployments.
+
+> **Integrity Guarantee**: Preserved 100% intact to guarantee continuous operation of deployed nodes, test suites, and the core cryptographic tamper demonstration.
+
+#### Decentralized Identifiers (W3C DID v1.0)
 ```solidity
 struct UserIdentity {
     string didURI;           // e.g. "did:ethr:0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db"
@@ -474,7 +654,7 @@ function registerDID(address user, string memory didURI, bytes32 didDocumentHash
 function verifyDID(address user) external view returns (bool, string memory, bytes32);
 ```
 
-### 2. NFT-Based Asset Ownership (ERC-721)
+#### NFT-Based Asset Ownership (ERC-721)
 ```solidity
 struct EvidenceMetadata {
     string assetId;          // e.g. "EV-2026-0891"
@@ -488,7 +668,7 @@ function mintAssetNFT(address to, string memory assetId, bytes32 contentHash, by
 function transferCustody(uint256 tokenId, address to) external;
 ```
 
-### 3. On-Chain Role-Based Access Control (RBAC)
+#### On-Chain Role-Based Access Control (RBAC)
 ```solidity
 bytes32 public constant ROLE_ADMIN   = DEFAULT_ADMIN_ROLE;
 bytes32 public constant ROLE_MANAGER = keccak256("ROLE_MANAGER");
@@ -500,14 +680,67 @@ bytes32 public constant ROLE_USER    = keccak256("ROLE_USER");
 - **ROLE_AUDITOR**: Can query all ledger states, emit independent audit attestation events (`AuditorVerified`), and inspect historical logs.
 - **ROLE_USER / CUSTODIAN**: Can initiate transfers for assigned tokens and register evidence exhibits.
 
-### 4. On-Chain Audit Events
-Every critical operation emits an immutable, indexed event:
+#### On-Chain Audit Events
+Every critical operation emits an immutable, indexed EVM log:
 - `IdentityRegistered(address indexed user, bytes32 didDocumentHash)`
 - `AssetNFTMinted(uint256 indexed tokenId, string assetId, address indexed to, bytes32 contentHash, uint256 timestamp)`
 - `CustodyTransferred(uint256 indexed tokenId, address indexed from, address indexed to)`
 - `HashVerified(uint256 indexed tokenId, bytes32 expectedHash, bytes32 observedHash, bool valid)`
 - `AuditorVerified(address indexed auditor, bytes32 credentialHash, bool valid)`
 - `RetentionEvent(uint256 indexed tokenId, string eventType, address actor, uint256 timestamp)`
+
+---
+
+### 2. Versioned Extension Proposal (`HashGuard_v2_1_Proposal.sol`)
+
+The versioned contract [`contracts/HashGuard_v2_1_Proposal.sol`](contracts/HashGuard_v2_1_Proposal.sol) formalizes a proposed architectural upgrade path.
+
+> **Architectural Status**: **SPECIFICATION & PROPOSAL ONLY.**  
+> In current HashGuard v1.0 deployments, Asset Sensitivity, Time-Bound Temporary Leases, Consortium Revocation Cascade, and 2-of-3 Quorum Gates are enforced at the application state layer. This proposal demonstrates how these governance mechanisms compile natively into EVM bytecode for consortia requiring strict on-chain multi-sig execution.
+
+#### Architectural Data Structures
+```solidity
+enum SensitivityTier { STANDARD, RESTRICTED, CRITICAL }
+
+struct TemporaryLease {
+    uint256 expiresAt;
+    string reason;
+    bool active;
+}
+
+struct QuorumTransferProposal {
+    uint256 tokenId;
+    address proposedCustodian;
+    uint8 approvalCount;
+    bool executed;
+    mapping(address => bool) approvedBy;
+}
+```
+
+#### Native On-Chain Quorum Gate (2-of-3 Multisig)
+```solidity
+// Requires CRITICAL asset sensitivity and verifies recipient DID is not revoked
+function proposeCriticalCustodyTransfer(uint256 tokenId, address newCustodian) external onlyRole(ROLE_GOVERNOR);
+
+// Approves transfer proposal; executes custody transfer when approvalCount >= 2
+function approveCriticalCustodyTransfer(uint256 tokenId) external onlyRole(ROLE_GOVERNOR);
+```
+
+#### Temporal Lease & Revocation Cascade Enforcements
+```solidity
+// Grants time-bound access evaluated against monotonic block.timestamp
+function grantTemporaryLease(uint256 tokenId, address grantee, uint256 durationSeconds, string calldata reason) external onlyRole(ROLE_GOVERNOR);
+
+// Cascade revocation instantly blocks user from all lease checks & transfer proposals
+function revokeIdentityCascade(address didAddress, string calldata reason) external onlyRole(ROLE_ADMIN);
+```
+
+#### Phased Migration Protocol (v1.0 → v2.1)
+1. **Parallel Deployment**: Deploy `HashGuard_v2_1_Proposal` to the consortium network referencing the existing v1.0 contract address in its constructor.
+2. **State Snapshot**: Export cryptographic state snapshot from v1.0 (all registered DIDs, minted exhibit token IDs, content hashes, and active custodians).
+3. **Registry Hydration**: Execute administrator batch hydration transactions on v2.1 to synchronize historical mappings.
+4. **Client RPC Cutover**: Point `src/contracts/HashGuard.json` ABI and client RPC configuration to the new v2.1 address.
+5. **Invariant Verification**: Execute test suites (`python test_hashguard.py`, `python test_integration.py`, `npm run build`) to ensure 100% compliance across all 19 test invariants.
 
 ---
 
@@ -608,9 +841,97 @@ npm run dev
 
 ---
 
-## 🧪 Step-by-Step Verification & Testing Guide (TEST 1 – TEST 7)
+## 🧪 Step-by-Step Verification & Testing Guide
 
-Follow this rigorous verification protocol to evaluate the Retention Management, Legal Hold Preservation, Organization vs. Role RBAC Separation, and Cryptographic Ledger Integrity.
+HashGuard features two layers of rigorous verification:
+1. **Automated Test Suites**: CLI-based deterministic unit and integration test runners verifying smart contracts and API security boundaries.
+2. **Security Validation Lab**: Interactive adversarial UI suite executing 4 live failure/attack tests with real-time `DETECTED` ➔ `BLOCKED` ➔ `AUDITED` status indicators.
+3. **Platform Integrity & Governance Protocol**: Step-by-step verification flows covering retention policies, legal holds, RBAC separation, and audit ledger integrity.
+
+---
+
+### Automated Test Suite Execution
+
+Run the built-in test suites directly from the terminal to verify cryptographic and smart contract invariants:
+
+```bash
+# 1. Smart Contract Unit Tests (EVM Foundry/Anvil)
+python test_hashguard.py
+# Output: ALL SMART CONTRACT TESTS PASSED (5/5 tests: Admin Mint, Revert Guard, Custody Transfer, Access Control, Ownership Transfer)
+
+# 2. End-to-End Multi-Layer Security Tests
+python test_integration.py
+# Output: ALL 14 SECURITY TESTS PASSED SUCCESSFULLY (Tests A–N: Minting, Reverts, Transfer, Access, HTTP 403 Guards, Blockchain Consensus)
+
+# 3. Production Frontend Bundle Build
+npm run build
+# Output: built in ~1.4s (Zero syntax, type, or bundling errors)
+```
+
+---
+
+### Security Validation Lab Protocol (Scenarios 1–4)
+
+Navigate to **Security Lab** (`/security-lab`) in the web interface to execute the 4 core adversarial scenarios against the live state machine. Click **"Execute All 4 Security Tests"** or run each test individually:
+
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│                      TRI-STATE EXECUTION PIPELINE                       │
+│  [ 1. DETECTED ]      ➔      [ 2. BLOCKED ]      ➔     [ 3. AUDITED ]   │
+│ Cryptographic Anomaly       Unauthorized Action       Tamper-Evident    │
+│  or Policy Violation         Strictly Prohibited       Ledger Event     │
+└────────────────────────────────────────────────────────────────────────┘
+```
+
+#### Scenario 1: Tampered Evidence Injection
+- **Category**: Cryptographic Integrity Failure
+- **Target Specimen**: `EV-DDXOEY` / `EV-001`
+- **Security Invariant**: Off-chain bitstream digest MUST strictly match on-chain root seal. Off-chain bytes altered ➔ verification fails.
+- **Execution Flow**:
+  1. Simulates a bit-flip alteration in the off-chain specimen payload.
+  2. Recomputes SHA-256 digest and compares against the immutable on-chain sealed root.
+  3. **`1. DETECTED`**: Bitstream mismatch identified (`482a...` ≠ `9a3f...`).
+  4. **`2. BLOCKED`**: Exhibit download prohibited; status flips to `✕ INTEGRITY COMPROMISED`.
+  5. **`3. AUDITED`**: `INTEGRITY_VIOLATION` event permanently recorded to the audit trail.
+
+#### Scenario 2: Unauthorized Custody Transfer
+- **Category**: Access & Governance Enforcement
+- **Target Specimen**: `EV-001` (LockBit 3.0 Encryptor) / `TR-010-CRITICAL`
+- **Security Invariant**: `CRITICAL` assets require explicit Application-Level Quorum Gate (2-of-3 Consensual Approval) sign-off before custody dispatch status transition is permitted.
+- **Execution Flow**:
+  1. Actor attempts custody dispatch on a Critical-tier exhibit with only 1 institutional approval.
+  2. Evaluates quorum threshold (`approvalCount: 1 < threshold: 2`).
+  3. **`1. DETECTED`**: Insufficient consortium quorum identified.
+  4. **`2. BLOCKED`**: Transfer dispatch locked in `PENDING_APPROVAL` state; physical transfer blocked.
+  5. **`3. AUDITED`**: Quorum deficit and blocked attempt recorded in the audit ledger.
+
+#### Scenario 3: Revoked Identity Operation
+- **Category**: Consortium Revocation Cascade
+- **Target Specimen**: `EV-002` (CobaltStrike C2 Capture)
+- **Security Invariant**: Revoked DID status terminates all downstream permissions across all nodes while preserving prior historical audit trail.
+- **Execution Flow**:
+  1. Triggers revocation cascade for an actor DID (`did:ethr:0xRevokedActor9999...`).
+  2. Actor attempts to access assets or initiate custody transfers.
+  3. **`1. DETECTED`**: Actor DID flagged as `REVOKED` in the consortium registry.
+  4. **`2. BLOCKED`**: Downstream roles zeroed, active leases voided, HTTP 403 Forbidden enforced.
+  5. **`3. AUDITED`**: `DID_REVOCATION_CASCADE` event recorded; historical signatures remain intact.
+
+#### Scenario 4: Expired Temporary Access
+- **Category**: Temporal Token Boundary
+- **Target Specimen**: `EV-003` (Domain Controller RAM Dump)
+- **Security Invariant**: Time-bound access leases automatically expire based on monotonically increasing timestamps without requiring manual revocation.
+- **Execution Flow**:
+  1. Simulates asset decryption request using a temporary lease whose expiration window has passed (`expiresAt < Date.now()`).
+  2. Verifies lease status against monotonic timestamp.
+  3. **`1. DETECTED`**: Temporal boundary exceeded (`lease.expiresAt < currentTimestamp`).
+  4. **`2. BLOCKED`**: Access token invalidated; exhibit decryption payload withheld (HTTP 403).
+  5. **`3. AUDITED`**: Expired token presentation recorded in audit logs.
+
+---
+
+### Platform Integrity & Governance Verification (TEST 1 – TEST 7)
+
+Follow this manual protocol to verify retention policies, legal holds, RBAC separation, and audit ledger filtering:
 
 ---
 
@@ -793,7 +1114,8 @@ HASHGUARD is engineered specifically to satisfy global digital evidence admissib
 ```plaintext
 Cyber-Evidence-Exchange/
 ├── contracts/                        # Smart Contracts Tier
-│   └── HASHGUARD.sol                 # Primary ERC-721 + AccessControl + DID Contract
+│   ├── HASHGUARD.sol                 # Primary ERC-721 + AccessControl + DID Contract (Active Deployed v1.0)
+│   └── HashGuard_v2_1_Proposal.sol   # v2.1 Proposal: Native Multisig Quorum Gate & Dynamic Leases
 ├── backend/                          # FastAPI Production Backend Tier
 │   ├── app/
 │   │   ├── api/routes/               # REST API Endpoints (auth, evidence, custody, transfers, ai...)
@@ -817,23 +1139,41 @@ Cyber-Evidence-Exchange/
 │   ├── assets/                       # Static media, icons & graphics
 │   ├── components/                   # Modular UI components
 │   │   ├── audit/                    # Audit ledger tables & export buttons
-│   │   ├── common/                   # Reusable badges, cards, modals, theme toggles
+│   │   ├── common/                   # TrustContinuityBanner, Badges, Modals, Theme toggles
 │   │   ├── custody/                  # Custody timeline & event inspectors
 │   │   ├── dashboard/                # SOC KPI cards, tamper banner, velocity charts
 │   │   ├── evidence/                 # Evidence tables, AI Threat Triage, upload modals
 │   │   ├── layout/                   # AppShell, Header, Sidebar, BootSequence
 │   │   ├── lineage/                  # React Flow DAG custom nodes & derivation modal
+│   │   ├── passport/                 # AssetTrustPassport (6 pillars, 3-level progressive disclosure)
 │   │   ├── transfer/                 # Transfer queues, mTLS handshake pipeline visualizer
 │   │   └── verification/             # 5-point verification checklist & certificate generator
 │   ├── context/                      # React Context providers (AppContext, ThemeContext)
 │   ├── contracts/                    # Deployed contract ABI definitions
 │   ├── mock/                         # Rich offline mock datasets for zero-dependency demo
-│   ├── pages/                        # View controllers (Dashboard, Evidence, Lineage, Settings...)
-│   ├── services/                     # Network clients (apiClient.js, blockchainClient.js)
+│   ├── pages/                        # View controllers
+│   │   ├── AccessGovernance/         # Adaptive Asset Authorization & Sensitivity Tiers (/access-governance)
+│   │   ├── Architecture/             # Interactive System Architecture Explorer (/architecture)
+│   │   ├── Audit/                    # Tamper-Evident Audit Logs Ledger (/audit)
+│   │   ├── Custody/                  # Global Custody Explorer (/custody)
+│   │   ├── Dashboard/                # Forensic SOC Operations Dashboard (/dashboard)
+│   │   ├── Evidence/                 # Evidence Repository (/evidence)
+│   │   ├── EvidenceDetails/          # Deep Forensic Dossier Inspection (/evidence/:id)
+│   │   ├── Landing/                  # Platform Landing & Showcase (/landing)
+│   │   ├── Lineage/                  # Evidence Lineage DAG (/lineage)
+│   │   ├── Passport/                 # Asset Trust Passport View (/passport, /passport/:id)
+│   │   ├── Retention/                # Lifecycle Retention & Legal Hold (/retention)
+│   │   ├── SecurityLab/              # Deterministic Adversarial Testing Suite (/security-lab)
+│   │   ├── Settings/                 # Identity, Network RPC & RBAC Settings (/settings)
+│   │   ├── Transfers/                # Cross-Agency Transfer Pipeline (/transfers)
+│   │   └── Verification/             # Zero-Trust Auditor Suite (/verification)
+│   ├── services/                     # Network clients (evidenceService, transferService, auditService...)
 │   ├── utils/                        # Forensic hashing, formatting & crypto helpers
 │   ├── App.jsx                       # Route definitions & sandbox router
 │   ├── index.css                     # Tailwind CSS directives & SOC styling
 │   └── main.jsx                      # React DOM mount point
+├── test_hashguard.py                 # Smart contract unit test runner (5/5 tests)
+├── test_integration.py               # Multi-layer integration test runner (14/14 tests)
 ├── docs/                             # Technical Documentation
 │   └── API_CONTRACT.md               # Frontend-Backend REST API Contract Specification
 ├── public/                           # Static assets served at root
