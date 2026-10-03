@@ -16,7 +16,11 @@ import {
   Menu,
   Wallet,
   LogOut,
-  Clock
+  Clock,
+  BadgeCheck,
+  FlaskConical,
+  KeyRound,
+  Layers
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { Logo } from '../common/Logo';
@@ -27,16 +31,18 @@ export const Sidebar = ({ isMobileOpen, setMobileOpen }) => {
 
   const navigationGroups = [
     {
-      label: 'Overview',
+      label: 'Core Trust Hub',
       items: [
         { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
+        { name: 'Trust Passport', path: '/passport', icon: BadgeCheck },
+        { name: 'Security Lab', path: '/security-lab', icon: FlaskConical },
       ]
     },
     {
-      label: 'Digital Assets',
+      label: 'Assets & Access Governance',
       items: [
         { name: 'Digital Assets', path: '/evidence', icon: ShieldAlert },
-        // Evidence Details is omitted from sidebar to avoid clutter, accessed via list
+        { name: 'Access & Governance', path: '/access-governance', icon: KeyRound },
       ]
     },
     {
@@ -44,21 +50,22 @@ export const Sidebar = ({ isMobileOpen, setMobileOpen }) => {
       items: [
         { name: 'Transfers', path: '/transfers', icon: ArrowLeftRight },
         { name: 'Custody', path: '/custody', icon: History },
-        { name: 'Lineage', path: '/lineage', icon: GitFork },
+        { name: 'Lineage DAG', path: '/lineage', icon: GitFork },
       ]
     },
     {
-      label: 'Trust & Verification',
+      label: 'Verification & Ledger',
       items: [
         { name: 'Verification', path: '/verification', icon: ShieldCheck, alert: isTamperSimulated },
         { name: 'Audit Logs', path: '/audit', icon: FileSpreadsheet },
       ]
     },
     {
-      label: 'Administration',
+      label: 'Identity & Platform',
       items: [
-        { name: 'Retention', icon: Clock, path: '/retention' },
-        { name: 'Settings', icon: Settings, path: '/settings' }
+        { name: 'Identity & Settings', path: '/settings', icon: Settings },
+        { name: 'System Architecture', path: '/architecture', icon: Layers },
+        { name: 'Retention', path: '/retention', icon: Clock },
       ]
     }
   ];

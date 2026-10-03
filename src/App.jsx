@@ -14,6 +14,9 @@ import { RetentionPage } from './pages/Retention/RetentionPage';
 import { LoginPage } from './pages/LoginPage';
 import { LandingPage } from './pages/Landing/LandingPage';
 import { ArchitecturePage } from './pages/Architecture/ArchitecturePage';
+import { AccessGovernancePage } from './pages/AccessGovernance/AccessGovernancePage';
+import { PassportPage } from './pages/Passport/PassportPage';
+import { SecurityLabPage } from './pages/SecurityLab/SecurityLabPage';
 import { BootSequence } from './components/layout/BootSequence';
 import { useApp } from './context/AppContext';
 
@@ -84,6 +87,10 @@ export function App() {
             <Route path="/custody" element={<ProtectedRoute element={<CustodyPage />} pathId="custody" />} />
             <Route path="/lineage" element={<ProtectedRoute element={<LineagePage />} pathId="lineage" />} />
             <Route path="/verification" element={<ProtectedRoute element={<VerificationPage />} pathId="verification" />} />
+            <Route path="/passport" element={<ProtectedRoute element={<PassportPage />} pathId="passport" />} />
+            <Route path="/passport/:id" element={<ProtectedRoute element={<PassportPage />} pathId="passport" />} />
+            <Route path="/security-lab" element={<ProtectedRoute element={<SecurityLabPage />} pathId="security-lab" />} />
+            <Route path="/access-governance" element={<ProtectedRoute element={<AccessGovernancePage />} pathId="access-governance" />} />
             <Route path="/audit" element={<ProtectedRoute element={<AuditPage />} pathId="audit" />} />
             <Route path="/retention" element={<ProtectedRoute element={<RetentionPage />} pathId="retention" />} />
             <Route path="/settings" element={<ProtectedRoute element={<SettingsPage />} pathId="settings" />} />
