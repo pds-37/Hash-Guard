@@ -344,194 +344,307 @@ export const TrustModelSection = ({ onSelectNode }) => {
       </div>
 
       {/* ─── 3. THE MAIN ARCHITECTURE MAP (CENTERPIECE DIAGRAM) ─── */}
-      <div className="p-6 sm:p-10 rounded-3xl bg-white border border-slate-200 shadow-sm dark:bg-[#02050f]/90 dark:border-cyan-500/30 dark:shadow-[0_0_50px_rgba(6,182,212,0.08)]">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-slate-200 dark:border-slate-800 gap-4 mb-8">
+      <div className="p-6 sm:p-8 rounded-2xl bg-white dark:bg-[#070e1c] border-2 border-slate-300 dark:border-slate-800 shadow-premium">
+        {/* Top Technical Docket Bar */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-5 border-b-2 border-dashed border-slate-300 dark:border-slate-800 gap-4 mb-8">
           <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="w-2 h-2 rounded-full bg-blue-600 dark:bg-cyan-400 animate-pulse" />
-              <span className="text-[10px] font-mono font-bold text-blue-700 dark:text-cyan-400 uppercase tracking-widest">
-                SYSTEM TOPOLOGY
+            <div className="flex items-center gap-2 mb-1.5">
+              <span className="w-2.5 h-2.5 rounded-full bg-blue-700 dark:bg-cyan-400 animate-pulse" />
+              <span className="text-[11px] font-mono font-bold text-blue-900 dark:text-cyan-400 uppercase tracking-widest">
+                SYSTEM ARCHITECTURE RUNTIME TOPOLOGY
               </span>
             </div>
             <h3 className="text-xl sm:text-2xl font-mono font-black text-slate-950 dark:text-white">
               MAIN ARCHITECTURE MAP
             </h3>
             <p className="text-xs text-slate-600 dark:text-slate-400 font-sans mt-0.5">
-              Interactive topology map. Click any node to inspect its architectural purpose and isolation properties.
+              Interactive topology map. Click any node to inspect its cryptographic enforcement properties and isolation boundaries.
             </p>
           </div>
-          <span className="text-xs font-mono text-slate-600 dark:text-slate-400">
-            ROOT: <strong className="text-blue-700 dark:text-cyan-300 font-bold">HASHGUARD</strong>
-          </span>
+          <div className="flex items-center gap-2">
+            <span className="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-xs font-mono font-bold text-slate-800 dark:text-slate-200 shadow-2xs">
+              TOPOLOGY ROOT: <strong className="text-blue-700 dark:text-cyan-400">HASHGUARD.sol</strong>
+            </span>
+          </div>
         </div>
 
-        {/* Visual Diagram Tree */}
-        <div className="flex flex-col items-center max-w-4xl mx-auto space-y-6 font-mono">
+        {/* Visual Diagram Tree with Explicit Connecting Conduits */}
+        <div className="flex flex-col items-center max-w-4xl mx-auto font-mono">
           {/* Level 0: HashGuard Core Header */}
-          <div className="px-6 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white font-bold text-sm tracking-widest shadow-sm dark:from-cyan-950 dark:via-slate-900 dark:to-blue-950 dark:border-cyan-400/80 dark:text-cyan-300 dark:shadow-[0_0_20px_rgba(6,182,212,0.3)]">
-            🛡️ HASHGUARD VERIFIABLE TRUST CORE
+          <div className="px-7 py-3 rounded-xl bg-slate-950 border-2 border-slate-800 text-white font-bold text-sm tracking-widest shadow-md flex items-center gap-2.5 dark:bg-cyan-950 dark:border-cyan-400 dark:text-cyan-300">
+            <Shield className="w-4 h-4 text-cyan-400" />
+            <span>HASHGUARD VERIFIABLE TRUST CORE</span>
           </div>
 
-          {/* Vertical Trunk Line */}
-          <div className="w-px h-6 bg-slate-300 dark:bg-cyan-500/50" />
+          {/* Conduit: Core to Level 1 Bus */}
+          <div className="flex flex-col items-center w-full">
+            <div className="w-1 h-6 bg-slate-400 dark:bg-cyan-500 rounded-full" />
+            {/* Horizontal Bus Rail */}
+            <div className="w-5/6 max-w-2xl h-0.5 bg-slate-400 dark:bg-cyan-500 relative flex justify-between items-center">
+              <div className="w-2.5 h-2.5 -mt-1 bg-blue-700 dark:bg-cyan-400 rounded-full border-2 border-white dark:border-black absolute left-0" />
+              <div className="w-2.5 h-2.5 -mt-1 bg-blue-700 dark:bg-cyan-400 rounded-full border-2 border-white dark:border-black absolute left-1/2 -translate-x-1/2" />
+              <div className="w-2.5 h-2.5 -mt-1 bg-blue-700 dark:bg-cyan-400 rounded-full border-2 border-white dark:border-black absolute right-0" />
+            </div>
+            {/* Drop lines with arrow indicators */}
+            <div className="w-5/6 max-w-2xl flex justify-between text-slate-500 dark:text-cyan-400 text-xs font-bold leading-none mb-1">
+              <span>&darr;</span>
+              <span>&darr;</span>
+              <span>&darr;</span>
+            </div>
+          </div>
 
           {/* Level 1: Triad (Identity, Authorization, Asset) */}
           <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4">
             <button
               onClick={() => setSelectedMapNode('IDENTITY')}
-              className={`p-4 rounded-xl border text-center transition-all cursor-pointer ${
+              className={`p-4 rounded-xl border-2 text-left transition-all cursor-pointer relative shadow-xs hover:shadow-md ${
                 selectedMapNode === 'IDENTITY'
-                  ? 'bg-blue-50/90 border-blue-600 shadow-sm ring-1 ring-blue-600 dark:bg-blue-950/50 dark:border-blue-400 dark:shadow-[0_0_20px_rgba(59,130,246,0.3)] dark:ring-blue-400'
-                  : 'bg-slate-50 border-slate-200/90 hover:bg-white hover:border-slate-300 shadow-2xs dark:bg-slate-950/80 dark:border-slate-800'
+                  ? 'bg-blue-50/95 border-blue-600 ring-2 ring-blue-600/30 dark:bg-blue-950/60 dark:border-blue-400'
+                  : 'bg-white border-slate-300 hover:border-slate-400 dark:bg-slate-900/90 dark:border-slate-700'
               }`}
             >
-              <span className="text-[10px] text-blue-700 dark:text-blue-400 font-bold block uppercase tracking-wider">WHO?</span>
-              <span className="text-sm font-bold text-slate-950 dark:text-white block mt-0.5">IDENTITY</span>
-              <span className="text-[11px] text-slate-600 dark:text-slate-400 block mt-1">W3C DID (did:ethr)</span>
+              <div className="flex items-center justify-between pb-1.5 border-b border-slate-200 dark:border-slate-800 mb-2">
+                <span className="text-[10px] text-blue-700 dark:text-blue-400 font-bold uppercase tracking-wider">
+                  [ACTOR] WHO?
+                </span>
+                <span className="text-[9px] px-1.5 py-0.5 rounded bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300 font-bold">
+                  W3C DID
+                </span>
+              </div>
+              <span className="text-sm font-black text-slate-950 dark:text-white block">
+                IDENTITY
+              </span>
+              <span className="text-[11px] text-slate-600 dark:text-slate-400 block mt-0.5">
+                did:ethr Registry (secp256k1)
+              </span>
             </button>
 
             <button
               onClick={() => setSelectedMapNode('AUTHORIZATION')}
-              className={`p-4 rounded-xl border text-center transition-all cursor-pointer ${
+              className={`p-4 rounded-xl border-2 text-left transition-all cursor-pointer relative shadow-xs hover:shadow-md ${
                 selectedMapNode === 'AUTHORIZATION'
-                  ? 'bg-purple-50/90 border-purple-600 shadow-sm ring-1 ring-purple-600 dark:bg-purple-950/50 dark:border-purple-400 dark:shadow-[0_0_20px_rgba(168,85,247,0.3)] dark:ring-purple-400'
-                  : 'bg-slate-50 border-slate-200/90 hover:bg-white hover:border-slate-300 shadow-2xs dark:bg-slate-950/80 dark:border-slate-800'
+                  ? 'bg-purple-50/95 border-purple-600 ring-2 ring-purple-600/30 dark:bg-purple-950/60 dark:border-purple-400'
+                  : 'bg-white border-slate-300 hover:border-slate-400 dark:bg-slate-900/90 dark:border-slate-700'
               }`}
             >
-              <span className="text-[10px] text-purple-700 dark:text-purple-400 font-bold block uppercase tracking-wider">PERMITTED?</span>
-              <span className="text-sm font-bold text-slate-950 dark:text-white block mt-0.5">AUTHORIZATION</span>
-              <span className="text-[11px] text-slate-600 dark:text-slate-400 block mt-1">Role &amp; Quorum Policy</span>
+              <div className="flex items-center justify-between pb-1.5 border-b border-slate-200 dark:border-slate-800 mb-2">
+                <span className="text-[10px] text-purple-700 dark:text-purple-400 font-bold uppercase tracking-wider">
+                  [POLICY] PERMITTED?
+                </span>
+                <span className="text-[9px] px-1.5 py-0.5 rounded bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300 font-bold">
+                  RBAC
+                </span>
+              </div>
+              <span className="text-sm font-black text-slate-950 dark:text-white block">
+                AUTHORIZATION
+              </span>
+              <span className="text-[11px] text-slate-600 dark:text-slate-400 block mt-0.5">
+                Consortium Role &amp; Quorum Gate
+              </span>
             </button>
 
             <button
               onClick={() => setSelectedMapNode('ASSET')}
-              className={`p-4 rounded-xl border text-center transition-all cursor-pointer ${
+              className={`p-4 rounded-xl border-2 text-left transition-all cursor-pointer relative shadow-xs hover:shadow-md ${
                 selectedMapNode === 'ASSET'
-                  ? 'bg-indigo-50/90 border-indigo-600 shadow-sm ring-1 ring-indigo-600 dark:bg-indigo-950/50 dark:border-indigo-400 dark:shadow-[0_0_20px_rgba(99,102,241,0.3)] dark:ring-indigo-400'
-                  : 'bg-slate-50 border-slate-200/90 hover:bg-white hover:border-slate-300 shadow-2xs dark:bg-slate-950/80 dark:border-slate-800'
+                  ? 'bg-indigo-50/95 border-indigo-600 ring-2 ring-indigo-600/30 dark:bg-indigo-950/60 dark:border-indigo-400'
+                  : 'bg-white border-slate-300 hover:border-slate-400 dark:bg-slate-900/90 dark:border-slate-700'
               }`}
             >
-              <span className="text-[10px] text-indigo-700 dark:text-indigo-400 font-bold block uppercase tracking-wider">WHAT ASSET?</span>
-              <span className="text-sm font-bold text-slate-950 dark:text-white block mt-0.5">ASSET</span>
-              <span className="text-[11px] text-slate-600 dark:text-slate-400 block mt-1">Exhibit ID &amp; Sensitivity</span>
+              <div className="flex items-center justify-between pb-1.5 border-b border-slate-200 dark:border-slate-800 mb-2">
+                <span className="text-[10px] text-indigo-700 dark:text-indigo-400 font-bold uppercase tracking-wider">
+                  [ENTITY] WHAT ASSET?
+                </span>
+                <span className="text-[9px] px-1.5 py-0.5 rounded bg-indigo-100 text-indigo-800 dark:bg-indigo-950 dark:text-indigo-300 font-bold">
+                  ERC-721
+                </span>
+              </div>
+              <span className="text-sm font-black text-slate-950 dark:text-white block">
+                DIGITAL ASSET
+              </span>
+              <span className="text-[11px] text-slate-600 dark:text-slate-400 block mt-0.5">
+                Exhibit ID &amp; Sensitivity Tier
+              </span>
             </button>
           </div>
 
-          {/* Triad Convergence Connector */}
-          <div className="w-px h-6 bg-slate-300 dark:bg-cyan-500/50" />
+          {/* Conduit: Convergence into Level 2 Proof */}
+          <div className="flex flex-col items-center w-full my-1">
+            <div className="w-5/6 max-w-2xl h-0.5 bg-slate-400 dark:bg-cyan-500 relative flex justify-between items-center">
+              <div className="w-2.5 h-2.5 -mt-1 bg-blue-700 dark:bg-cyan-400 rounded-full border-2 border-white dark:border-black absolute left-0" />
+              <div className="w-2.5 h-2.5 -mt-1 bg-blue-700 dark:bg-cyan-400 rounded-full border-2 border-white dark:border-black absolute left-1/2 -translate-x-1/2" />
+              <div className="w-2.5 h-2.5 -mt-1 bg-blue-700 dark:bg-cyan-400 rounded-full border-2 border-white dark:border-black absolute right-0" />
+            </div>
+            <div className="w-1 h-5 bg-slate-400 dark:bg-cyan-500 rounded-full" />
+            <span className="text-slate-500 dark:text-cyan-400 text-xs font-bold leading-none">&darr;</span>
+          </div>
 
-          {/* Level 2: Cryptographic Proof (SHA-256) */}
+          {/* Level 2: Cryptographic Proof (SHA-256 Anchor Box) */}
           <button
             onClick={() => setSelectedMapNode('PROOF')}
-            className={`w-full max-w-md p-4 rounded-xl border text-center transition-all cursor-pointer ${
+            className={`w-full max-w-lg p-4 rounded-xl border-2 text-center transition-all cursor-pointer relative shadow-sm hover:shadow-md ${
               selectedMapNode === 'PROOF'
-                ? 'bg-cyan-50/90 border-cyan-600 shadow-sm ring-1 ring-cyan-600 dark:bg-cyan-950/60 dark:border-cyan-400 dark:shadow-[0_0_25px_rgba(6,182,212,0.3)] dark:ring-cyan-400'
-                : 'bg-slate-50 border-slate-200/90 hover:bg-white hover:border-slate-300 shadow-2xs dark:bg-slate-950/80 dark:border-slate-800'
+                ? 'bg-cyan-50/95 border-cyan-600 ring-2 ring-cyan-600/30 dark:bg-cyan-950/60 dark:border-cyan-400'
+                : 'bg-white border-cyan-500/60 hover:border-cyan-600 dark:bg-slate-900/90 dark:border-cyan-500/40'
             }`}
           >
-            <span className="text-[10px] text-cyan-800 dark:text-cyan-400 font-bold block uppercase tracking-wider">ORIGINAL STATE?</span>
-            <span className="text-sm font-bold text-slate-950 dark:text-white block mt-0.5">CRYPTOGRAPHIC PROOF</span>
-            <span className="text-[11px] text-cyan-900 dark:text-cyan-300 block mt-1 font-semibold">SHA-256 Deterministic Bitstream Fingerprint</span>
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded bg-cyan-100 text-cyan-900 border border-cyan-200 dark:bg-cyan-950 dark:text-cyan-300 dark:border-cyan-500/30 text-[10px] font-bold uppercase mb-1">
+              <Fingerprint className="w-3.5 h-3.5 text-cyan-700 dark:text-cyan-400" />
+              <span>ORIGINAL STATE? &bull; FIPS 180-4 CRYPTOGRAPHIC ROOT</span>
+            </div>
+            <span className="text-base font-black text-slate-950 dark:text-white block mt-0.5">
+              CRYPTOGRAPHIC PROOF (SHA-256)
+            </span>
+            <span className="text-xs text-cyan-900 dark:text-cyan-300 block mt-1 font-semibold">
+              Deterministic Bitstream Fingerprint &bull; 32-Byte Immutable contentHash
+            </span>
           </button>
 
-          {/* Branching to Off-Chain vs On-Chain */}
-          <div className="w-px h-6 bg-slate-300 dark:bg-cyan-500/50" />
+          {/* Conduit: Proof to Off-Chain/On-Chain Split */}
+          <div className="flex flex-col items-center w-full my-1">
+            <span className="text-slate-500 dark:text-cyan-400 text-xs font-bold leading-none">&darr;</span>
+            <div className="w-1 h-5 bg-slate-400 dark:bg-cyan-500 rounded-full" />
+            <div className="w-3/4 max-w-xl h-0.5 bg-slate-400 dark:bg-cyan-500 relative flex justify-between items-center">
+              <div className="w-2.5 h-2.5 -mt-1 bg-indigo-700 dark:bg-indigo-400 rounded-full border-2 border-white dark:border-black absolute left-0" />
+              <div className="w-2.5 h-2.5 -mt-1 bg-amber-700 dark:bg-amber-400 rounded-full border-2 border-white dark:border-black absolute right-0" />
+            </div>
+            <div className="w-3/4 max-w-xl flex justify-between text-slate-500 dark:text-cyan-400 text-xs font-bold leading-none mb-1">
+              <span>&darr;</span>
+              <span>&darr;</span>
+            </div>
+          </div>
 
           {/* Level 3: Off-Chain Data vs On-Chain Trust Split */}
           <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
             <button
               onClick={() => setSelectedMapNode('OFFCHAIN')}
-              className={`p-4 rounded-xl border text-left transition-all cursor-pointer ${
+              className={`p-4 rounded-xl border-2 text-left transition-all cursor-pointer relative shadow-xs hover:shadow-md ${
                 selectedMapNode === 'OFFCHAIN'
-                  ? 'bg-indigo-50/90 border-indigo-600 shadow-sm ring-1 ring-indigo-600 dark:bg-indigo-950/50 dark:border-indigo-400 dark:shadow-[0_0_20px_rgba(99,102,241,0.3)] dark:ring-indigo-400'
-                  : 'bg-slate-50 border-slate-200/90 hover:bg-white hover:border-slate-300 shadow-2xs dark:bg-slate-950/80 dark:border-slate-800'
+                  ? 'bg-indigo-50/95 border-indigo-600 ring-2 ring-indigo-600/30 dark:bg-indigo-950/60 dark:border-indigo-400'
+                  : 'bg-white border-slate-300 hover:border-slate-400 dark:bg-slate-900/90 dark:border-slate-700'
               }`}
             >
-              <span className="text-[10px] text-indigo-700 dark:text-indigo-400 font-bold block uppercase tracking-wider">CONFIDENTIAL DATA</span>
-              <span className="text-sm font-bold text-slate-950 dark:text-white block mt-0.5">OFF-CHAIN STORAGE</span>
-              <span className="text-[11px] text-slate-600 dark:text-slate-400 block mt-1">Raw Evidence • MinIO S3 • AES-256-GCM</span>
+              <div className="flex items-center justify-between pb-1.5 border-b border-slate-200 dark:border-slate-800 mb-2">
+                <span className="text-[10px] text-indigo-700 dark:text-indigo-400 font-bold uppercase tracking-wider">
+                  ZONE 01 &bull; ISOLATED ENCLAVE
+                </span>
+                <span className="text-[9px] px-1.5 py-0.5 rounded bg-indigo-100 text-indigo-800 dark:bg-indigo-950 dark:text-indigo-300 font-bold">
+                  AES-256-GCM
+                </span>
+              </div>
+              <span className="text-sm font-black text-slate-950 dark:text-white block">
+                OFF-CHAIN CONFIDENTIAL STORAGE
+              </span>
+              <span className="text-[11px] text-slate-600 dark:text-slate-400 block mt-0.5">
+                Raw Forensic Binaries &bull; MinIO S3 &bull; Zero Raw Bytes On-Chain
+              </span>
             </button>
 
             <button
               onClick={() => setSelectedMapNode('ONCHAIN')}
-              className={`p-4 rounded-xl border text-left transition-all cursor-pointer ${
+              className={`p-4 rounded-xl border-2 text-left transition-all cursor-pointer relative shadow-xs hover:shadow-md ${
                 selectedMapNode === 'ONCHAIN'
-                  ? 'bg-amber-50/90 border-amber-600 shadow-sm ring-1 ring-amber-600 dark:bg-amber-950/50 dark:border-amber-400 dark:shadow-[0_0_20px_rgba(245,158,11,0.3)] dark:ring-amber-400'
-                  : 'bg-slate-50 border-slate-200/90 hover:bg-white hover:border-slate-300 shadow-2xs dark:bg-slate-950/80 dark:border-slate-800'
+                  ? 'bg-amber-50/95 border-amber-600 ring-2 ring-amber-600/30 dark:bg-amber-950/60 dark:border-amber-400'
+                  : 'bg-white border-slate-300 hover:border-slate-400 dark:bg-slate-900/90 dark:border-slate-700'
               }`}
             >
-              <span className="text-[10px] text-amber-800 dark:text-amber-400 font-bold block uppercase tracking-wider">TRUST ANCHOR</span>
-              <span className="text-sm font-bold text-slate-950 dark:text-white block mt-0.5">ON-CHAIN STATE</span>
-              <span className="text-[11px] text-slate-600 dark:text-slate-400 block mt-1">Proofs • Tokens • Events • Sepolia/Besu</span>
+              <div className="flex items-center justify-between pb-1.5 border-b border-slate-200 dark:border-slate-800 mb-2">
+                <span className="text-[10px] text-amber-800 dark:text-amber-400 font-bold uppercase tracking-wider">
+                  ZONE 02 &bull; CONSENSUS ANCHOR
+                </span>
+                <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-100 text-amber-900 dark:bg-amber-950 dark:text-amber-300 font-bold">
+                  ETHEREUM / BESU
+                </span>
+              </div>
+              <span className="text-sm font-black text-slate-950 dark:text-white block">
+                ON-CHAIN TRUST STATE
+              </span>
+              <span className="text-[11px] text-slate-600 dark:text-slate-400 block mt-0.5">
+                Proofs &bull; ERC-721 Tokens &bull; Custody Handovers &bull; Block Event Logs
+              </span>
             </button>
           </div>
 
-          {/* Downward Connector to Lifecycle Phases */}
-          <div className="w-px h-6 bg-slate-300 dark:bg-cyan-500/50" />
+          {/* Conduit: Split to Lifecycle Pillars */}
+          <div className="flex flex-col items-center w-full my-1">
+            <div className="w-1 h-5 bg-slate-400 dark:bg-cyan-500 rounded-full" />
+            <div className="w-full max-w-3xl h-0.5 bg-slate-400 dark:bg-cyan-500 relative flex justify-between items-center">
+              <div className="w-2.5 h-2.5 -mt-1 bg-amber-700 dark:bg-amber-400 rounded-full border-2 border-white dark:border-black absolute left-[12%]" />
+              <div className="w-2.5 h-2.5 -mt-1 bg-emerald-700 dark:bg-emerald-400 rounded-full border-2 border-white dark:border-black absolute left-[37%]" />
+              <div className="w-2.5 h-2.5 -mt-1 bg-sky-700 dark:bg-sky-400 rounded-full border-2 border-white dark:border-black absolute left-[62%]" />
+              <div className="w-2.5 h-2.5 -mt-1 bg-teal-700 dark:bg-teal-400 rounded-full border-2 border-white dark:border-black absolute left-[87%]" />
+            </div>
+            <div className="w-full max-w-3xl flex justify-around text-slate-500 dark:text-cyan-400 text-xs font-bold leading-none mb-1">
+              <span>&darr;</span>
+              <span>&darr;</span>
+              <span>&darr;</span>
+              <span>&darr;</span>
+            </div>
+          </div>
 
-          {/* Level 4: Downstream Trust Verification Chain */}
-          <div className="w-full grid grid-cols-1 sm:grid-cols-4 gap-3">
+          {/* Level 4: Downstream Trust Verification Chain (4 Pillars) */}
+          <div className="w-full grid grid-cols-2 sm:grid-cols-4 gap-3">
             <button
               onClick={() => setSelectedMapNode('CUSTODY')}
-              className={`p-3.5 rounded-xl border text-center transition-all cursor-pointer ${
+              className={`p-3 rounded-xl border-2 text-left transition-all cursor-pointer shadow-xs hover:shadow-md ${
                 selectedMapNode === 'CUSTODY'
-                  ? 'bg-amber-50/90 border-amber-600 ring-1 ring-amber-600 shadow-sm dark:bg-amber-950/50 dark:border-amber-400 dark:ring-amber-400'
-                  : 'bg-slate-50 border-slate-200/90 hover:bg-white hover:border-slate-300 shadow-2xs dark:bg-slate-950/80 dark:border-slate-800'
+                  ? 'bg-amber-50/95 border-amber-600 ring-2 ring-amber-600/30 dark:bg-amber-950/60 dark:border-amber-400'
+                  : 'bg-white border-slate-300 hover:border-slate-400 dark:bg-slate-900 dark:border-slate-700'
               }`}
             >
               <span className="text-[10px] text-amber-800 dark:text-amber-400 font-bold block uppercase">WHO HANDLED?</span>
-              <span className="text-xs font-bold text-slate-950 dark:text-white block mt-0.5">CUSTODY</span>
+              <span className="text-xs font-black text-slate-950 dark:text-white block mt-0.5">CUSTODY</span>
               <span className="text-[10px] text-slate-600 dark:text-slate-400 block mt-0.5">Dual-Auth Transfers</span>
             </button>
 
             <button
               onClick={() => setSelectedMapNode('VERIFICATION')}
-              className={`p-3.5 rounded-xl border text-center transition-all cursor-pointer ${
+              className={`p-3 rounded-xl border-2 text-left transition-all cursor-pointer shadow-xs hover:shadow-md ${
                 selectedMapNode === 'VERIFICATION'
-                  ? 'bg-emerald-50/90 border-emerald-600 ring-1 ring-emerald-600 shadow-sm dark:bg-emerald-950/50 dark:border-emerald-400 dark:ring-emerald-400'
-                  : 'bg-slate-50 border-slate-200/90 hover:bg-white hover:border-slate-300 shadow-2xs dark:bg-slate-950/80 dark:border-slate-800'
+                  ? 'bg-emerald-50/95 border-emerald-600 ring-2 ring-emerald-600/30 dark:bg-emerald-950/60 dark:border-emerald-400'
+                  : 'bg-white border-slate-300 hover:border-slate-400 dark:bg-slate-900 dark:border-slate-700'
               }`}
             >
               <span className="text-[10px] text-emerald-800 dark:text-emerald-400 font-bold block uppercase">DID IT CHANGE?</span>
-              <span className="text-xs font-bold text-slate-950 dark:text-white block mt-0.5">VERIFICATION</span>
+              <span className="text-xs font-black text-slate-950 dark:text-white block mt-0.5">VERIFICATION</span>
               <span className="text-[10px] text-slate-600 dark:text-slate-400 block mt-0.5">Zero-Trust Match</span>
             </button>
 
             <button
               onClick={() => setSelectedMapNode('PROVENANCE')}
-              className={`p-3.5 rounded-xl border text-center transition-all cursor-pointer ${
+              className={`p-3 rounded-xl border-2 text-left transition-all cursor-pointer shadow-xs hover:shadow-md ${
                 selectedMapNode === 'PROVENANCE'
-                  ? 'bg-sky-50/90 border-sky-600 ring-1 ring-sky-600 shadow-sm dark:bg-sky-950/50 dark:border-sky-400 dark:ring-sky-400'
-                  : 'bg-slate-50 border-slate-200/90 hover:bg-white hover:border-slate-300 shadow-2xs dark:bg-slate-950/80 dark:border-slate-800'
+                  ? 'bg-sky-50/95 border-sky-600 ring-2 ring-sky-600/30 dark:bg-sky-950/60 dark:border-sky-400'
+                  : 'bg-white border-slate-300 hover:border-slate-400 dark:bg-slate-900 dark:border-slate-700'
               }`}
             >
               <span className="text-[10px] text-sky-800 dark:text-sky-400 font-bold block uppercase">WHERE FROM?</span>
-              <span className="text-xs font-bold text-slate-950 dark:text-white block mt-0.5">PROVENANCE</span>
-              <span className="text-[10px] text-slate-600 dark:text-slate-400 block mt-0.5">Lineage DAG</span>
+              <span className="text-xs font-black text-slate-950 dark:text-white block mt-0.5">PROVENANCE</span>
+              <span className="text-[10px] text-slate-600 dark:text-slate-400 block mt-0.5">Lineage DAG Tree</span>
             </button>
 
             <button
               onClick={() => setSelectedMapNode('AUDIT')}
-              className={`p-3.5 rounded-xl border text-center transition-all cursor-pointer ${
+              className={`p-3 rounded-xl border-2 text-left transition-all cursor-pointer shadow-xs hover:shadow-md ${
                 selectedMapNode === 'AUDIT'
-                  ? 'bg-teal-50/90 border-teal-600 ring-1 ring-teal-600 shadow-sm dark:bg-teal-950/50 dark:border-teal-400 dark:ring-teal-400'
-                  : 'bg-slate-50 border-slate-200/90 hover:bg-white hover:border-slate-300 shadow-2xs dark:bg-slate-950/80 dark:border-slate-800'
+                  ? 'bg-teal-50/95 border-teal-600 ring-2 ring-teal-600/30 dark:bg-teal-950/60 dark:border-teal-400'
+                  : 'bg-white border-slate-300 hover:border-slate-400 dark:bg-slate-900 dark:border-slate-700'
               }`}
             >
               <span className="text-[10px] text-teal-800 dark:text-teal-400 font-bold block uppercase">WHAT HAPPENED?</span>
-              <span className="text-xs font-bold text-slate-950 dark:text-white block mt-0.5">AUDIT</span>
-              <span className="text-[10px] text-slate-600 dark:text-slate-400 block mt-0.5">Tamper-Evident Trail</span>
+              <span className="text-xs font-black text-slate-950 dark:text-white block mt-0.5">AUDIT TRAIL</span>
+              <span className="text-[10px] text-slate-600 dark:text-slate-400 block mt-0.5">Tamper-Evident Stream</span>
             </button>
           </div>
 
           {/* Map Node Inspector Drawer */}
-          <div className="w-full mt-6 p-4 rounded-xl bg-slate-50 border border-slate-200 dark:bg-slate-950 dark:border-slate-800 flex items-start gap-3 text-left">
+          <div className="w-full mt-6 p-4 rounded-xl bg-slate-50 dark:bg-slate-950 border-2 border-slate-300 dark:border-slate-800 flex items-start gap-3 text-left shadow-xs">
             <Info className="w-4 h-4 text-blue-700 dark:text-cyan-400 shrink-0 mt-0.5" />
             <div>
               <span className="text-xs font-mono font-bold text-slate-950 dark:text-white uppercase">
-                {currentMap.title} &mdash; <span className="text-blue-700 dark:text-cyan-400">{currentMap.sub}</span>
+                NODE SPECIFICATION &mdash; {currentMap.title} (<span className="text-blue-700 dark:text-cyan-400">{currentMap.sub}</span>)
               </span>
-              <p className="text-xs font-sans text-slate-600 dark:text-slate-300 mt-0.5">
+              <p className="text-xs font-sans text-slate-700 dark:text-slate-300 mt-0.5">
                 {currentMap.desc}
               </p>
             </div>

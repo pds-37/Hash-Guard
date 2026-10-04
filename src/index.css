@@ -5,24 +5,24 @@
 @layer base {
   :root {
     /* Legacy variables for backwards compatibility */
-    --background: 40 22% 95%;          /* #f6f4ee clean luxury warm alabaster */
+    --background: 40 20% 91%;          /* #efeadf rich luxury warm linen */
     --foreground: 222 47% 11%;         /* #0f172a obsidian ink */
-    --card: 0 0% 100%;                 /* #ffffff pure white card */
+    --card: 40 40% 98%;                /* #fcfbf7 crisp porcelain card */
     --card-foreground: 222 47% 11%;    /* #0f172a */
-    --popover: 0 0% 100%;
+    --popover: 40 40% 98%;
     --popover-foreground: 222 47% 11%;
     --primary: 218 80% 25%;            /* #0d3674 deep navy */
     --primary-foreground: 0 0% 100%;
-    --secondary: 40 20% 92%;           /* #eeeae0 subtle tray */
+    --secondary: 40 20% 88%;           /* #e5dfd2 subtle tray */
     --secondary-foreground: 222 47% 11%;
-    --muted: 40 20% 92%;               /* #eeeae0 */
-    --muted-foreground: 215 18% 42%;   /* #576479 sharp slate */
-    --accent: 40 20% 92%;
+    --muted: 40 20% 88%;               /* #e5dfd2 */
+    --muted-foreground: 215 18% 38%;   /* #4f5b6e sharp slate */
+    --accent: 40 20% 88%;
     --accent-foreground: 222 47% 11%;
     --destructive: 354 75% 42%;        /* #bf162c seal crimson */
     --destructive-foreground: 0 0% 100%;
-    --border: 40 15% 82%;              /* #dcd7cb crisp line */
-    --input: 40 15% 82%;
+    --border: 40 18% 78%;              /* #d3ccbb crisp line */
+    --input: 40 18% 78%;
     --ring: 218 80% 25%;
     --radius: 0.5rem;
 
@@ -31,14 +31,14 @@
        ========================================= */
 
     /* Surfaces & Backgrounds (Pristine Luxury Warm Paper) */
-    --color-background: 40 22% 95%;     /* #f6f4ee alabaster canvas */
-    --color-surface: 0 0% 100%;         /* #ffffff crisp pure white card */
+    --color-background: 40 20% 91%;     /* #efeadf luxury linen canvas */
+    --color-surface: 40 40% 98%;         /* #fcfbf7 crisp porcelain card */
     --color-surface-elevated: 0 0% 100%; /* #ffffff */
-    --color-surface-subtle: 40 20% 92%; /* #eeeae0 subtle tray */
+    --color-surface-subtle: 40 20% 88%; /* #e5dfd2 subtle tray */
     
     /* Borders */
-    --color-border: 40 15% 82%;         /* #dcd7cb crisp border */
-    --color-border-strong: 40 18% 70%;  /* #bcb5a3 */
+    --color-border: 40 18% 78%;         /* #d3ccbb crisp tactile border */
+    --color-border-strong: 40 18% 68%;  /* #bcb5a3 */
 
     /* Typography */
     --color-text-primary: 222 47% 11%;  /* #0f172a obsidian ink */
