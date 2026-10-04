@@ -11,6 +11,7 @@ import {
 import { useNavigate, Link } from 'react-router-dom';
 import { apiClient } from '../services/api';
 import { useApp } from '../context/AppContext';
+import { useTheme } from '../context/ThemeContext';
 
 export const LoginPage = () => {
   const [authMode, setAuthMode] = useState('login'); // 'login' | 'register'
@@ -47,18 +48,16 @@ export const LoginPage = () => {
     organizations, 
     loginSession, 
     registerOrganization, 
-    getUsersForOrg,
-    theme,
-    setTheme
+    getUsersForOrg 
   } = useApp();
 
-  const isDark = theme === 'dark';
+  // Robust theme management synced with global context & root HTML dataset
+  const { theme, isDark, toggleTheme } = useTheme();
 
-  // Toggle Theme between light and dark
-  const toggleTheme = () => {
-    const nextTheme = isDark ? 'light' : 'dark';
-    setTheme(nextTheme);
-  };
+  useEffect(() => {
+    // Keep data-theme aligned on html element for custom root CSS styling
+    document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+  }, [isDark]);
 
   // Recompute live SHA-256 fingerprint when fields change
   const computeFingerprint = useCallback(async () => {
@@ -69,7 +68,6 @@ export const LoginPage = () => {
       const buffer = await window.crypto.subtle.digest('SHA-256', new TextEncoder().encode(src));
       const hex = Array.from(new Uint8Array(buffer)).map(b => b.toString(16).padStart(2, '0')).join('');
       
-      // format into 4 blocks of 4 hex pairs
       let formatted = '';
       for (let i = 0; i < 64; i += 16) {
         formatted += hex.slice(i, i + 16).replace(/(.{4})/g, '$1 ').trim() + (i < 48 ? '\n' : '');
@@ -77,7 +75,6 @@ export const LoginPage = () => {
       setFingerprint(formatted);
       setFormNumber(`HG-${hex.slice(0, 4).toUpperCase()}`);
     } catch {
-      // Fallback
       setFormNumber('HG-2612');
     }
   }, [authMode, email, selectedOrgId, role, regOrgName, organizations]);
@@ -117,15 +114,14 @@ export const LoginPage = () => {
       'Session anchored to ledger'
     ];
 
-    // Animate the terminal verification logs
     for (let i = 0; i < steps.length; i++) {
       const stepName = steps[i];
       setVerificationSteps(prev => [...prev, { text: stepName, done: false }]);
-      await new Promise(r => setTimeout(r, 220));
+      await new Promise(r => setTimeout(r, 260));
       setVerificationSteps(prev => 
         prev.map((s, idx) => idx === i ? { ...s, done: true } : s)
       );
-      await new Promise(r => setTimeout(r, 140));
+      await new Promise(r => setTimeout(r, 160));
     }
 
     setStampText('Verified');
@@ -224,14 +220,14 @@ export const LoginPage = () => {
 
   return (
     <div 
-      className="min-h-screen w-full transition-colors duration-200 relative flex items-center justify-center p-5 md:p-12 overflow-x-hidden"
+      className="min-h-screen w-full transition-colors duration-300 relative flex items-center justify-center p-5 md:p-12 overflow-x-hidden select-none"
       style={{
-        backgroundColor: isDark ? 'var(--bg, #09101d)' : 'var(--bg, #efeadf)',
+        backgroundColor: isDark ? '#09101d' : '#efeadf',
         backgroundImage: isDark
           ? 'radial-gradient(#16233b 1px, transparent 1px)'
           : 'radial-gradient(#d9d2c1 1px, transparent 1px)',
         backgroundSize: '22px 22px',
-        color: isDark ? 'var(--ink, #e8eefc)' : 'var(--ink, #0e1a2f)',
+        color: isDark ? '#e8eefc' : '#0e1a2f',
         fontFamily: "'DM Sans', system-ui, sans-serif"
       }}
     >
@@ -251,19 +247,49 @@ export const LoginPage = () => {
           );
           opacity: 0.85;
         }
+
+        /* Subtle floating ambient card animation */
+        @keyframes floatTicket {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-4px); }
+        }
+        .ticket-float {
+          animation: floatTicket 6s ease-in-out infinite;
+        }
+
+        /* Live pulse animation for fingerprint status */
+        @keyframes pulseGlow {
+          0%, 100% { opacity: 0.6; transform: scale(1); }
+          50% { opacity: 1; transform: scale(1.2); }
+        }
+        .live-dot {
+          animation: pulseGlow 2s ease-in-out infinite;
+        }
+
+        /* Stamp Slam animation */
         @keyframes stampPop {
           0% { transform: rotate(-9deg) scale(2.4); opacity: 0; }
+          60% { transform: rotate(-9deg) scale(0.92); opacity: 1; }
           100% { transform: rotate(-9deg) scale(1); opacity: 0.95; }
         }
         .stamp-animate {
           animation: stampPop 0.45s cubic-bezier(0.2, 1.4, 0.4, 1) forwards;
+        }
+
+        /* Step fade-in animation */
+        @keyframes fadeInStep {
+          from { opacity: 0; transform: translateX(-4px); }
+          to { opacity: 1; transform: translateX(0); }
+        }
+        .step-enter {
+          animation: fadeInStep 0.25s ease-out forwards;
         }
       `}</style>
 
       <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center relative z-10">
         
         {/* LEFT COLUMN: HERO EDITORIAL STORY */}
-        <section className="flex flex-col gap-7 max-w-[560px] lg:justify-self-end w-full">
+        <section className="flex flex-col gap-7 max-w-[560px] lg:justify-self-end w-full transition-all duration-300">
           <div className="flex justify-between items-center">
             <div className="flex gap-2.5 items-center font-bold tracking-[0.16em] text-[13px] uppercase">
               <svg 
@@ -275,6 +301,7 @@ export const LoginPage = () => {
                 strokeWidth="2.2" 
                 strokeLinecap="round" 
                 strokeLinejoin="round"
+                className="transition-colors duration-300"
                 style={{ color: isDark ? '#6ea8ff' : '#123a6b' }}
               >
                 <path d="M12 3l8 3v6c0 4.5-3.2 8-8 9-4.8-1-8-4.5-8-9V6z"/>
@@ -286,7 +313,7 @@ export const LoginPage = () => {
             <div className="flex gap-2">
               <Link 
                 to="/" 
-                className="dm-mono text-xs rounded-full px-3 py-1.5 transition-colors cursor-pointer border"
+                className="dm-mono text-xs rounded-full px-3 py-1.5 transition-all duration-200 cursor-pointer border hover:scale-105 active:scale-95"
                 style={{
                   color: isDark ? '#8093b6' : '#6b7488',
                   borderColor: isDark ? '#22324f' : '#d3ccbb',
@@ -299,24 +326,24 @@ export const LoginPage = () => {
                 type="button" 
                 onClick={toggleTheme} 
                 aria-label="Toggle theme" 
-                className="dm-mono text-xs rounded-full px-3 py-1.5 transition-colors cursor-pointer border"
+                className="dm-mono text-xs rounded-full px-3 py-1.5 transition-all duration-200 cursor-pointer border hover:scale-105 active:scale-95 flex items-center gap-1.5 shadow-sm"
                 style={{
                   color: isDark ? '#8093b6' : '#6b7488',
                   borderColor: isDark ? '#22324f' : '#d3ccbb',
                   backgroundColor: isDark ? '#101a2d' : '#fbf8f1'
                 }}
               >
-                ☀ / ☾
+                <span>{isDark ? '☾ Dark' : '☀ Light'}</span>
               </button>
             </div>
           </div>
 
           <h1 
-            className="serif-title font-normal tracking-[-0.02em] leading-[0.95] text-5xl sm:text-6xl lg:text-[76px]"
+            className="serif-title font-normal tracking-[-0.02em] leading-[0.95] text-5xl sm:text-6xl lg:text-[76px] transition-colors duration-300"
           >
             Every handoff,{' '}
             <em 
-              className="not-italic italic" 
+              className="not-italic italic transition-colors duration-300" 
               style={{ color: isDark ? '#ff5d73' : '#c62d3f' }}
             >
               signed.
@@ -324,7 +351,7 @@ export const LoginPage = () => {
           </h1>
 
           <p 
-            className="text-[15px] max-w-[30em] leading-relaxed"
+            className="text-[15px] max-w-[30em] leading-relaxed transition-colors duration-300"
             style={{ color: isDark ? '#8093b6' : '#6b7488' }}
           >
             Verifiable digital asset trust infrastructure. Sign in and your session is bound to a cryptographic fingerprint on the ledger.
@@ -332,7 +359,7 @@ export const LoginPage = () => {
 
           {/* Cryptographic Session Fingerprint */}
           <div 
-            className="rounded-xl p-4 sm:p-5 border transition-colors"
+            className="rounded-xl p-4 sm:p-5 border transition-all duration-300 shadow-sm"
             style={{
               backgroundColor: isDark ? '#101a2d' : '#fbf8f1',
               borderColor: isDark ? '#22324f' : '#d3ccbb'
@@ -343,14 +370,15 @@ export const LoginPage = () => {
                 Session fingerprint &bull; SHA-256
               </span>
               <span 
-                className="font-normal flex items-center gap-1 text-[11px]"
+                className="font-normal flex items-center gap-1.5 text-[11px]"
                 style={{ color: isDark ? '#3ddc97' : '#1d7a52' }}
               >
-                &bull; live
+                <span className="live-dot inline-block w-1.5 h-1.5 rounded-full bg-current" />
+                <span>live</span>
               </span>
             </div>
             <pre 
-              className="dm-mono text-[13px] leading-[1.7] tracking-[0.04em] whitespace-pre-wrap break-all"
+              className="dm-mono text-[13px] leading-[1.7] tracking-[0.04em] whitespace-pre-wrap break-all transition-colors duration-300 select-all"
               style={{ color: isDark ? '#6ea8ff' : '#123a6b' }}
             >
               {fingerprint}
@@ -359,12 +387,12 @@ export const LoginPage = () => {
 
           {/* Handoff Lifecycle Trail */}
           <div 
-            className="flex flex-wrap gap-x-2.5 gap-y-1.5 dm-mono text-[11px] uppercase tracking-[0.08em] pt-1"
+            className="flex flex-wrap gap-x-2.5 gap-y-1.5 dm-mono text-[11px] uppercase tracking-[0.08em] pt-1 transition-colors duration-300"
             style={{ color: isDark ? '#8093b6' : '#6b7488' }}
           >
             {['Collect', 'Seal', 'Transfer', 'Receive', 'Analyze', 'Derive'].map((stage, i, arr) => (
               <React.Fragment key={stage}>
-                <span>{stage}</span>
+                <span className="hover:opacity-80 transition-opacity">{stage}</span>
                 {i < arr.length - 1 && (
                   <span style={{ color: isDark ? '#ff5d73' : '#c62d3f' }}>&rarr;</span>
                 )}
@@ -374,20 +402,20 @@ export const LoginPage = () => {
         </section>
 
         {/* RIGHT COLUMN: TAG / EVIDENCE TICKET */}
-        <section className="w-full max-w-[520px] lg:justify-self-start relative">
+        <section className="w-full max-w-[520px] lg:justify-self-start relative ticket-float">
           <div 
             className="rounded-t-[6px] rounded-b-[18px] border relative overflow-hidden transition-all duration-300"
             style={{
               backgroundColor: isDark ? '#101a2d' : '#fbf8f1',
               borderColor: isDark ? '#22324f' : '#d3ccbb',
               boxShadow: isDark 
-                ? '0 1px 0 #22324f, 0 26px 60px -28px rgba(0,0,0,0.6)' 
-                : '0 1px 0 #d3ccbb, 0 26px 60px -28px rgba(14,26,47,0.35)'
+                ? '0 1px 0 #22324f, 0 30px 70px -25px rgba(0,0,0,0.7)' 
+                : '0 1px 0 #d3ccbb, 0 30px 70px -25px rgba(14,26,47,0.25)'
             }}
           >
             {/* Lanyard Hole Punch */}
             <div 
-              className="absolute top-[14px] left-1/2 -ml-[9px] w-[18px] h-[18px] rounded-full border"
+              className="absolute top-[14px] left-1/2 -ml-[9px] w-[18px] h-[18px] rounded-full border transition-colors duration-300"
               style={{
                 backgroundColor: isDark ? '#09101d' : '#efeadf',
                 borderColor: isDark ? '#22324f' : '#d3ccbb',
@@ -397,7 +425,7 @@ export const LoginPage = () => {
 
             {/* Tag Header */}
             <div 
-              className="pt-[44px] px-7 pb-4 border-b-2 border-dashed flex justify-between items-end gap-3"
+              className="pt-[44px] px-7 pb-4 border-b-2 border-dashed flex justify-between items-end gap-3 transition-colors duration-300"
               style={{ borderColor: isDark ? '#22324f' : '#d3ccbb' }}
             >
               <div>
@@ -416,7 +444,7 @@ export const LoginPage = () => {
                   role="tab"
                   aria-selected={authMode === 'login'}
                   onClick={() => { setAuthMode('login'); setError(''); setRegisteredResult(null); setIsStamped(false); }}
-                  className="bg-transparent border-0 border-b-2 py-0.5 cursor-pointer font-inherit transition-colors"
+                  className="bg-transparent border-0 border-b-2 py-0.5 cursor-pointer font-inherit transition-all duration-200 hover:opacity-90"
                   style={{
                     color: authMode === 'login' ? (isDark ? '#e8eefc' : '#0e1a2f') : (isDark ? '#8093b6' : '#6b7488'),
                     borderColor: authMode === 'login' ? (isDark ? '#ff5d73' : '#c62d3f') : 'transparent'
@@ -429,7 +457,7 @@ export const LoginPage = () => {
                   role="tab"
                   aria-selected={authMode === 'register'}
                   onClick={() => { setAuthMode('register'); setError(''); setIsStamped(false); }}
-                  className="bg-transparent border-0 border-b-2 py-0.5 cursor-pointer font-inherit transition-colors"
+                  className="bg-transparent border-0 border-b-2 py-0.5 cursor-pointer font-inherit transition-all duration-200 hover:opacity-90"
                   style={{
                     color: authMode === 'register' ? (isDark ? '#e8eefc' : '#0e1a2f') : (isDark ? '#8093b6' : '#6b7488'),
                     borderColor: authMode === 'register' ? (isDark ? '#ff5d73' : '#c62d3f') : 'transparent'
@@ -444,7 +472,7 @@ export const LoginPage = () => {
             <div className="pt-[22px] px-7 pb-2">
               {error && (
                 <div 
-                  className="p-2.5 rounded-lg dm-mono text-xs text-center mb-4 border"
+                  className="p-2.5 rounded-lg dm-mono text-xs text-center mb-4 border transition-colors"
                   style={{
                     backgroundColor: isDark ? 'rgba(255, 93, 115, 0.1)' : 'rgba(198, 45, 63, 0.1)',
                     borderColor: isDark ? 'rgba(255, 93, 115, 0.3)' : 'rgba(198, 45, 63, 0.3)',
@@ -480,7 +508,7 @@ export const LoginPage = () => {
                             type="button"
                             onClick={() => handleRoleSelect(item.id)}
                             aria-pressed={isSelected}
-                            className="dm-mono text-xs font-medium py-2 px-1 rounded-lg border-[1.5px] cursor-pointer transition-all text-center"
+                            className="dm-mono text-xs font-medium py-2 px-1 rounded-lg border-[1.5px] cursor-pointer transition-all duration-200 text-center hover:scale-[1.02] active:scale-[0.98]"
                             style={{
                               backgroundColor: isSelected ? (isDark ? '#e8eefc' : '#0e1a2f') : 'transparent',
                               color: isSelected ? (isDark ? '#101a2d' : '#fbf8f1') : (isDark ? '#e8eefc' : '#0e1a2f'),
@@ -542,7 +570,7 @@ export const LoginPage = () => {
                       <button 
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-0 top-1/2 -translate-y-1/2 bg-transparent border-0 dm-mono text-[10.5px] cursor-pointer"
+                        className="absolute right-0 top-1/2 -translate-y-1/2 bg-transparent border-0 dm-mono text-[10.5px] cursor-pointer hover:opacity-80 transition-opacity"
                         style={{ color: isDark ? '#8093b6' : '#6b7488' }}
                       >
                         {showPassword ? 'HIDE' : 'SHOW'}
@@ -598,14 +626,14 @@ export const LoginPage = () => {
                   <button 
                     type="submit"
                     disabled={loading}
-                    className="w-full mt-1.5 border-0 rounded-[10px] py-[15px] px-[18px] font-bold text-[13px] tracking-[0.1em] cursor-pointer flex justify-between items-center transition-transform hover:-translate-y-[1px] active:translate-y-0 disabled:opacity-70 disabled:cursor-progress shadow-sm"
+                    className="w-full mt-1.5 border-0 rounded-[10px] py-[15px] px-[18px] font-bold text-[13px] tracking-[0.1em] cursor-pointer flex justify-between items-center transition-all duration-200 hover:-translate-y-[2px] active:translate-y-0 disabled:opacity-70 disabled:cursor-progress shadow-md hover:shadow-lg"
                     style={{
                       backgroundColor: isDark ? '#e8eefc' : '#0e1a2f',
                       color: isDark ? '#101a2d' : '#fbf8f1'
                     }}
                   >
                     <span>INITIALIZE SECURE SESSION</span>
-                    <span>{loading ? '...' : '&rarr;'}</span>
+                    <span className="text-sm font-mono">{loading ? '...' : '→'}</span>
                   </button>
 
                   {/* Progressive Terminal Logs */}
@@ -614,6 +642,7 @@ export const LoginPage = () => {
                       {verificationSteps.map((step, idx) => (
                         <div 
                           key={idx} 
+                          className="step-enter"
                           style={{ color: step.done ? (isDark ? '#3ddc97' : '#1d7a52') : (isDark ? '#8093b6' : '#6b7488') }}
                         >
                           {step.done ? `✓ ${step.text}` : `· ${step.text}`}
@@ -626,7 +655,7 @@ export const LoginPage = () => {
                 /* REGISTRATION FORM */
                 <div>
                   {registeredResult ? (
-                    <div className="space-y-4 text-center py-2">
+                    <div className="space-y-4 text-center py-2 animate-in fade-in duration-300">
                       <div 
                         className="w-10 h-10 rounded-full border flex items-center justify-center mx-auto"
                         style={{
@@ -678,7 +707,7 @@ export const LoginPage = () => {
                       <button
                         type="button"
                         onClick={handleEnterRegisteredOrg}
-                        className="w-full mt-2 rounded-[10px] py-[13px] px-4 font-bold text-xs tracking-wider flex items-center justify-center gap-2 cursor-pointer"
+                        className="w-full mt-2 rounded-[10px] py-[13px] px-4 font-bold text-xs tracking-wider flex items-center justify-center gap-2 cursor-pointer transition-transform hover:-translate-y-0.5"
                         style={{
                           backgroundColor: isDark ? '#e8eefc' : '#0e1a2f',
                           color: isDark ? '#101a2d' : '#fbf8f1'
@@ -788,14 +817,14 @@ export const LoginPage = () => {
                       <button 
                         type="submit"
                         disabled={loading}
-                        className="w-full mt-1.5 border-0 rounded-[10px] py-[15px] px-[18px] font-bold text-[13px] tracking-[0.1em] cursor-pointer flex justify-between items-center transition-transform hover:-translate-y-[1px] active:translate-y-0 disabled:opacity-70 disabled:cursor-progress"
+                        className="w-full mt-1.5 border-0 rounded-[10px] py-[15px] px-[18px] font-bold text-[13px] tracking-[0.1em] cursor-pointer flex justify-between items-center transition-all duration-200 hover:-translate-y-[2px] active:translate-y-0 disabled:opacity-70 disabled:cursor-progress"
                         style={{
                           backgroundColor: isDark ? '#e8eefc' : '#0e1a2f',
                           color: isDark ? '#101a2d' : '#fbf8f1'
                         }}
                       >
                         <span>{loading ? 'DEPLOYING NODE...' : 'REGISTER ORGANIZATION'}</span>
-                        <span>&rarr;</span>
+                        <span className="text-sm font-mono">&rarr;</span>
                       </button>
                     </form>
                   )}
@@ -805,7 +834,7 @@ export const LoginPage = () => {
 
             {/* Tag Perforated Barcode Footer */}
             <div 
-              className="mt-[14px] px-7 pt-[14px] pb-[18px] border-t-2 border-dashed flex justify-between items-center gap-3"
+              className="mt-[14px] px-7 pt-[14px] pb-[18px] border-t-2 border-dashed flex justify-between items-center gap-3 transition-colors duration-300"
               style={{ borderColor: isDark ? '#22324f' : '#d3ccbb' }}
             >
               <div className="barcode-strip flex-1 max-w-[210px]" aria-hidden="true" />
