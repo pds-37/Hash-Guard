@@ -80,17 +80,24 @@ export const LandingPage = () => {
   const sampleTamperedHash = '759eee0f9d4163fe5422020789d7034a17bb14b747f648c8390e03b25437afaf';
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-[#040812] text-slate-900 dark:text-slate-100 selection:bg-cyan-500/30 selection:text-cyan-200 relative overflow-hidden font-sans transition-colors duration-200">
+    <div className="min-h-screen bg-[#efeadf] dark:bg-[#040812] text-[#0e1a2f] dark:text-slate-100 selection:bg-cyan-500/30 selection:text-cyan-200 relative overflow-hidden font-sans transition-colors duration-200">
       {/* Background Glows & Grid */}
       <div className="fixed inset-0 pointer-events-none z-0">
         <div className="absolute top-0 left-1/4 w-[700px] h-[550px] bg-cyan-500/10 rounded-full blur-[150px]" />
         <div className="absolute top-1/3 right-10 w-[600px] h-[600px] bg-blue-600/10 rounded-full blur-[170px]" />
         <div className="absolute bottom-10 left-1/3 w-[600px] h-[400px] bg-emerald-500/5 rounded-full blur-[150px]" />
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b12_1px,transparent_1px),linear-gradient(to_bottom,#1e293b12_1px,transparent_1px)] bg-[size:32px_32px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]" />
+        <div 
+          className="absolute inset-0"
+          style={{
+            backgroundImage: 'radial-gradient(currentColor 1px, transparent 1px)',
+            backgroundSize: '22px 22px',
+            opacity: 0.12
+          }}
+        />
       </div>
 
       {/* TOP NAVBAR */}
-      <header className="sticky top-0 z-50 backdrop-blur-md bg-white/90 dark:bg-[#040812]/90 border-b border-slate-200 dark:border-slate-800/80 transition-all shadow-xs dark:shadow-none">
+      <header className="sticky top-0 z-50 backdrop-blur-md bg-[#fbf8f1]/90 dark:bg-[#040812]/90 border-b border-[#d3ccbb] dark:border-slate-800/80 transition-all shadow-xs dark:shadow-none">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
           {/* Logo Branding */}
           <Logo 
@@ -99,40 +106,38 @@ export const LandingPage = () => {
           />
 
           {/* Navigation Links (Desktop) */}
-          <nav className="hidden lg:flex items-center gap-5 xl:gap-8 text-xs font-mono tracking-wider text-slate-600 dark:text-slate-300 shrink-0">
+          <nav className="hidden lg:flex items-center gap-5 xl:gap-8 text-xs font-mono tracking-wider text-[#475468] dark:text-slate-300 shrink-0">
             <button 
               onClick={() => scrollToSection('evidence-flow')}
-              className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors whitespace-nowrap cursor-pointer font-medium"
+              className="hover:text-cyan-700 dark:hover:text-cyan-400 transition-colors whitespace-nowrap cursor-pointer font-medium"
             >
               Evidence Flow
             </button>
             <button 
               onClick={() => scrollToSection('demo-video')}
-              className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors whitespace-nowrap cursor-pointer font-medium"
+              className="hover:text-cyan-700 dark:hover:text-cyan-400 transition-colors whitespace-nowrap cursor-pointer font-medium"
             >
               Demo Video
             </button>
             <button 
               onClick={() => scrollToSection('tamper-testbed')}
-              className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors whitespace-nowrap cursor-pointer font-medium"
+              className="hover:text-cyan-700 dark:hover:text-cyan-400 transition-colors whitespace-nowrap cursor-pointer font-medium"
             >
               Tamper Testbed
             </button>
             <button 
               onClick={() => scrollToSection('roles')}
-              className="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors whitespace-nowrap cursor-pointer font-medium"
+              className="hover:text-cyan-700 dark:hover:text-cyan-400 transition-colors whitespace-nowrap cursor-pointer font-medium"
             >
               Agency Roles
             </button>
-            <a 
-              href={SYSTEM_ARCHITECTURE_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 hover:text-cyan-500 dark:hover:text-cyan-300 border border-cyan-500/20 transition-all whitespace-nowrap cursor-pointer font-medium group"
+            <button
+              onClick={() => navigate('/architecture')}
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-cyan-500/10 text-cyan-700 dark:text-cyan-400 hover:text-cyan-600 dark:hover:text-cyan-300 border border-cyan-500/20 transition-all whitespace-nowrap cursor-pointer font-medium group"
             >
               <span>System Architecture</span>
-              <ExternalLink className="w-3 h-3 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-            </a>
+              <Layers className="w-3 h-3 group-hover:scale-110 transition-transform" />
+            </button>
           </nav>
 
           {/* Action CTAs + Theme Toggle */}
@@ -141,9 +146,9 @@ export const LandingPage = () => {
 
             <button
               onClick={() => navigate('/login')}
-              className="hidden sm:flex px-3.5 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700/80 bg-white dark:bg-[#091122] hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white text-xs font-mono transition-all cursor-pointer items-center gap-1.5 shrink-0 whitespace-nowrap shadow-xs"
+              className="hidden sm:flex px-3.5 py-1.5 rounded-lg border border-[#d3ccbb] dark:border-slate-700/80 bg-[#fbf8f1] dark:bg-[#091122] hover:bg-[#edeae3] dark:hover:bg-slate-800 text-[#0e1a2f] dark:text-slate-300 hover:text-black dark:hover:text-white text-xs font-mono transition-all cursor-pointer items-center gap-1.5 shrink-0 whitespace-nowrap shadow-xs"
             >
-              <LogIn className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
+              <LogIn className="w-3.5 h-3.5 text-[#6b7488] dark:text-slate-400" />
               <span>Sign In / Register</span>
             </button>
 
@@ -312,11 +317,11 @@ export const LandingPage = () => {
           {/* CARD 01 */}
           <div 
             onClick={() => launchConsole('ORG_A', '/evidence', true)}
-            className="p-4 pt-5 rounded-xl border border-slate-800/70 bg-[#070e1c]/80 hover:border-cyan-500/40 hover:shadow-[0_0_20px_rgba(6,182,212,0.12)] transition-all cursor-pointer group flex flex-col items-start gap-3"
+            className="p-4 pt-5 rounded-xl border border-[#d3ccbb] dark:border-slate-800/70 bg-[#fbf8f1] dark:bg-[#070e1c]/80 hover:border-cyan-600 dark:hover:border-cyan-500/40 hover:shadow-md transition-all cursor-pointer group flex flex-col items-start gap-3 shadow-xs"
           >
             <div className="flex items-center gap-2">
-              <span className="text-[11px] font-mono font-bold text-cyan-400">01</span>
-              <h4 className="text-sm font-bold text-white">Register Evidence</h4>
+              <span className="text-[11px] font-mono font-bold text-cyan-600 dark:text-cyan-400">01</span>
+              <h4 className="text-sm font-bold text-[#0e1a2f] dark:text-white">Register Evidence</h4>
             </div>
             <div className="w-full flex items-center justify-center flex-1 py-1">
               <img 
@@ -325,17 +330,17 @@ export const LandingPage = () => {
                 className="h-20 object-contain filter drop-shadow-[0_0_14px_rgba(6,182,212,0.3)] group-hover:scale-105 transition-transform"
               />
             </div>
-            <p className="text-[11px] text-slate-400 leading-snug">Upload &amp; cryptographically seal forensic exhibits</p>
+            <p className="text-[11px] text-[#475468] dark:text-slate-400 leading-snug">Upload &amp; cryptographically seal forensic exhibits</p>
           </div>
 
           {/* CARD 02 */}
           <div 
             onClick={() => launchConsole('ORG_B', '/transfers', true)}
-            className="p-4 pt-5 rounded-xl border border-slate-800/70 bg-[#070e1c]/80 hover:border-cyan-500/40 hover:shadow-[0_0_20px_rgba(6,182,212,0.12)] transition-all cursor-pointer group flex flex-col items-start gap-3"
+            className="p-4 pt-5 rounded-xl border border-[#d3ccbb] dark:border-slate-800/70 bg-[#fbf8f1] dark:bg-[#070e1c]/80 hover:border-cyan-600 dark:hover:border-cyan-500/40 hover:shadow-md transition-all cursor-pointer group flex flex-col items-start gap-3 shadow-xs"
           >
             <div className="flex items-center gap-2">
-              <span className="text-[11px] font-mono font-bold text-cyan-400">02</span>
-              <h4 className="text-sm font-bold text-white">Track Custody</h4>
+              <span className="text-[11px] font-mono font-bold text-cyan-600 dark:text-cyan-400">02</span>
+              <h4 className="text-sm font-bold text-[#0e1a2f] dark:text-white">Track Custody</h4>
             </div>
             <div className="w-full flex items-center justify-center flex-1 py-1">
               <img 
@@ -344,17 +349,17 @@ export const LandingPage = () => {
                 className="h-20 object-contain filter drop-shadow-[0_0_14px_rgba(6,182,212,0.3)] group-hover:scale-105 transition-transform"
               />
             </div>
-            <p className="text-[11px] text-slate-400 leading-snug">Monitor inter-agency transfers in real time</p>
+            <p className="text-[11px] text-[#475468] dark:text-slate-400 leading-snug">Monitor inter-agency transfers in real time</p>
           </div>
 
           {/* CARD 03 */}
           <div 
             onClick={() => launchConsole('ORG_B', '/lineage', true)}
-            className="p-4 pt-5 rounded-xl border border-slate-800/70 bg-[#070e1c]/80 hover:border-cyan-500/40 hover:shadow-[0_0_20px_rgba(6,182,212,0.12)] transition-all cursor-pointer group flex flex-col items-start gap-3"
+            className="p-4 pt-5 rounded-xl border border-[#d3ccbb] dark:border-slate-800/70 bg-[#fbf8f1] dark:bg-[#070e1c]/80 hover:border-cyan-600 dark:hover:border-cyan-500/40 hover:shadow-md transition-all cursor-pointer group flex flex-col items-start gap-3 shadow-xs"
           >
             <div className="flex items-center gap-2">
-              <span className="text-[11px] font-mono font-bold text-cyan-400">03</span>
-              <h4 className="text-sm font-bold text-white">Verify Lineage</h4>
+              <span className="text-[11px] font-mono font-bold text-cyan-600 dark:text-cyan-400">03</span>
+              <h4 className="text-sm font-bold text-[#0e1a2f] dark:text-white">Verify Lineage</h4>
             </div>
             <div className="w-full flex items-center justify-center flex-1 py-1">
               <img 
@@ -363,26 +368,26 @@ export const LandingPage = () => {
                 className="h-20 object-contain filter drop-shadow-[0_0_14px_rgba(6,182,212,0.3)] group-hover:scale-105 transition-transform"
               />
             </div>
-            <p className="text-[11px] text-slate-400 leading-snug">Inspect artifact trees and parent derivations</p>
+            <p className="text-[11px] text-[#475468] dark:text-slate-400 leading-snug">Inspect artifact trees and parent derivations</p>
           </div>
 
           {/* CARD 04 */}
           <div 
             onClick={() => launchConsole('AUDITOR', '/verification', true)}
-            className="p-4 pt-5 rounded-xl border border-slate-800/70 bg-[#070e1c]/80 hover:border-cyan-500/40 hover:shadow-[0_0_20px_rgba(6,182,212,0.12)] transition-all cursor-pointer group flex flex-col items-start gap-3"
+            className="p-4 pt-5 rounded-xl border border-[#d3ccbb] dark:border-slate-800/70 bg-[#fbf8f1] dark:bg-[#070e1c]/80 hover:border-cyan-600 dark:hover:border-cyan-500/40 hover:shadow-md transition-all cursor-pointer group flex flex-col items-start gap-3 shadow-xs"
           >
             <div className="flex items-center gap-2">
-              <span className="text-[11px] font-mono font-bold text-cyan-400">04</span>
-              <h4 className="text-sm font-bold text-white">Maintain Trust</h4>
+              <span className="text-[11px] font-mono font-bold text-cyan-600 dark:text-cyan-400">04</span>
+              <h4 className="text-sm font-bold text-[#0e1a2f] dark:text-white">Maintain Trust</h4>
             </div>
             <div className="w-full flex items-center justify-center flex-1 py-1">
               <img 
-                src="/assets/step-04-trust.png"
+                src="/assets/step-04-trust.png" 
                 alt="Maintain Trust"
                 className="h-20 object-contain filter drop-shadow-[0_0_14px_rgba(6,182,212,0.3)] group-hover:scale-105 transition-transform"
               />
             </div>
-            <p className="text-[11px] text-slate-400 leading-snug">Support legal, audit, and judicial oversight</p>
+            <p className="text-[11px] text-[#475468] dark:text-slate-400 leading-snug">Support legal, audit, and judicial oversight</p>
           </div>
         </div>
       </section>
