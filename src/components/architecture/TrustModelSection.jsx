@@ -16,7 +16,8 @@ import {
   Info,
   Lock,
   Layers,
-  Sparkles
+  Sparkles,
+  Shield
 } from 'lucide-react';
 
 export const TrustModelSection = ({ onSelectNode }) => {
