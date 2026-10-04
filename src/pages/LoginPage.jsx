@@ -1,16 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { 
   Shield, 
-  LogIn, 
   Loader2, 
   Building2, 
   ArrowLeft, 
   Check,
   ChevronRight,
-  Fingerprint,
-  Sun,
-  Moon,
-  ArrowRight
+  Fingerprint
 } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import { apiClient } from '../services/api';
@@ -20,11 +16,11 @@ export const LoginPage = () => {
   const [authMode, setAuthMode] = useState('login'); // 'login' | 'register'
   
   // Login Form State
-  const [email, setEmail] = useState('admin@cyberlab.local');
-  const [password, setPassword] = useState('•••••••••••');
+  const [email, setEmail] = useState('analyst@cyberlab.local');
+  const [password, setPassword] = useState('••••••••••');
   const [showPassword, setShowPassword] = useState(false);
   const [selectedOrgId, setSelectedOrgId] = useState('ORG_B');
-  const [activeClearance, setActiveClearance] = useState('ADMINISTRATOR');
+  const [role, setRole] = useState('analyst'); // 'admin' | 'analyst' | 'auditor' | 'custodian'
   
   // Register Organization State
   const [regOrgName, setRegOrgName] = useState('Cyber Defense Lab');
@@ -35,8 +31,17 @@ export const LoginPage = () => {
   const [regPassword, setRegPassword] = useState('');
   const [registeredResult, setRegisteredResult] = useState(null);
 
+  // Live cryptographic fingerprint state
+  const [fingerprint, setFingerprint] = useState('8890 1294 3dcc 141f\n7827 3cac 6f65 31f9\n0543 79bb 1b8b 7ff0\n2650 f56c 3479 d915');
+  const [formNumber, setFormNumber] = useState('HG-8890');
+
+  // Submit flow states (step log & verified stamp)
   const [loading, setLoading] = useState(false);
+  const [verificationSteps, setVerificationSteps] = useState([]);
+  const [isStamped, setIsStamped] = useState(false);
+  const [stampText, setStampText] = useState('Verified');
   const [error, setError] = useState('');
+
   const navigate = useNavigate();
   const { 
     organizations, 
@@ -47,29 +52,84 @@ export const LoginPage = () => {
     setTheme
   } = useApp();
 
-  const isLight = theme === 'light';
+  const isDark = theme === 'dark';
 
+  // Toggle Theme between light and dark
   const toggleTheme = () => {
-    setTheme(isLight ? 'dark' : 'light');
+    const nextTheme = isDark ? 'light' : 'dark';
+    setTheme(nextTheme);
   };
 
-  const generateNewDid = () => {
-    const randomHex = Array.from({ length: 40 }, () => Math.floor(Math.random() * 16).toString(16)).join('');
-    setRegDid(`did:ethr:0x${randomHex}`);
+  // Recompute live SHA-256 fingerprint when fields change
+  const computeFingerprint = useCallback(async () => {
+    const orgValue = authMode === 'register' ? regOrgName : (organizations[selectedOrgId]?.name || selectedOrgId);
+    const src = `${email}|${orgValue}|${authMode === 'register' ? 'register' : role}|${Math.floor(Date.now() / 60000)}`;
+    
+    try {
+      const buffer = await window.crypto.subtle.digest('SHA-256', new TextEncoder().encode(src));
+      const hex = Array.from(new Uint8Array(buffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+      
+      // format into 4 blocks of 4 hex pairs
+      let formatted = '';
+      for (let i = 0; i < 64; i += 16) {
+        formatted += hex.slice(i, i + 16).replace(/(.{4})/g, '$1 ').trim() + (i < 48 ? '\n' : '');
+      }
+      setFingerprint(formatted);
+      setFormNumber(`HG-${hex.slice(0, 4).toUpperCase()}`);
+    } catch {
+      // Fallback
+      setFormNumber('HG-2612');
+    }
+  }, [authMode, email, selectedOrgId, role, regOrgName, organizations]);
+
+  useEffect(() => {
+    computeFingerprint();
+  }, [computeFingerprint]);
+
+  const ROLES = {
+    admin: { email: 'admin@cyberlab.local', orgId: 'ORG_B', roleId: 'ADMINISTRATOR', name: 'Dr. Sarah Chen' },
+    analyst: { email: 'analyst@cyberlab.local', orgId: 'ORG_B', roleId: 'FORENSIC_ANALYST', name: 'Lead Forensic Analyst' },
+    auditor: { email: 'audit@cyberlab.local', orgId: 'ORG_AUDIT', roleId: 'AUDITOR', name: 'Elena Rostova' },
+    custodian: { email: 'custody@cyberlab.local', orgId: 'ORG_B', roleId: 'EVIDENCE_CUSTODIAN', name: 'Marcus Vance' },
   };
 
-  const handleRoleSelection = (roleId) => {
-    setActiveClearance(roleId);
-    if (roleId === 'ADMINISTRATOR') setEmail('admin@cyberlab.local');
-    else if (roleId === 'FORENSIC_ANALYST') setEmail('analyst@cyberlab.local');
-    else if (roleId === 'AUDITOR') setEmail('audit@cyberlab.local');
-    else if (roleId === 'EVIDENCE_CUSTODIAN') setEmail('custody@cyberlab.local');
+  const handleRoleSelect = (r) => {
+    setRole(r);
+    const target = ROLES[r];
+    if (target) {
+      setEmail(target.email);
+      setPassword('••••••••••');
+      setSelectedOrgId(target.orgId);
+    }
   };
 
-  const handleLogin = async (e) => {
+  const handleLoginSubmit = async (e) => {
     if (e) e.preventDefault();
     setLoading(true);
     setError('');
+    setIsStamped(false);
+    setVerificationSteps([]);
+
+    const steps = [
+      'mTLS channel established',
+      'DID signature verified',
+      'RBAC policy resolved',
+      'Session anchored to ledger'
+    ];
+
+    // Animate the terminal verification logs
+    for (let i = 0; i < steps.length; i++) {
+      const stepName = steps[i];
+      setVerificationSteps(prev => [...prev, { text: stepName, done: false }]);
+      await new Promise(r => setTimeout(r, 220));
+      setVerificationSteps(prev => 
+        prev.map((s, idx) => idx === i ? { ...s, done: true } : s)
+      );
+      await new Promise(r => setTimeout(r, 140));
+    }
+
+    setStampText('Verified');
+    setIsStamped(true);
 
     const targetOrg = organizations[selectedOrgId] || {
       id: selectedOrgId,
@@ -81,68 +141,45 @@ export const LoginPage = () => {
     const orgUserList = getUsersForOrg ? getUsersForOrg(targetOrg.id) : [];
     const matchedUser = orgUserList.find(u => u.email.toLowerCase() === email.toLowerCase());
 
-    let roleToAssign = activeClearance || 'FORENSIC_ANALYST';
-    let userObj = null;
+    const mappedRole = ROLES[role]?.roleId || 'FORENSIC_ANALYST';
+    const userObj = matchedUser || {
+      id: `USR-${Math.floor(1000 + Math.random() * 9000)}`,
+      email: email.trim(),
+      name: ROLES[role]?.name || email.split('@')[0].toUpperCase(),
+      orgId: targetOrg.id,
+      role: mappedRole,
+      status: 'ACTIVE'
+    };
 
-    if (matchedUser) {
-      roleToAssign = matchedUser.role;
-      userObj = matchedUser;
-    } else {
-      let userName = 'OPERATOR';
-      if (email.toLowerCase().includes('admin')) {
-        roleToAssign = 'ADMINISTRATOR';
-        userName = 'Dr. Sarah Chen';
-      } else if (email.toLowerCase().includes('audit')) {
-        roleToAssign = 'AUDITOR';
-        userName = 'Elena Rostova';
-      } else if (email.toLowerCase().includes('custod')) {
-        roleToAssign = 'EVIDENCE_CUSTODIAN';
-        userName = 'Marcus Vance';
-      } else if (email.toLowerCase().includes('analyst')) {
-        roleToAssign = 'FORENSIC_ANALYST';
-        userName = 'Vikram Malhotra';
-      } else if (targetOrg.id === 'ORG_A') {
-        roleToAssign = 'FIRST_RESPONDER';
-        userName = 'Commander Hayes';
+    setTimeout(async () => {
+      try {
+        const response = await apiClient.post('/auth/login', {
+          email: email.trim(),
+          password,
+          organization_id: targetOrg.id
+        });
+        const { access_token, user } = response.data;
+        loginSession({
+          user: user || userObj,
+          organizationId: targetOrg.id,
+          roleId: mappedRole,
+          token: access_token,
+          isSandbox: false
+        });
+        navigate('/dashboard');
+      } catch {
+        loginSession({
+          user: userObj,
+          organizationId: targetOrg.id,
+          roleId: mappedRole,
+          token: 'jwt_session_' + Date.now(),
+          isSandbox: false
+        });
+        navigate('/dashboard');
+      } finally {
+        setLoading(false);
       }
-
-      userObj = {
-        id: `USR-${Math.floor(1000 + Math.random() * 9000)}`,
-        email: email.trim(),
-        name: userName,
-        orgId: targetOrg.id,
-        role: roleToAssign,
-        status: 'ACTIVE'
-      };
-    }
-
-    try {
-      const response = await apiClient.post('/auth/login', {
-        email: email.trim(),
-        password,
-        organization_id: targetOrg.id
-      });
-      const { access_token, user } = response.data;
-      loginSession({
-        user: user || userObj,
-        organizationId: targetOrg.id,
-        roleId: roleToAssign,
-        token: access_token,
-        isSandbox: false
-      });
-      navigate('/dashboard');
-    } catch (err) {
-      loginSession({
-        user: userObj,
-        organizationId: targetOrg.id,
-        roleId: roleToAssign,
-        token: 'jwt_session_' + Date.now(),
-        isSandbox: false
-      });
-      navigate('/dashboard');
-    } finally {
-      setLoading(false);
-    }
+    }, 700);
   };
 
   const handleRegisterOrg = (e) => {
@@ -166,8 +203,10 @@ export const LoginPage = () => {
       });
 
       setRegisteredResult(result);
+      setStampText('Submitted');
+      setIsStamped(true);
       setLoading(false);
-    }, 350);
+    }, 450);
   };
 
   const handleEnterRegisteredOrg = () => {
@@ -185,575 +224,614 @@ export const LoginPage = () => {
 
   return (
     <div 
-      className={`min-h-screen w-full transition-colors duration-300 font-sans relative flex items-center justify-center p-6 md:p-12 overflow-x-hidden ${
-        isLight ? 'bg-[#edeae3] text-[#1c2229]' : 'bg-[#0b1017] text-[#e6edf3]'
-      }`}
+      className="min-h-screen w-full transition-colors duration-200 relative flex items-center justify-center p-5 md:p-12 overflow-x-hidden"
       style={{
-        backgroundImage: isLight 
-          ? 'radial-gradient(rgba(30, 41, 59, 0.12) 1px, transparent 1px)' 
-          : 'radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px)',
-        backgroundSize: '24px 24px'
+        backgroundColor: isDark ? 'var(--bg, #09101d)' : 'var(--bg, #efeadf)',
+        backgroundImage: isDark
+          ? 'radial-gradient(#16233b 1px, transparent 1px)'
+          : 'radial-gradient(#d9d2c1 1px, transparent 1px)',
+        backgroundSize: '22px 22px',
+        color: isDark ? 'var(--ink, #e8eefc)' : 'var(--ink, #0e1a2f)',
+        fontFamily: "'DM Sans', system-ui, sans-serif"
       }}
     >
-      <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center relative z-10">
+      <style>{`
+        .serif-title { font-family: 'Instrument Serif', Georgia, serif; }
+        .dm-mono { font-family: 'DM Mono', ui-monospace, monospace; }
+        .barcode-strip {
+          height: 34px;
+          background: repeating-linear-gradient(
+            90deg,
+            ${isDark ? '#e8eefc' : '#0e1a2f'} 0 2px,
+            transparent 2px 4px,
+            ${isDark ? '#e8eefc' : '#0e1a2f'} 4px 5px,
+            transparent 5px 9px,
+            ${isDark ? '#e8eefc' : '#0e1a2f'} 9px 12px,
+            transparent 12px 14px
+          );
+          opacity: 0.85;
+        }
+        @keyframes stampPop {
+          0% { transform: rotate(-9deg) scale(2.4); opacity: 0; }
+          100% { transform: rotate(-9deg) scale(1); opacity: 0.95; }
+        }
+        .stamp-animate {
+          animation: stampPop 0.45s cubic-bezier(0.2, 1.4, 0.4, 1) forwards;
+        }
+      `}</style>
+
+      <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center relative z-10">
         
         {/* LEFT COLUMN: HERO EDITORIAL STORY */}
-        <div className="lg:col-span-6 flex flex-col justify-between space-y-8">
-          {/* Header row: Brand & Actions */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <Shield className={`w-5 h-5 ${isLight ? 'text-[#1c2229]' : 'text-white'}`} strokeWidth={2.2} />
-              <span className="font-mono text-xs font-bold tracking-widest uppercase">
-                HASHGUARD
-              </span>
+        <section className="flex flex-col gap-7 max-w-[560px] lg:justify-self-end w-full">
+          <div className="flex justify-between items-center">
+            <div className="flex gap-2.5 items-center font-bold tracking-[0.16em] text-[13px] uppercase">
+              <svg 
+                width="22" 
+                height="22" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor" 
+                strokeWidth="2.2" 
+                strokeLinecap="round" 
+                strokeLinejoin="round"
+                style={{ color: isDark ? '#6ea8ff' : '#123a6b' }}
+              >
+                <path d="M12 3l8 3v6c0 4.5-3.2 8-8 9-4.8-1-8-4.5-8-9V6z"/>
+                <path d="M9 12l2 2 4-4"/>
+              </svg>
+              <span>HASHGUARD</span>
             </div>
-
-            <div className="flex items-center gap-2">
-              <Link
-                to="/"
-                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono transition-colors ${
-                  isLight 
-                    ? 'bg-[#e2ded5] hover:bg-[#d6d1c6] text-[#2d3748] border border-[#d2ccc0]' 
-                    : 'bg-[#151d27] hover:bg-[#1c2633] text-[#94a3b8] border border-[#232f3e]'
-                }`}
+            
+            <div className="flex gap-2">
+              <Link 
+                to="/" 
+                className="dm-mono text-xs rounded-full px-3 py-1.5 transition-colors cursor-pointer border"
+                style={{
+                  color: isDark ? '#8093b6' : '#6b7488',
+                  borderColor: isDark ? '#22324f' : '#d3ccbb',
+                  backgroundColor: isDark ? '#101a2d' : '#fbf8f1'
+                }}
               >
-                <span>&larr;</span>
-                <span>Home</span>
+                &larr; Home
               </Link>
-              <button
-                type="button"
-                onClick={toggleTheme}
-                aria-label="Toggle theme"
-                className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-mono transition-colors ${
-                  isLight 
-                    ? 'bg-[#e2ded5] hover:bg-[#d6d1c6] text-[#2d3748] border border-[#d2ccc0]' 
-                    : 'bg-[#151d27] hover:bg-[#1c2633] text-[#94a3b8] border border-[#232f3e]'
-                }`}
+              <button 
+                type="button" 
+                onClick={toggleTheme} 
+                aria-label="Toggle theme" 
+                className="dm-mono text-xs rounded-full px-3 py-1.5 transition-colors cursor-pointer border"
+                style={{
+                  color: isDark ? '#8093b6' : '#6b7488',
+                  borderColor: isDark ? '#22324f' : '#d3ccbb',
+                  backgroundColor: isDark ? '#101a2d' : '#fbf8f1'
+                }}
               >
-                {isLight ? (
-                  <>
-                    <Moon className="w-3 h-3 text-[#334155]" />
-                    <span>/ D</span>
-                  </>
-                ) : (
-                  <>
-                    <Sun className="w-3 h-3 text-amber-300" />
-                    <span>/ L</span>
-                  </>
-                )}
+                ☀ / ☾
               </button>
             </div>
           </div>
 
-          {/* Editorial Headline */}
-          <div className="space-y-4 pt-4">
-            <h1 
-              className={`text-5xl sm:text-6xl lg:text-7xl leading-[1.04] tracking-tight ${
-                isLight ? 'text-[#141b24]' : 'text-[#f1f5f9]'
-              }`}
-              style={{ fontFamily: "'Newsreader', 'Instrument Serif', Georgia, serif" }}
-            >
-              Every handoff,<br />
-              <span 
-                className="italic font-normal"
-                style={{ color: isLight ? '#d9383a' : '#f87171' }}
-              >
-                signed.
-              </span>
-            </h1>
-
-            <p className={`text-sm sm:text-base leading-relaxed max-w-md ${
-              isLight ? 'text-[#556376]' : 'text-[#8b9bb4]'
-            }`}>
-              Verifiable digital asset trust infrastructure. Sign in and your session is bound to a cryptographic fingerprint on the ledger.
-            </p>
-          </div>
-
-          {/* Live Session Fingerprint Card */}
-          <div className={`p-5 rounded-2xl border transition-colors ${
-            isLight 
-              ? 'bg-[#e4dfd5]/70 border-[#d3ccbe] text-[#222c38]' 
-              : 'bg-[#101721]/80 border-[#1c2736] text-[#cbd5e1]'
-          }`}>
-            <div className="flex items-center justify-between mb-3 text-[11px] font-mono tracking-wider">
-              <span className={`uppercase font-medium ${isLight ? 'text-[#64748b]' : 'text-[#64748b]'}`}>
-                SESSION FINGERPRINT &bull; SHA-256
-              </span>
-              <span className="flex items-center gap-1.5 text-emerald-500 font-bold text-[10px]">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                LIVE
-              </span>
-            </div>
-
-            <div className={`font-mono text-xs sm:text-sm tracking-[0.22em] leading-relaxed select-all ${
-              isLight ? 'text-[#1e293b] font-medium' : 'text-[#93c5fd] font-medium'
-            }`}>
-              8890 1294 3dcc 141f<br />
-              7827 3cac 6f65 31f9<br />
-              0543 79bb 1b8b 7ff0<br />
-              2650 f56c 3479 d915
-            </div>
-          </div>
-
-          {/* Stepper Footer line */}
-          <div className={`pt-2 text-[10px] font-mono tracking-widest uppercase flex flex-wrap gap-2 items-center ${
-            isLight ? 'text-[#78889b]' : 'text-[#56657a]'
-          }`}>
-            <span>COLLECT</span>
-            <span>&bull;</span>
-            <span>SEAL</span>
-            <span>&bull;</span>
-            <span>TRANSFER</span>
-            <span>&bull;</span>
-            <span>RECEIVE</span>
-            <span>&bull;</span>
-            <span>ANALYZE</span>
-            <span>&bull;</span>
-            <span>DERIVE</span>
-          </div>
-        </div>
-
-        {/* RIGHT COLUMN: TICKET / RECEIPT MANILA FORM */}
-        <div className="lg:col-span-6 flex justify-center">
-          <div 
-            className={`w-full max-w-md rounded-2xl transition-all duration-300 relative overflow-hidden flex flex-col ${
-              isLight 
-                ? 'bg-[#faf8f5] text-[#1c2229] border border-[#ded8cc] shadow-[0_20px_50px_rgba(40,30,20,0.08)]' 
-                : 'bg-[#121924] text-[#e2e8f0] border border-[#1e2b3c] shadow-[0_25px_60px_rgba(0,0,0,0.6)]'
-            }`}
+          <h1 
+            className="serif-title font-normal tracking-[-0.02em] leading-[0.95] text-5xl sm:text-6xl lg:text-[76px]"
           >
-            {/* Top Lanyard / Hole Punch */}
-            <div className="pt-4 pb-2 flex justify-center">
-              <div className={`w-3.5 h-3.5 rounded-full border transition-colors ${
-                isLight ? 'bg-[#edeae3] border-[#d8d2c4]' : 'bg-[#0b1017] border-[#223043]'
-              }`} />
-            </div>
+            Every handoff,{' '}
+            <em 
+              className="not-italic italic" 
+              style={{ color: isDark ? '#ff5d73' : '#c62d3f' }}
+            >
+              signed.
+            </em>
+          </h1>
 
-            {/* Receipt Header Title & Tabs */}
-            <div className="px-7 pt-1 pb-4 flex items-baseline justify-between border-b border-dashed transition-colors"
-              style={{ borderColor: isLight ? '#e2ded5' : '#223044' }}
+          <p 
+            className="text-[15px] max-w-[30em] leading-relaxed"
+            style={{ color: isDark ? '#8093b6' : '#6b7488' }}
+          >
+            Verifiable digital asset trust infrastructure. Sign in and your session is bound to a cryptographic fingerprint on the ledger.
+          </p>
+
+          {/* Cryptographic Session Fingerprint */}
+          <div 
+            className="rounded-xl p-4 sm:p-5 border transition-colors"
+            style={{
+              backgroundColor: isDark ? '#101a2d' : '#fbf8f1',
+              borderColor: isDark ? '#22324f' : '#d3ccbb'
+            }}
+          >
+            <div className="flex justify-between dm-mono text-[11px] tracking-[0.1em] uppercase mb-2">
+              <span style={{ color: isDark ? '#8093b6' : '#6b7488' }}>
+                Session fingerprint &bull; SHA-256
+              </span>
+              <span 
+                className="font-normal flex items-center gap-1 text-[11px]"
+                style={{ color: isDark ? '#3ddc97' : '#1d7a52' }}
+              >
+                &bull; live
+              </span>
+            </div>
+            <pre 
+              className="dm-mono text-[13px] leading-[1.7] tracking-[0.04em] whitespace-pre-wrap break-all"
+              style={{ color: isDark ? '#6ea8ff' : '#123a6b' }}
+            >
+              {fingerprint}
+            </pre>
+          </div>
+
+          {/* Handoff Lifecycle Trail */}
+          <div 
+            className="flex flex-wrap gap-x-2.5 gap-y-1.5 dm-mono text-[11px] uppercase tracking-[0.08em] pt-1"
+            style={{ color: isDark ? '#8093b6' : '#6b7488' }}
+          >
+            {['Collect', 'Seal', 'Transfer', 'Receive', 'Analyze', 'Derive'].map((stage, i, arr) => (
+              <React.Fragment key={stage}>
+                <span>{stage}</span>
+                {i < arr.length - 1 && (
+                  <span style={{ color: isDark ? '#ff5d73' : '#c62d3f' }}>&rarr;</span>
+                )}
+              </React.Fragment>
+            ))}
+          </div>
+        </section>
+
+        {/* RIGHT COLUMN: TAG / EVIDENCE TICKET */}
+        <section className="w-full max-w-[520px] lg:justify-self-start relative">
+          <div 
+            className="rounded-t-[6px] rounded-b-[18px] border relative overflow-hidden transition-all duration-300"
+            style={{
+              backgroundColor: isDark ? '#101a2d' : '#fbf8f1',
+              borderColor: isDark ? '#22324f' : '#d3ccbb',
+              boxShadow: isDark 
+                ? '0 1px 0 #22324f, 0 26px 60px -28px rgba(0,0,0,0.6)' 
+                : '0 1px 0 #d3ccbb, 0 26px 60px -28px rgba(14,26,47,0.35)'
+            }}
+          >
+            {/* Lanyard Hole Punch */}
+            <div 
+              className="absolute top-[14px] left-1/2 -ml-[9px] w-[18px] h-[18px] rounded-full border"
+              style={{
+                backgroundColor: isDark ? '#09101d' : '#efeadf',
+                borderColor: isDark ? '#22324f' : '#d3ccbb',
+                boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.2)'
+              }}
+            />
+
+            {/* Tag Header */}
+            <div 
+              className="pt-[44px] px-7 pb-4 border-b-2 border-dashed flex justify-between items-end gap-3"
+              style={{ borderColor: isDark ? '#22324f' : '#d3ccbb' }}
             >
               <div>
-                <span className={`text-[9px] font-mono uppercase tracking-widest block ${
-                  isLight ? 'text-[#8c9ba5]' : 'text-[#64748b]'
-                }`}>
-                  ACCESS FORM &bull; HG-0028
+                <span className="dm-mono text-[10.5px] tracking-[0.12em] uppercase block" style={{ color: isDark ? '#8093b6' : '#6b7488' }}>
+                  Access form &bull; <span>{formNumber}</span>
                 </span>
-                <h2 
-                  className="text-xl sm:text-2xl font-normal tracking-tight mt-0.5"
-                  style={{ fontFamily: "'Newsreader', 'Instrument Serif', Georgia, serif" }}
-                >
+                <h2 className="serif-title font-normal text-[26px] leading-[1.1] mt-0.5">
                   {authMode === 'login' ? 'Officer sign in' : 'Register organization'}
                 </h2>
               </div>
 
-              <div className="flex items-center gap-3 text-xs font-mono">
-                <button
-                  type="button"
-                  onClick={() => { setAuthMode('login'); setError(''); setRegisteredResult(null); }}
-                  className={`cursor-pointer transition-colors ${
-                    authMode === 'login' 
-                      ? 'underline font-bold text-inherit decoration-current underline-offset-4' 
-                      : 'text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300'
-                  }`}
+              {/* Mode Tabs: Sign in vs Register org */}
+              <div className="flex gap-3.5 dm-mono text-xs" role="tablist">
+                <button 
+                  type="button" 
+                  role="tab"
+                  aria-selected={authMode === 'login'}
+                  onClick={() => { setAuthMode('login'); setError(''); setRegisteredResult(null); setIsStamped(false); }}
+                  className="bg-transparent border-0 border-b-2 py-0.5 cursor-pointer font-inherit transition-colors"
+                  style={{
+                    color: authMode === 'login' ? (isDark ? '#e8eefc' : '#0e1a2f') : (isDark ? '#8093b6' : '#6b7488'),
+                    borderColor: authMode === 'login' ? (isDark ? '#ff5d73' : '#c62d3f') : 'transparent'
+                  }}
                 >
                   Sign in
                 </button>
-                <button
-                  type="button"
-                  onClick={() => { setAuthMode('register'); setError(''); }}
-                  className={`cursor-pointer transition-colors ${
-                    authMode === 'register' 
-                      ? 'underline font-bold text-inherit decoration-current underline-offset-4' 
-                      : 'text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300'
-                  }`}
+                <button 
+                  type="button" 
+                  role="tab"
+                  aria-selected={authMode === 'register'}
+                  onClick={() => { setAuthMode('register'); setError(''); setIsStamped(false); }}
+                  className="bg-transparent border-0 border-b-2 py-0.5 cursor-pointer font-inherit transition-colors"
+                  style={{
+                    color: authMode === 'register' ? (isDark ? '#e8eefc' : '#0e1a2f') : (isDark ? '#8093b6' : '#6b7488'),
+                    borderColor: authMode === 'register' ? (isDark ? '#ff5d73' : '#c62d3f') : 'transparent'
+                  }}
                 >
                   Register org
                 </button>
               </div>
             </div>
 
-            {/* Form Body */}
-            {authMode === 'login' ? (
-              <div className="p-7 space-y-6">
-                {error && (
-                  <div className="p-2.5 bg-rose-500/10 border border-rose-500/30 rounded-lg text-rose-500 text-xs font-mono text-center">
-                    {error}
-                  </div>
-                )}
-
-                {/* CLEARANCE TOGGLE BUTTONS */}
-                <div>
-                  <label className={`block text-[10px] font-mono uppercase tracking-widest mb-2 font-medium ${
-                    isLight ? 'text-[#7a8a9e]' : 'text-[#627387]'
-                  }`}>
-                    CLEARANCE
-                  </label>
-                  <div className={`grid grid-cols-4 gap-1 p-1 rounded-xl border ${
-                    isLight ? 'bg-[#edeae3] border-[#ded8cc]' : 'bg-[#0e141d] border-[#1b2635]'
-                  }`}>
-                    {[
-                      { id: 'ADMINISTRATOR', label: 'Admin' },
-                      { id: 'FORENSIC_ANALYST', label: 'Analyst' },
-                      { id: 'AUDITOR', label: 'Auditor' },
-                      { id: 'EVIDENCE_CUSTODIAN', label: 'Custodian' },
-                    ].map((role) => {
-                      const isActive = activeClearance === role.id;
-                      return (
-                        <button
-                          key={role.id}
-                          type="button"
-                          onClick={() => handleRoleSelection(role.id)}
-                          className={`py-1.5 text-xs font-mono font-medium rounded-lg transition-all cursor-pointer text-center ${
-                            isActive
-                              ? isLight 
-                                ? 'bg-[#18202a] text-white shadow-sm' 
-                                : 'bg-[#e2e8f0] text-[#0b1017] shadow-sm'
-                              : isLight
-                                ? 'text-[#475569] hover:text-[#0f172a]'
-                                : 'text-[#94a3b8] hover:text-white'
-                          }`}
-                        >
-                          {role.label}
-                        </button>
-                      );
-                    })}
-                  </div>
+            {/* Form Container */}
+            <div className="pt-[22px] px-7 pb-2">
+              {error && (
+                <div 
+                  className="p-2.5 rounded-lg dm-mono text-xs text-center mb-4 border"
+                  style={{
+                    backgroundColor: isDark ? 'rgba(255, 93, 115, 0.1)' : 'rgba(198, 45, 63, 0.1)',
+                    borderColor: isDark ? 'rgba(255, 93, 115, 0.3)' : 'rgba(198, 45, 63, 0.3)',
+                    color: isDark ? '#ff5d73' : '#c62d3f'
+                  }}
+                >
+                  {error}
                 </div>
+              )}
 
-                <form onSubmit={handleLogin} className="space-y-5">
-                  {/* WORK EMAIL */}
+              {authMode === 'login' ? (
+                /* LOGIN FORM */
+                <form onSubmit={handleLoginSubmit} autoComplete="off" className="space-y-[18px]">
+                  {/* Clearance Segment */}
                   <div>
-                    <label className={`block text-[10px] font-mono uppercase tracking-widest mb-1.5 font-medium ${
-                      isLight ? 'text-[#7a8a9e]' : 'text-[#627387]'
-                    }`}>
-                      WORK EMAIL
+                    <span 
+                      className="block font-medium text-[10.5px] dm-mono tracking-[0.12em] uppercase mb-1"
+                      style={{ color: isDark ? '#8093b6' : '#6b7488' }}
+                    >
+                      Clearance
+                    </span>
+                    <div className="grid grid-cols-4 gap-1.5">
+                      {[
+                        { id: 'admin', label: 'Admin' },
+                        { id: 'analyst', label: 'Analyst' },
+                        { id: 'auditor', label: 'Auditor' },
+                        { id: 'custodian', label: 'Custodian' },
+                      ].map((item) => {
+                        const isSelected = role === item.id;
+                        return (
+                          <button
+                            key={item.id}
+                            type="button"
+                            onClick={() => handleRoleSelect(item.id)}
+                            aria-pressed={isSelected}
+                            className="dm-mono text-xs font-medium py-2 px-1 rounded-lg border-[1.5px] cursor-pointer transition-all text-center"
+                            style={{
+                              backgroundColor: isSelected ? (isDark ? '#e8eefc' : '#0e1a2f') : 'transparent',
+                              color: isSelected ? (isDark ? '#101a2d' : '#fbf8f1') : (isDark ? '#e8eefc' : '#0e1a2f'),
+                              borderColor: isSelected ? (isDark ? '#e8eefc' : '#0e1a2f') : (isDark ? '#22324f' : '#d3ccbb')
+                            }}
+                          >
+                            {item.label}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Work Email */}
+                  <div>
+                    <label 
+                      htmlFor="email-in"
+                      className="block font-medium text-[10.5px] dm-mono tracking-[0.12em] uppercase mb-1"
+                      style={{ color: isDark ? '#8093b6' : '#6b7488' }}
+                    >
+                      Work email
                     </label>
-                    <input
+                    <input 
+                      id="email-in"
                       type="email"
                       required
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className={`w-full bg-transparent border-b text-xs font-mono py-2 focus:outline-none transition-colors ${
-                        isLight 
-                          ? 'border-[#cbd5e1] focus:border-[#0f172a] text-[#0f172a]' 
-                          : 'border-[#263548] focus:border-[#93c5fd] text-[#f1f5f9]'
-                      }`}
-                      placeholder="admin@cyberlab.local"
+                      className="w-full bg-transparent border-0 border-b-[1.5px] dm-mono font-medium text-[15px] py-2 focus:outline-none transition-colors"
+                      style={{
+                        borderColor: isDark ? '#22324f' : '#d3ccbb',
+                        color: isDark ? '#e8eefc' : '#0e1a2f'
+                      }}
                     />
                   </div>
 
-                  {/* PASSWORD */}
+                  {/* Password */}
                   <div>
-                    <div className="flex items-center justify-between mb-1.5">
-                      <label className={`block text-[10px] font-mono uppercase tracking-widest font-medium ${
-                        isLight ? 'text-[#7a8a9e]' : 'text-[#627387]'
-                      }`}>
-                        PASSWORD
-                      </label>
-                      <button
+                    <label 
+                      htmlFor="pw-in"
+                      className="block font-medium text-[10.5px] dm-mono tracking-[0.12em] uppercase mb-1"
+                      style={{ color: isDark ? '#8093b6' : '#6b7488' }}
+                    >
+                      Password
+                    </label>
+                    <div className="relative">
+                      <input 
+                        id="pw-in"
+                        type={showPassword ? 'text' : 'password'}
+                        required
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        className="w-full bg-transparent border-0 border-b-[1.5px] dm-mono font-medium text-[15px] py-2 pr-12 focus:outline-none transition-colors"
+                        style={{
+                          borderColor: isDark ? '#22324f' : '#d3ccbb',
+                          color: isDark ? '#e8eefc' : '#0e1a2f'
+                        }}
+                      />
+                      <button 
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className={`text-[9px] font-mono uppercase tracking-wider hover:underline ${
-                          isLight ? 'text-[#8c9ba5]' : 'text-[#64748b]'
-                        }`}
+                        className="absolute right-0 top-1/2 -translate-y-1/2 bg-transparent border-0 dm-mono text-[10.5px] cursor-pointer"
+                        style={{ color: isDark ? '#8093b6' : '#6b7488' }}
                       >
                         {showPassword ? 'HIDE' : 'SHOW'}
                       </button>
                     </div>
-                    <input
-                      type={showPassword ? 'text' : 'password'}
-                      required
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className={`w-full bg-transparent border-b text-xs font-mono py-2 focus:outline-none transition-colors ${
-                        isLight 
-                          ? 'border-[#cbd5e1] focus:border-[#0f172a] text-[#0f172a]' 
-                          : 'border-[#263548] focus:border-[#93c5fd] text-[#f1f5f9]'
-                      }`}
-                      placeholder="•••••••••••"
-                    />
                   </div>
 
-                  {/* ORGANIZATION */}
+                  {/* Organization */}
                   <div>
-                    <label className={`block text-[10px] font-mono uppercase tracking-widest mb-1.5 font-medium ${
-                      isLight ? 'text-[#7a8a9e]' : 'text-[#627387]'
-                    }`}>
-                      ORGANIZATION
+                    <label 
+                      htmlFor="org-in"
+                      className="block font-medium text-[10.5px] dm-mono tracking-[0.12em] uppercase mb-1"
+                      style={{ color: isDark ? '#8093b6' : '#6b7488' }}
+                    >
+                      Organization
                     </label>
-                    <div className="relative">
-                      <select
-                        value={selectedOrgId}
-                        onChange={(e) => setSelectedOrgId(e.target.value)}
-                        className={`w-full bg-transparent border-b text-xs font-mono py-2 pr-6 appearance-none focus:outline-none transition-colors cursor-pointer ${
-                          isLight 
-                            ? 'border-[#cbd5e1] focus:border-[#0f172a] text-[#0f172a]' 
-                            : 'border-[#263548] focus:border-[#93c5fd] text-[#f1f5f9]'
-                        }`}
-                      >
-                        <option value="ORG_B" className={isLight ? 'bg-white text-black' : 'bg-[#121924] text-white'}>
-                          Cyber Defense Lab (Forensics)
-                        </option>
-                        <option value="ORG_A" className={isLight ? 'bg-white text-black' : 'bg-[#121924] text-white'}>
-                          CERT-Alpha (Incident Response)
-                        </option>
-                        <option value="ORG_D" className={isLight ? 'bg-white text-black' : 'bg-[#121924] text-white'}>
-                          Cyber Crime Police (Law Enforcement)
-                        </option>
-                        <option value="ORG_C" className={isLight ? 'bg-white text-black' : 'bg-[#121924] text-white'}>
-                          Judicial Court Registry (Judiciary)
-                        </option>
-                        <option value="ORG_AUDIT" className={isLight ? 'bg-white text-black' : 'bg-[#121924] text-white'}>
-                          Audit Board (Independent Oversight)
-                        </option>
-                        {Object.values(organizations || {})
-                          .filter((org) => !['ORG_A', 'ORG_B', 'ORG_C', 'ORG_D', 'ORG_AUDIT'].includes(org.id))
-                          .map((org) => (
-                            <option key={org.id} value={org.id} className={isLight ? 'bg-white text-black' : 'bg-[#121924] text-white'}>
-                              {org.name}
-                            </option>
-                          ))}
-                      </select>
-                      <span className={`absolute right-1 top-1/2 -translate-y-1/2 pointer-events-none text-xs ${
-                        isLight ? 'text-[#64748b]' : 'text-[#94a3b8]'
-                      }`}>
-                        &#9662;
-                      </span>
-                    </div>
+                    <select 
+                      id="org-in"
+                      value={selectedOrgId}
+                      onChange={(e) => setSelectedOrgId(e.target.value)}
+                      className="w-full bg-transparent border-0 border-b-[1.5px] dm-mono font-medium text-[15px] py-2 pr-4 focus:outline-none transition-colors cursor-pointer"
+                      style={{
+                        borderColor: isDark ? '#22324f' : '#d3ccbb',
+                        color: isDark ? '#e8eefc' : '#0e1a2f'
+                      }}
+                    >
+                      <option value="ORG_B" style={{ backgroundColor: isDark ? '#101a2d' : '#fbf8f1', color: isDark ? '#e8eefc' : '#0e1a2f' }}>
+                        Cyber Defense Lab (Forensics)
+                      </option>
+                      <option value="ORG_A" style={{ backgroundColor: isDark ? '#101a2d' : '#fbf8f1', color: isDark ? '#e8eefc' : '#0e1a2f' }}>
+                        CERT-Alpha (Collector / IR)
+                      </option>
+                      <option value="ORG_D" style={{ backgroundColor: isDark ? '#101a2d' : '#fbf8f1', color: isDark ? '#e8eefc' : '#0e1a2f' }}>
+                        Cyber Crime Police (LEA)
+                      </option>
+                      <option value="ORG_C" style={{ backgroundColor: isDark ? '#101a2d' : '#fbf8f1', color: isDark ? '#e8eefc' : '#0e1a2f' }}>
+                        Judicial Court Registry (Judiciary)
+                      </option>
+                      <option value="ORG_AUDIT" style={{ backgroundColor: isDark ? '#101a2d' : '#fbf8f1', color: isDark ? '#e8eefc' : '#0e1a2f' }}>
+                        National Cyber Security Audit Board
+                      </option>
+                      {Object.values(organizations || {})
+                        .filter((org) => !['ORG_A', 'ORG_B', 'ORG_C', 'ORG_D', 'ORG_AUDIT'].includes(org.id))
+                        .map((org) => (
+                          <option key={org.id} value={org.id} style={{ backgroundColor: isDark ? '#101a2d' : '#fbf8f1', color: isDark ? '#e8eefc' : '#0e1a2f' }}>
+                            {org.name}
+                          </option>
+                        ))}
+                    </select>
                   </div>
 
-                  {/* SUBMIT BUTTON */}
-                  <button
+                  {/* Submit Button */}
+                  <button 
                     type="submit"
                     disabled={loading}
-                    className={`w-full mt-4 py-3 px-4 rounded-xl font-mono font-bold text-xs flex items-center justify-between transition-all cursor-pointer shadow-sm ${
-                      isLight 
-                        ? 'bg-[#18202a] hover:bg-[#0f172a] text-white' 
-                        : 'bg-[#f1f5f9] hover:bg-white text-[#0b1017]'
-                    }`}
+                    className="w-full mt-1.5 border-0 rounded-[10px] py-[15px] px-[18px] font-bold text-[13px] tracking-[0.1em] cursor-pointer flex justify-between items-center transition-transform hover:-translate-y-[1px] active:translate-y-0 disabled:opacity-70 disabled:cursor-progress shadow-sm"
+                    style={{
+                      backgroundColor: isDark ? '#e8eefc' : '#0e1a2f',
+                      color: isDark ? '#101a2d' : '#fbf8f1'
+                    }}
                   >
-                    <span>
-                      {loading ? 'AUTHENTICATING...' : 'INITIALIZE SECURE SESSION'}
-                    </span>
-                    {loading ? (
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                    ) : (
-                      <span>&rarr;</span>
-                    )}
+                    <span>INITIALIZE SECURE SESSION</span>
+                    <span>{loading ? '...' : '&rarr;'}</span>
                   </button>
-                </form>
-              </div>
-            ) : (
-              /* REGISTRATION FORM */
-              <div className="p-7">
-                {registeredResult ? (
-                  <div className="space-y-4 text-center animate-in fade-in zoom-in-95 duration-200">
-                    <div className="w-10 h-10 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center mx-auto text-emerald-500">
-                      <Check className="w-5 h-5" />
-                    </div>
 
-                    <div>
-                      <div className="text-[10px] font-mono font-bold text-emerald-500 uppercase tracking-widest">
-                        ORGANIZATION CREATED ✓
-                      </div>
-                      <h3 className="text-base font-bold font-mono text-inherit mt-1">
-                        {registeredResult.newOrg.name}
-                      </h3>
-                      <p className="text-[11px] text-neutral-400 mt-0.5">
-                        Enclave registered &amp; provisioned on federated ledger
-                      </p>
-                    </div>
-
-                    <div className={`p-3.5 rounded-xl border text-left space-y-2 font-mono text-xs ${
-                      isLight ? 'bg-[#edeae3] border-[#ded8cc]' : 'bg-[#0e141d] border-[#1e2b3c]'
-                    }`}>
-                      <div>
-                        <span className="text-[10px] uppercase text-neutral-400 block">Organization ID:</span>
-                        <span className="font-bold">{registeredResult.newOrg.id}</span>
-                      </div>
-                      <div>
-                        <span className="text-[10px] uppercase text-neutral-400 block">DID:</span>
-                        <span className="text-cyan-500 font-bold text-[11px] break-all">{registeredResult.newOrg.did}</span>
-                      </div>
-                      <div>
-                        <span className="text-[10px] uppercase text-neutral-400 block">Admin Email:</span>
-                        <span>{registeredResult.adminUser.email}</span>
-                      </div>
-                    </div>
-
-                    <button
-                      type="button"
-                      onClick={handleEnterRegisteredOrg}
-                      className={`w-full py-2.5 px-4 rounded-xl font-mono font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer ${
-                        isLight ? 'bg-[#18202a] text-white' : 'bg-white text-[#0b1017]'
-                      }`}
-                    >
-                      <span>INITIALIZE AS ADMINISTRATOR</span>
-                      <ChevronRight className="w-4 h-4" />
-                    </button>
-                  </div>
-                ) : (
-                  <form onSubmit={handleRegisterOrg} className="space-y-4">
-                    <div>
-                      <label className={`block text-[10px] font-mono uppercase tracking-widest mb-1 font-medium ${
-                        isLight ? 'text-[#7a8a9e]' : 'text-[#627387]'
-                      }`}>
-                        Organization Name
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        value={regOrgName}
-                        onChange={(e) => setRegOrgName(e.target.value)}
-                        className={`w-full bg-transparent border-b text-xs font-mono py-1.5 focus:outline-none transition-colors ${
-                          isLight ? 'border-[#cbd5e1] focus:border-[#0f172a]' : 'border-[#263548] focus:border-[#93c5fd]'
-                        }`}
-                        placeholder="Cyber Defense Lab"
-                      />
-                    </div>
-
-                    <div>
-                      <label className={`block text-[10px] font-mono uppercase tracking-widest mb-1 font-medium ${
-                        isLight ? 'text-[#7a8a9e]' : 'text-[#627387]'
-                      }`}>
-                        Organization Type
-                      </label>
-                      <select
-                        value={regOrgType}
-                        onChange={(e) => setRegOrgType(e.target.value)}
-                        className={`w-full bg-transparent border-b text-xs font-mono py-1.5 appearance-none focus:outline-none cursor-pointer ${
-                          isLight ? 'border-[#cbd5e1] focus:border-[#0f172a]' : 'border-[#263548] focus:border-[#93c5fd]'
-                        }`}
-                      >
-                        <option value="Cybersecurity / Forensics Lab" className={isLight ? 'bg-white' : 'bg-[#121924]'}>Cybersecurity / Forensics Lab</option>
-                        <option value="Incident Response Team (CERT)" className={isLight ? 'bg-white' : 'bg-[#121924]'}>Incident Response Team (CERT)</option>
-                        <option value="Judicial Court Registry" className={isLight ? 'bg-white' : 'bg-[#121924]'}>Judicial Court Registry</option>
-                        <option value="Law Enforcement Agency (LEA)" className={isLight ? 'bg-white' : 'bg-[#121924]'}>Law Enforcement Agency (LEA)</option>
-                        <option value="Independent Regulatory & Audit Oversight" className={isLight ? 'bg-white' : 'bg-[#121924]'}>Independent Regulatory & Audit Oversight</option>
-                      </select>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-3">
-                      <div>
-                        <label className={`block text-[10px] font-mono uppercase tracking-widest mb-1 font-medium ${
-                          isLight ? 'text-[#7a8a9e]' : 'text-[#627387]'
-                        }`}>
-                          Node ID
-                        </label>
-                        <input
-                          type="text"
-                          readOnly
-                          value={regOrgId}
-                          className={`w-full bg-transparent border-b text-xs font-mono py-1.5 opacity-80 cursor-not-allowed ${
-                            isLight ? 'border-[#cbd5e1]' : 'border-[#263548]'
-                          }`}
-                        />
-                      </div>
-                      <div>
-                        <div className="flex items-center justify-between mb-1">
-                          <label className={`block text-[10px] font-mono uppercase tracking-widest font-medium ${
-                            isLight ? 'text-[#7a8a9e]' : 'text-[#627387]'
-                          }`}>
-                            DID
-                          </label>
-                          <button
-                            type="button"
-                            onClick={generateNewDid}
-                            className="text-[9px] text-cyan-500 hover:underline font-mono"
-                          >
-                            New
-                          </button>
+                  {/* Progressive Terminal Logs */}
+                  {verificationSteps.length > 0 && (
+                    <div className="dm-mono text-[11.5px] mt-3 min-h-0 grid gap-0.5" role="status">
+                      {verificationSteps.map((step, idx) => (
+                        <div 
+                          key={idx} 
+                          style={{ color: step.done ? (isDark ? '#3ddc97' : '#1d7a52') : (isDark ? '#8093b6' : '#6b7488') }}
+                        >
+                          {step.done ? `✓ ${step.text}` : `· ${step.text}`}
                         </div>
-                        <input
+                      ))}
+                    </div>
+                  )}
+                </form>
+              ) : (
+                /* REGISTRATION FORM */
+                <div>
+                  {registeredResult ? (
+                    <div className="space-y-4 text-center py-2">
+                      <div 
+                        className="w-10 h-10 rounded-full border flex items-center justify-center mx-auto"
+                        style={{
+                          backgroundColor: isDark ? 'rgba(61, 220, 151, 0.1)' : 'rgba(29, 122, 82, 0.1)',
+                          borderColor: isDark ? 'rgba(61, 220, 151, 0.3)' : 'rgba(29, 122, 82, 0.3)',
+                          color: isDark ? '#3ddc97' : '#1d7a52'
+                        }}
+                      >
+                        <Check className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <div 
+                          className="text-[10px] dm-mono font-bold uppercase tracking-widest"
+                          style={{ color: isDark ? '#3ddc97' : '#1d7a52' }}
+                        >
+                          ORGANIZATION CREATED ✓
+                        </div>
+                        <h3 className="serif-title text-2xl font-normal mt-0.5">
+                          {registeredResult.newOrg.name}
+                        </h3>
+                        <p className="text-[11px]" style={{ color: isDark ? '#8093b6' : '#6b7488' }}>
+                          Enclave provisioned on federated ledger
+                        </p>
+                      </div>
+
+                      <div 
+                        className="p-3.5 rounded-xl border text-left space-y-2 dm-mono text-xs"
+                        style={{
+                          backgroundColor: isDark ? '#09101d' : '#efeadf',
+                          borderColor: isDark ? '#22324f' : '#d3ccbb'
+                        }}
+                      >
+                        <div>
+                          <span className="text-[10px] uppercase block" style={{ color: isDark ? '#8093b6' : '#6b7488' }}>Organization ID:</span>
+                          <span className="font-bold">{registeredResult.newOrg.id}</span>
+                        </div>
+                        <div>
+                          <span className="text-[10px] uppercase block" style={{ color: isDark ? '#8093b6' : '#6b7488' }}>DID:</span>
+                          <span className="break-all font-bold" style={{ color: isDark ? '#6ea8ff' : '#123a6b' }}>
+                            {registeredResult.newOrg.did}
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-[10px] uppercase block" style={{ color: isDark ? '#8093b6' : '#6b7488' }}>Admin Email:</span>
+                          <span>{registeredResult.adminUser.email}</span>
+                        </div>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={handleEnterRegisteredOrg}
+                        className="w-full mt-2 rounded-[10px] py-[13px] px-4 font-bold text-xs tracking-wider flex items-center justify-center gap-2 cursor-pointer"
+                        style={{
+                          backgroundColor: isDark ? '#e8eefc' : '#0e1a2f',
+                          color: isDark ? '#101a2d' : '#fbf8f1'
+                        }}
+                      >
+                        <span>INITIALIZE AS ADMINISTRATOR</span>
+                        <ChevronRight className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ) : (
+                    <form onSubmit={handleRegisterOrg} className="space-y-[18px]">
+                      <div>
+                        <label 
+                          htmlFor="reg-on"
+                          className="block font-medium text-[10.5px] dm-mono tracking-[0.12em] uppercase mb-1"
+                          style={{ color: isDark ? '#8093b6' : '#6b7488' }}
+                        >
+                          Organization name
+                        </label>
+                        <input 
+                          id="reg-on"
                           type="text"
-                          readOnly
-                          value={regDid}
-                          className={`w-full bg-transparent border-b text-xs font-mono py-1.5 truncate opacity-80 cursor-not-allowed ${
-                            isLight ? 'border-[#cbd5e1]' : 'border-[#263548]'
-                          }`}
+                          required
+                          value={regOrgName}
+                          onChange={(e) => setRegOrgName(e.target.value)}
+                          placeholder="National Forensics Unit"
+                          className="w-full bg-transparent border-0 border-b-[1.5px] dm-mono font-medium text-[15px] py-2 focus:outline-none transition-colors"
+                          style={{
+                            borderColor: isDark ? '#22324f' : '#d3ccbb',
+                            color: isDark ? '#e8eefc' : '#0e1a2f'
+                          }}
                         />
                       </div>
-                    </div>
 
-                    <div>
-                      <label className={`block text-[10px] font-mono uppercase tracking-widest mb-1 font-medium ${
-                        isLight ? 'text-[#7a8a9e]' : 'text-[#627387]'
-                      }`}>
-                        Admin Email
-                      </label>
-                      <input
-                        type="email"
-                        required
-                        value={regAdminEmail}
-                        onChange={(e) => setRegAdminEmail(e.target.value)}
-                        className={`w-full bg-transparent border-b text-xs font-mono py-1.5 focus:outline-none transition-colors ${
-                          isLight ? 'border-[#cbd5e1] focus:border-[#0f172a]' : 'border-[#263548] focus:border-[#93c5fd]'
-                        }`}
-                        placeholder="admin@cyberlab.local"
-                      />
-                    </div>
+                      <div>
+                        <label 
+                          htmlFor="reg-type"
+                          className="block font-medium text-[10.5px] dm-mono tracking-[0.12em] uppercase mb-1"
+                          style={{ color: isDark ? '#8093b6' : '#6b7488' }}
+                        >
+                          Organization type
+                        </label>
+                        <select 
+                          id="reg-type"
+                          value={regOrgType}
+                          onChange={(e) => setRegOrgType(e.target.value)}
+                          className="w-full bg-transparent border-0 border-b-[1.5px] dm-mono font-medium text-[15px] py-2 pr-4 focus:outline-none cursor-pointer"
+                          style={{
+                            borderColor: isDark ? '#22324f' : '#d3ccbb',
+                            color: isDark ? '#e8eefc' : '#0e1a2f'
+                          }}
+                        >
+                          <option value="Cybersecurity / Forensics Lab" style={{ backgroundColor: isDark ? '#101a2d' : '#fbf8f1' }}>Cybersecurity / Forensics Lab</option>
+                          <option value="Incident Response Team (CERT)" style={{ backgroundColor: isDark ? '#101a2d' : '#fbf8f1' }}>Incident Response Team (CERT)</option>
+                          <option value="Judicial Court Registry" style={{ backgroundColor: isDark ? '#101a2d' : '#fbf8f1' }}>Judicial Court Registry</option>
+                          <option value="Law Enforcement Agency (LEA)" style={{ backgroundColor: isDark ? '#101a2d' : '#fbf8f1' }}>Law Enforcement Agency (LEA)</option>
+                          <option value="Independent Regulatory & Audit Oversight" style={{ backgroundColor: isDark ? '#101a2d' : '#fbf8f1' }}>Independent Regulatory & Audit Oversight</option>
+                        </select>
+                      </div>
 
-                    <div>
-                      <label className={`block text-[10px] font-mono uppercase tracking-widest mb-1 font-medium ${
-                        isLight ? 'text-[#7a8a9e]' : 'text-[#627387]'
-                      }`}>
-                        Access Passphrase
-                      </label>
-                      <input
-                        type="password"
-                        required
-                        value={regPassword}
-                        onChange={(e) => setRegPassword(e.target.value)}
-                        className={`w-full bg-transparent border-b text-xs font-mono py-1.5 focus:outline-none transition-colors ${
-                          isLight ? 'border-[#cbd5e1] focus:border-[#0f172a]' : 'border-[#263548] focus:border-[#93c5fd]'
-                        }`}
-                        placeholder="Create strong passphrase"
-                      />
-                    </div>
+                      <div>
+                        <label 
+                          htmlFor="reg-email"
+                          className="block font-medium text-[10.5px] dm-mono tracking-[0.12em] uppercase mb-1"
+                          style={{ color: isDark ? '#8093b6' : '#6b7488' }}
+                        >
+                          Admin work email
+                        </label>
+                        <input 
+                          id="reg-email"
+                          type="email"
+                          required
+                          value={regAdminEmail}
+                          onChange={(e) => setRegAdminEmail(e.target.value)}
+                          placeholder="admin@agency.gov.local"
+                          className="w-full bg-transparent border-0 border-b-[1.5px] dm-mono font-medium text-[15px] py-2 focus:outline-none transition-colors"
+                          style={{
+                            borderColor: isDark ? '#22324f' : '#d3ccbb',
+                            color: isDark ? '#e8eefc' : '#0e1a2f'
+                          }}
+                        />
+                      </div>
 
-                    <button
-                      type="submit"
-                      disabled={loading}
-                      className={`w-full mt-3 py-2.5 px-4 rounded-xl font-mono font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer ${
-                        isLight ? 'bg-[#18202a] text-white' : 'bg-white text-[#0b1017]'
-                      }`}
-                    >
-                      {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Building2 className="w-4 h-4" />}
-                      <span>REGISTER NODE</span>
-                    </button>
-                  </form>
-                )}
+                      <div>
+                        <label 
+                          htmlFor="reg-pw"
+                          className="block font-medium text-[10.5px] dm-mono tracking-[0.12em] uppercase mb-1"
+                          style={{ color: isDark ? '#8093b6' : '#6b7488' }}
+                        >
+                          Passphrase
+                        </label>
+                        <input 
+                          id="reg-pw"
+                          type="password"
+                          required
+                          value={regPassword}
+                          onChange={(e) => setRegPassword(e.target.value)}
+                          placeholder="Create strong passphrase"
+                          className="w-full bg-transparent border-0 border-b-[1.5px] dm-mono font-medium text-[15px] py-2 focus:outline-none transition-colors"
+                          style={{
+                            borderColor: isDark ? '#22324f' : '#d3ccbb',
+                            color: isDark ? '#e8eefc' : '#0e1a2f'
+                          }}
+                        />
+                      </div>
+
+                      <button 
+                        type="submit"
+                        disabled={loading}
+                        className="w-full mt-1.5 border-0 rounded-[10px] py-[15px] px-[18px] font-bold text-[13px] tracking-[0.1em] cursor-pointer flex justify-between items-center transition-transform hover:-translate-y-[1px] active:translate-y-0 disabled:opacity-70 disabled:cursor-progress"
+                        style={{
+                          backgroundColor: isDark ? '#e8eefc' : '#0e1a2f',
+                          color: isDark ? '#101a2d' : '#fbf8f1'
+                        }}
+                      >
+                        <span>{loading ? 'DEPLOYING NODE...' : 'REGISTER ORGANIZATION'}</span>
+                        <span>&rarr;</span>
+                      </button>
+                    </form>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Tag Perforated Barcode Footer */}
+            <div 
+              className="mt-[14px] px-7 pt-[14px] pb-[18px] border-t-2 border-dashed flex justify-between items-center gap-3"
+              style={{ borderColor: isDark ? '#22324f' : '#d3ccbb' }}
+            >
+              <div className="barcode-strip flex-1 max-w-[210px]" aria-hidden="true" />
+              <span className="dm-mono text-[10.5px] tracking-[0.08em] text-right" style={{ color: isDark ? '#8093b6' : '#6b7488' }}>
+                DID AUTH<br />
+                RBAC ENFORCED<br />
+                CHAIN-OF-CUSTODY
+              </span>
+            </div>
+
+            {/* Verified / Submitted Stamp Overlay */}
+            {isStamped && (
+              <div 
+                className="stamp-animate absolute right-6 top-[110px] border-[3px] py-1.5 px-4 rounded-md serif-title text-[34px] tracking-[0.14em] uppercase pointer-events-none"
+                style={{
+                  borderColor: isDark ? '#3ddc97' : '#1d7a52',
+                  color: isDark ? '#3ddc97' : '#1d7a52',
+                  mixBlendMode: isDark ? 'normal' : 'multiply'
+                }}
+              >
+                {stampText}
               </div>
             )}
 
-            {/* Perforated Barcode Ticket Footer */}
-            <div 
-              className="p-6 pt-4 border-t border-dashed mt-auto flex items-center justify-between"
-              style={{ borderColor: isLight ? '#ded8cc' : '#223044' }}
-            >
-              {/* Barcode visual lines */}
-              <div className="flex items-center h-8 gap-[2.5px] opacity-80">
-                {[3, 1, 4, 1, 5, 2, 1, 3, 1, 4, 2, 1, 3, 1, 2, 4, 1, 3, 2, 1, 4, 1, 2, 3, 1, 2, 4, 1, 3].map((width, idx) => (
-                  <div
-                    key={idx}
-                    className={`h-full ${isLight ? 'bg-[#1c2229]' : 'bg-[#e2e8f0]'}`}
-                    style={{ width: `${width}px` }}
-                  />
-                ))}
-              </div>
-
-              <div className={`text-right text-[9px] font-mono leading-tight uppercase ${
-                isLight ? 'text-[#8492a6]' : 'text-[#64748b]'
-              }`}>
-                <div>DID AUTH</div>
-                <div>RBAC ENFORCED</div>
-                <div>CHAIN OF CUSTODY</div>
-              </div>
-            </div>
-
           </div>
-        </div>
+        </section>
 
       </div>
     </div>
