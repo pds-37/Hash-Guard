@@ -152,31 +152,31 @@ export const ArchitecturePage = () => {
             )}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2 rounded-lg border border-slate-800 bg-slate-900 text-slate-400 hover:text-white cursor-pointer"
+              className="lg:hidden p-2 rounded-lg border border-ce-border bg-ce-surface text-ce-text-secondary hover:text-ce-text-primary dark:border-slate-800 dark:bg-slate-900 dark:text-slate-400 dark:hover:text-white cursor-pointer"
               aria-label="Toggle navigation"
             >
-              {mobileMenuOpen ? <X className="w-4 h-4 text-cyan-400" /> : <Menu className="w-4 h-4" />}
+              {mobileMenuOpen ? <X className="w-4 h-4 text-cyan-600 dark:text-cyan-400" /> : <Menu className="w-4 h-4" />}
             </button>
           </div>
         </div>
 
         {/* Mobile Dropdown */}
         {mobileMenuOpen && (
-          <div className="lg:hidden border-t border-slate-800 bg-[#030611]/98 px-4 py-3 space-y-1 font-mono text-xs">
+          <div className="lg:hidden border-t border-ce-border bg-ce-surface/98 text-ce-text-primary dark:border-slate-800 dark:bg-[#030611]/98 px-4 py-3 space-y-1 font-mono text-xs shadow-lg">
             {navLinks.map((link) => (
               <button
                 key={link.id}
                 onClick={() => scrollTo(link.id)}
-                className="w-full flex items-center justify-between px-3 py-2 rounded-lg hover:bg-slate-800/80 text-slate-300 hover:text-white transition-colors cursor-pointer text-left"
+                className="w-full flex items-center justify-between px-3 py-2 rounded-lg hover:bg-ce-surface-subtle text-ce-text-secondary hover:text-ce-text-primary dark:hover:bg-slate-800/80 dark:text-slate-300 dark:hover:text-white transition-colors cursor-pointer text-left"
               >
                 <span>{link.label}</span>
-                <ChevronRight className="w-3.5 h-3.5 text-slate-600" />
+                <ChevronRight className="w-3.5 h-3.5 text-ce-text-muted dark:text-slate-600" />
               </button>
             ))}
-            <div className="pt-2 border-t border-slate-800">
+            <div className="pt-2 border-t border-ce-border dark:border-slate-800">
               <button
                 onClick={isLoggedIn ? () => navigate('/dashboard') : launchSandbox}
-                className="w-full py-2.5 rounded-lg bg-cyan-500/20 border border-cyan-500/30 text-cyan-300 font-bold text-center"
+                className="w-full py-2.5 rounded-lg bg-cyan-500/15 border border-cyan-500/30 text-cyan-700 dark:text-cyan-300 font-bold text-center"
               >
                 {isLoggedIn ? 'Open Console' : 'Launch Evaluation Sandbox'}
               </button>
@@ -203,15 +203,15 @@ export const ArchitecturePage = () => {
         <TechnicalDeepDiveSection />
 
         {/* ─── JURY FOOTER CALL-TO-ACTION ─── */}
-        <section className="py-16 text-center max-w-4xl mx-auto px-4 border-t border-slate-800/80">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-cyan-500/30 bg-cyan-950/40 text-cyan-300 font-mono text-[10px] font-bold tracking-wider uppercase mb-4">
+        <section className="py-16 text-center max-w-4xl mx-auto px-4 border-t border-ce-border dark:border-slate-800/80">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-cyan-800 dark:bg-cyan-950/40 dark:text-cyan-300 font-mono text-[10px] font-bold tracking-wider uppercase mb-4">
             <span>READY FOR TECHNICAL DEFENSE &amp; JURY EVALUATION</span>
           </div>
 
-          <h3 className="text-3xl sm:text-4xl font-extrabold text-white font-mono mb-3">
+          <h3 className="text-3xl sm:text-4xl font-extrabold text-ce-text-primary dark:text-white font-mono mb-3">
             Inspect the Live HashGuard Prototype
           </h3>
-          <p className="text-xs sm:text-sm text-slate-400 font-mono mb-8 max-w-xl mx-auto">
+          <p className="text-xs sm:text-sm text-ce-text-secondary dark:text-slate-400 font-mono mb-8 max-w-xl mx-auto">
             "HASHGUARD gives a digital asset a verifiable trust history."
           </p>
 
@@ -225,24 +225,24 @@ export const ArchitecturePage = () => {
             </button>
             <button
               onClick={() => navigate('/passport')}
-              className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 font-mono font-bold text-sm transition-all flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-ce-surface hover:bg-ce-surface-subtle border border-ce-border text-ce-text-primary dark:bg-slate-900 dark:hover:bg-slate-800 dark:border-slate-700 dark:text-slate-200 font-mono font-bold text-sm transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm"
             >
-              <ShieldCheck className="w-4 h-4 text-cyan-400" />
+              <ShieldCheck className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
               <span>Inspect Trust Passport</span>
             </button>
           </div>
         </section>
 
         {/* ─── TECHNICAL FOOTER ─── */}
-        <footer className="border-t border-slate-800/80 bg-[#02050f] py-10 font-mono text-xs text-slate-400">
+        <footer className="border-t border-ce-border bg-ce-surface py-10 font-mono text-xs text-ce-text-secondary dark:border-slate-800/80 dark:bg-[#02050f] dark:text-slate-400 transition-colors">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2.5">
-              <LogoIcon className="w-5 h-5 text-cyan-400" />
-              <span className="text-white font-bold tracking-wider">
-                HASH<span className="text-cyan-400">GUARD</span>
+              <LogoIcon className="w-5 h-5 text-cyan-600 dark:text-cyan-400" />
+              <span className="text-ce-text-primary dark:text-white font-bold tracking-wider">
+                HASH<span className="text-cyan-600 dark:text-cyan-400">GUARD</span>
               </span>
-              <span className="text-slate-600">|</span>
-              <span className="text-slate-300">Verifiable Trust Infrastructure for Digital Assets</span>
+              <span className="text-ce-text-muted dark:text-slate-600">|</span>
+              <span className="text-ce-text-secondary dark:text-slate-300">Verifiable Trust Infrastructure for Digital Assets</span>
             </div>
 
             <div className="flex items-center gap-4 text-[11px] flex-wrap justify-center">
@@ -250,7 +250,7 @@ export const ArchitecturePage = () => {
                 href="https://sepolia.etherscan.io/address/0x3592925Cf64E7C3c68d4911b2ebC722c2Ea67052"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-cyan-300 transition-colors flex items-center gap-1"
+                className="hover:text-cyan-600 dark:hover:text-cyan-300 transition-colors flex items-center gap-1"
               >
                 <span>Sepolia Contract (0x3592...)</span>
                 <ExternalLink className="w-3 h-3" />
@@ -258,7 +258,7 @@ export const ArchitecturePage = () => {
               <span>•</span>
               <button
                 onClick={() => navigate(isLoggedIn ? '/dashboard' : '/')}
-                className="hover:text-cyan-300 transition-colors cursor-pointer"
+                className="hover:text-cyan-600 dark:hover:text-cyan-300 transition-colors cursor-pointer"
               >
                 ← Return to App
               </button>

@@ -101,24 +101,24 @@ export const AssetLifecycleSection = () => {
   const Icon = current.icon;
 
   return (
-    <section id="asset-lifecycle" className="relative py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-slate-800/80">
+    <section id="asset-lifecycle" className="relative py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-ce-border dark:border-slate-800/80">
       {/* Section Header */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
         <div>
           <div className="flex items-center gap-2 mb-2">
-            <span className="w-2 h-2 rounded-full bg-teal-400 animate-pulse" />
-            <span className="text-[11px] font-mono font-bold text-teal-400 uppercase tracking-widest">
+            <span className="w-2 h-2 rounded-full bg-teal-500 dark:bg-teal-400 animate-pulse" />
+            <span className="text-[11px] font-mono font-bold text-teal-700 dark:text-teal-400 uppercase tracking-widest">
               SECTION 03 &bull; LIFECYCLE STATE MACHINE
             </span>
           </div>
-          <h2 className="text-2xl sm:text-3xl font-mono font-black text-white">
+          <h2 className="text-2xl sm:text-3xl font-mono font-black text-ce-text-primary dark:text-white">
             THE 7-STAGE ASSET LIFECYCLE
           </h2>
-          <p className="text-xs sm:text-sm text-slate-400 font-sans mt-1 max-w-2xl">
+          <p className="text-xs sm:text-sm text-ce-text-secondary dark:text-slate-400 font-sans mt-1 max-w-2xl">
             A continuous, connected chain of custody. Click any stage along the timeline to inspect its operational purpose, cryptographic inputs, outputs, and security invariants.
           </p>
         </div>
-        <div className="text-xs font-mono text-cyan-400 bg-cyan-950/40 border border-cyan-500/30 px-3 py-1.5 rounded-full shrink-0">
+        <div className="text-xs font-mono text-cyan-800 dark:text-cyan-400 bg-cyan-500/10 dark:bg-cyan-950/40 border border-cyan-500/30 px-3 py-1.5 rounded-full shrink-0 font-bold">
           STAGE {current.num} OF 07 &bull; {current.name}
         </div>
       </div>
@@ -137,31 +137,31 @@ export const AssetLifecycleSection = () => {
                 onClick={() => setSelectedStage(idx)}
                 className={`p-3.5 rounded-xl border text-left transition-all cursor-pointer relative flex flex-col justify-between h-28 group ${
                   isSelected
-                    ? 'bg-teal-950/50 border-teal-400 shadow-[0_0_25px_rgba(20,184,166,0.25)] ring-1 ring-teal-400'
+                    ? 'bg-teal-500/15 border-teal-500 text-ce-text-primary shadow-sm dark:bg-teal-950/50 dark:border-teal-400 dark:shadow-[0_0_25px_rgba(20,184,166,0.25)] ring-1 ring-teal-500 dark:ring-teal-400'
                     : isPassed
-                    ? 'bg-slate-950/90 border-slate-700/80 hover:border-teal-500/50'
-                    : 'bg-slate-950/60 border-slate-800 hover:border-slate-700'
+                    ? 'bg-ce-surface border-ce-border hover:border-teal-500/50 dark:bg-slate-950/90 dark:border-slate-700/80'
+                    : 'bg-ce-surface-subtle border-ce-border hover:border-ce-border-strong dark:bg-slate-950/60 dark:border-slate-800 hover:dark:border-slate-700'
                 }`}
               >
                 <div className="flex items-center justify-between w-full">
-                  <span className={`text-[10px] font-mono font-bold ${isSelected ? 'text-teal-400' : 'text-slate-500'}`}>
+                  <span className={`text-[10px] font-mono font-bold ${isSelected ? 'text-teal-700 dark:text-teal-400' : 'text-ce-text-muted dark:text-slate-500'}`}>
                     {stage.num}
                   </span>
-                  <StageIcon className={`w-4 h-4 ${isSelected ? 'text-teal-400' : 'text-slate-400 group-hover:text-slate-200'}`} />
+                  <StageIcon className={`w-4 h-4 ${isSelected ? 'text-teal-700 dark:text-teal-400' : 'text-ce-text-muted dark:text-slate-400 group-hover:text-ce-text-primary dark:group-hover:text-slate-200'}`} />
                 </div>
 
                 <div>
-                  <div className="font-mono text-xs font-bold text-white tracking-wider">
+                  <div className="font-mono text-xs font-bold text-ce-text-primary dark:text-white tracking-wider">
                     {stage.name}
                   </div>
-                  <div className="text-[9px] font-mono text-slate-400 truncate mt-0.5">
+                  <div className="text-[9px] font-mono text-ce-text-muted dark:text-slate-400 truncate mt-0.5">
                     Stage {stage.num}
                   </div>
                 </div>
 
                 {/* Bottom Active Indicator Bar */}
                 <div className={`h-0.5 w-full rounded-full transition-all ${
-                  isSelected ? 'bg-teal-400' : isPassed ? 'bg-slate-600' : 'bg-transparent'
+                  isSelected ? 'bg-teal-500 dark:bg-teal-400' : isPassed ? 'bg-ce-border-strong dark:bg-slate-600' : 'bg-transparent'
                 }`} />
               </button>
             );
@@ -170,24 +170,24 @@ export const AssetLifecycleSection = () => {
       </div>
 
       {/* DYNAMIC STAGE INSPECTOR (PURPOSE, INPUT, OUTPUT, SECURITY PROPERTY) */}
-      <div className="p-6 sm:p-8 rounded-3xl bg-[#030712] border border-teal-500/30 shadow-2xl space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-800 gap-4">
+      <div className="p-6 sm:p-8 rounded-3xl bg-ce-surface border border-teal-500/30 shadow-md dark:bg-[#030712] dark:shadow-2xl space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-ce-border dark:border-slate-800 gap-4">
           <div className="flex items-center gap-3">
-            <div className="p-3 rounded-2xl bg-teal-500/10 border border-teal-500/30 text-teal-400">
+            <div className="p-3 rounded-2xl bg-teal-500/10 border border-teal-500/30 text-teal-700 dark:text-teal-400">
               <Icon className="w-6 h-6" />
             </div>
             <div>
-              <span className="text-[10px] font-mono uppercase tracking-widest text-teal-400 font-bold block">
+              <span className="text-[10px] font-mono uppercase tracking-widest text-teal-700 dark:text-teal-400 font-bold block">
                 STAGE {current.num} &bull; STATE TRANSITION
               </span>
-              <h3 className="text-xl font-mono font-black text-white">
+              <h3 className="text-xl font-mono font-black text-ce-text-primary dark:text-white">
                 {current.name}
               </h3>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-mono text-xs font-bold flex items-center gap-1.5">
+            <span className="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-700 dark:text-emerald-400 font-mono text-xs font-bold flex items-center gap-1.5">
               <CheckCircle2 className="w-3.5 h-3.5" />
               <span>DETERMINISTIC INVARIANT</span>
             </span>
@@ -197,41 +197,41 @@ export const AssetLifecycleSection = () => {
         {/* 4 Invariant Cards: Purpose, Input, Output, Security Property */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* PURPOSE */}
-          <div className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 space-y-1.5">
-            <span className="text-[10px] font-mono uppercase tracking-wider text-teal-400 font-bold block">
+          <div className="p-4 rounded-2xl bg-ce-surface-subtle border border-ce-border dark:bg-slate-950/80 dark:border-slate-800 space-y-1.5">
+            <span className="text-[10px] font-mono uppercase tracking-wider text-teal-700 dark:text-teal-400 font-bold block">
               01 &bull; OPERATIONAL PURPOSE
             </span>
-            <p className="text-xs sm:text-sm text-slate-200 font-sans leading-relaxed">
+            <p className="text-xs sm:text-sm text-ce-text-primary dark:text-slate-200 font-sans leading-relaxed">
               {current.purpose}
             </p>
           </div>
 
           {/* SECURITY PROPERTY */}
-          <div className="p-4 rounded-2xl bg-slate-950/80 border border-teal-500/30 space-y-1.5">
-            <span className="text-[10px] font-mono uppercase tracking-wider text-emerald-400 font-bold block">
+          <div className="p-4 rounded-2xl bg-ce-surface-subtle border border-teal-500/30 dark:bg-slate-950/80 space-y-1.5">
+            <span className="text-[10px] font-mono uppercase tracking-wider text-emerald-700 dark:text-emerald-400 font-bold block">
               02 &bull; SECURITY INVARIANT / PROPERTY
             </span>
-            <p className="text-xs sm:text-sm text-slate-200 font-sans leading-relaxed">
+            <p className="text-xs sm:text-sm text-ce-text-primary dark:text-slate-200 font-sans leading-relaxed">
               {current.securityProperty}
             </p>
           </div>
 
           {/* INPUT */}
-          <div className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 space-y-1.5">
-            <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400 font-bold block">
+          <div className="p-4 rounded-2xl bg-ce-surface-subtle border border-ce-border dark:bg-slate-950/80 dark:border-slate-800 space-y-1.5">
+            <span className="text-[10px] font-mono uppercase tracking-wider text-ce-text-muted dark:text-slate-400 font-bold block">
               03 &bull; INCOMING INPUT
             </span>
-            <p className="text-xs sm:text-sm text-slate-300 font-mono leading-relaxed">
+            <p className="text-xs sm:text-sm text-ce-text-secondary dark:text-slate-300 font-mono leading-relaxed">
               {current.input}
             </p>
           </div>
 
           {/* OUTPUT */}
-          <div className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 space-y-1.5">
-            <span className="text-[10px] font-mono uppercase tracking-wider text-cyan-400 font-bold block">
-              04 &bull; EMITTED OUTPUT & PROOF
+          <div className="p-4 rounded-2xl bg-ce-surface-subtle border border-ce-border dark:bg-slate-950/80 dark:border-slate-800 space-y-1.5">
+            <span className="text-[10px] font-mono uppercase tracking-wider text-cyan-700 dark:text-cyan-400 font-bold block">
+              04 &bull; EMITTED OUTPUT &amp; PROOF
             </span>
-            <p className="text-xs sm:text-sm text-slate-300 font-mono leading-relaxed">
+            <p className="text-xs sm:text-sm text-ce-text-secondary dark:text-slate-300 font-mono leading-relaxed">
               {current.output}
             </p>
           </div>
