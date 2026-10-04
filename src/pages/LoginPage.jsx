@@ -229,49 +229,46 @@ export const LoginPage = () => {
       <div className="w-full max-w-md bg-ce-surface border border-ce-border rounded-xl shadow-2xl overflow-hidden relative z-10 backdrop-blur-md">
         
         {/* Header */}
-        <div className="bg-ce-surface-subtle border-b border-ce-border p-6 flex flex-col items-center justify-center text-center">
-          <div className="w-14 h-14 bg-gradient-to-br from-cyan-500/20 to-blue-600/20 border border-cyan-500/30 rounded-xl flex items-center justify-center mb-3 shadow-[0_0_20px_rgba(6,182,212,0.25)]">
-            <ShieldAlert className="w-8 h-8 text-cyan-400" />
+        <div className="p-6 pb-4 flex flex-col items-center justify-center text-center">
+          <div className="w-12 h-12 bg-cyan-500/10 border border-cyan-500/20 rounded-xl flex items-center justify-center mb-2.5 shadow-sm">
+            <ShieldAlert className="w-6 h-6 text-cyan-400" />
           </div>
-          <h1 className="text-xl font-bold font-mono text-ce-text-primary tracking-wide">
+          <h1 className="text-lg font-bold font-mono text-ce-text-primary tracking-wide">
             HASHGUARD
           </h1>
-          <div className="text-xs font-mono font-bold text-ce-brand tracking-wider mt-0.5">
-            CYBER EVIDENCE EXCHANGE
-          </div>
-          <p className="text-[10px] font-mono text-ce-text-muted mt-1 uppercase tracking-widest">
-            Cryptographic Chain-of-Custody Platform
+          <p className="text-xs text-ce-text-muted mt-0.5">
+            Verifiable Digital Asset Trust Infrastructure
           </p>
         </div>
 
         {/* Tab Toggle: Sign In vs Register Organization */}
-        <div className="flex border-b border-ce-border bg-ce-bg/50">
+        <div className="flex border-b border-ce-border bg-ce-bg/40 px-2 pt-1 gap-1">
           <button
             type="button"
             onClick={() => { setAuthMode('login'); setError(''); setRegisteredResult(null); }}
-            className={`flex-1 py-3 text-xs font-mono font-bold transition-all border-b-2 cursor-pointer ${
+            className={`flex-1 py-2 text-xs font-mono font-medium rounded-t-lg transition-all cursor-pointer ${
               authMode === 'login'
-                ? 'border-ce-brand text-ce-brand bg-ce-surface'
-                : 'border-transparent text-ce-text-muted hover:text-ce-text-primary'
+                ? 'bg-ce-surface text-ce-text-primary border-t border-x border-ce-border font-bold'
+                : 'text-ce-text-muted hover:text-ce-text-primary'
             }`}
           >
             <span className="flex items-center justify-center gap-1.5">
-              <LogIn className="w-3.5 h-3.5" />
-              <span>OFFICER SIGN IN</span>
+              <LogIn className="w-3.5 h-3.5 text-cyan-400" />
+              <span>Officer Sign In</span>
             </span>
           </button>
           <button
             type="button"
             onClick={() => { setAuthMode('register'); setError(''); }}
-            className={`flex-1 py-3 text-xs font-mono font-bold transition-all border-b-2 cursor-pointer ${
+            className={`flex-1 py-2 text-xs font-mono font-medium rounded-t-lg transition-all cursor-pointer ${
               authMode === 'register'
-                ? 'border-ce-brand text-ce-brand bg-ce-surface'
-                : 'border-transparent text-ce-text-muted hover:text-ce-text-primary'
+                ? 'bg-ce-surface text-ce-text-primary border-t border-x border-ce-border font-bold'
+                : 'text-ce-text-muted hover:text-ce-text-primary'
             }`}
           >
             <span className="flex items-center justify-center gap-1.5">
-              <Building2 className="w-3.5 h-3.5" />
-              <span>REGISTER ORGANIZATION</span>
+              <Building2 className="w-3.5 h-3.5 text-blue-400" />
+              <span>Register Org</span>
             </span>
           </button>
         </div>
@@ -279,25 +276,16 @@ export const LoginPage = () => {
         {/* Form Body */}
         {authMode === 'login' ? (
           /* LOGIN FORM */
-          <div className="p-6 space-y-4">
-            <div className="pb-1 border-b border-ce-border/60">
-              <h2 className="text-sm font-mono font-bold uppercase text-ce-text-primary">
-                SIGN IN
-              </h2>
-              <p className="text-xs text-ce-text-muted mt-0.5">
-                Access your organization's secure evidence environment
-              </p>
-            </div>
-
+          <div className="p-6 space-y-5">
             {error && (
-              <div className="p-3 bg-ce-danger/10 border border-ce-danger/30 rounded text-ce-danger text-xs font-mono font-bold text-center">
+              <div className="p-2.5 bg-ce-danger/10 border border-ce-danger/30 rounded-lg text-ce-danger text-xs font-mono font-medium text-center">
                 {error}
               </div>
             )}
 
-            <form onSubmit={handleLogin} className="space-y-3.5">
+            <form onSubmit={handleLogin} className="space-y-4">
               <div>
-                <label className="block text-xs font-mono font-bold text-ce-text-secondary uppercase mb-1">
+                <label className="block text-xs font-mono text-ce-text-secondary uppercase mb-1.5 tracking-wider">
                   Work Email
                 </label>
                 <input
@@ -305,39 +293,44 @@ export const LoginPage = () => {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-ce-bg border border-ce-border rounded-lg px-3 py-2 text-xs text-ce-text-primary focus:outline-none focus:border-ce-brand font-mono transition-colors"
+                  className="w-full bg-ce-bg border border-ce-border focus:border-ce-brand rounded-lg px-3.5 py-2.5 text-xs text-ce-text-primary focus:outline-none font-mono transition-colors shadow-inner"
                   placeholder="analyst@cyberlab.local"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-mono font-bold text-ce-text-secondary uppercase mb-1">
-                  Password / Access Key
+                <label className="block text-xs font-mono text-ce-text-secondary uppercase mb-1.5 tracking-wider">
+                  Password
                 </label>
                 <input
                   type="password"
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-ce-bg border border-ce-border rounded-lg px-3 py-2 text-xs text-ce-text-primary focus:outline-none focus:border-ce-brand font-mono transition-colors"
+                  className="w-full bg-ce-bg border border-ce-border focus:border-ce-brand rounded-lg px-3.5 py-2.5 text-xs text-ce-text-primary focus:outline-none font-mono transition-colors shadow-inner"
                   placeholder="•••••••••••"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-mono font-bold text-ce-text-secondary uppercase mb-1">
-                  Organization
-                </label>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="block text-xs font-mono text-ce-text-secondary uppercase tracking-wider">
+                    Organization
+                  </label>
+                  <span className="text-[10px] font-mono text-ce-text-muted">
+                    {organizations[selectedOrgId]?.shortName || 'Cyber Defense Lab'}
+                  </span>
+                </div>
                 <select
                   value={selectedOrgId}
                   onChange={(e) => setSelectedOrgId(e.target.value)}
-                  className="w-full bg-ce-bg border border-ce-border rounded-lg px-3 py-2 text-xs text-ce-text-primary focus:outline-none focus:border-ce-brand font-mono transition-colors cursor-pointer"
+                  className="w-full bg-ce-bg border border-ce-border focus:border-ce-brand rounded-lg px-3.5 py-2.5 text-xs text-ce-text-primary focus:outline-none font-mono transition-colors cursor-pointer"
                 >
-                  <option value="ORG_A">Organization A — CERT-Alpha</option>
-                  <option value="ORG_B">Organization B — Cyber Defense Lab</option>
-                  <option value="ORG_C">Organization C — Judicial Court Registry</option>
-                  <option value="ORG_D">Organization D — Cyber Crime Police (LEA)</option>
-                  <option value="ORG_AUDIT">Audit Board — Independent Oversight</option>
+                  <option value="ORG_B">Cyber Defense Lab (Forensics)</option>
+                  <option value="ORG_A">CERT-Alpha (Incident Response)</option>
+                  <option value="ORG_D">Cyber Crime Police (Law Enforcement)</option>
+                  <option value="ORG_C">Judicial Court Registry (Judiciary)</option>
+                  <option value="ORG_AUDIT">Audit Board (Independent Oversight)</option>
                   {Object.values(organizations || {})
                     .filter((org) => !['ORG_A', 'ORG_B', 'ORG_C', 'ORG_D', 'ORG_AUDIT'].includes(org.id))
                     .map((org) => (
@@ -346,106 +339,75 @@ export const LoginPage = () => {
                       </option>
                     ))}
                 </select>
-                <div className="text-[10px] text-ce-text-muted font-mono mt-1">
-                  Node Jurisdiction: {organizations[selectedOrgId]?.function || 'Forensic Operations'}
-                </div>
               </div>
 
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full mt-2 bg-ce-brand hover:bg-ce-brand-hover disabled:opacity-50 disabled:cursor-not-allowed text-white font-mono font-bold text-xs py-2.5 rounded-lg flex items-center justify-center gap-2 transition-all shadow-md cursor-pointer"
+                className="w-full mt-3 bg-ce-brand hover:bg-ce-brand-hover active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed text-white font-mono font-bold text-xs py-2.5 rounded-lg flex items-center justify-center gap-2 transition-all shadow-md cursor-pointer"
               >
                 {loading ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
                 ) : (
                   <LogIn className="w-4 h-4" />
                 )}
-                <span>INITIALIZE SECURE SESSION →</span>
+                <span>INITIALIZE SECURE SESSION</span>
               </button>
             </form>
 
-            {/* DEMO / INSTANT LOGIN SECTION */}
-            <div className="relative my-4">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-ce-border"></div>
-              </div>
-              <div className="relative flex justify-center text-[10px] font-mono uppercase">
-                <span className="bg-ce-surface px-2 text-ce-text-muted font-bold tracking-wider">
-                  ──────────── OR DEMO ACCESS ────────────
+            {/* QUICK DEMO ROLES */}
+            <div className="pt-2">
+              <div className="flex items-center gap-2 mb-2.5">
+                <div className="h-px bg-ce-border flex-1" />
+                <span className="text-[10px] font-mono uppercase text-ce-text-muted tracking-wider">
+                  Quick Access Simulation
                 </span>
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <div className="text-xs font-mono font-bold text-ce-text-primary flex items-center gap-1.5">
-                  <Building2 className="w-3.5 h-3.5 text-ce-brand" />
-                  <span>Cyber Defense Lab</span>
-                </div>
-                <span className="text-[10px] font-mono text-ce-text-muted">
-                  Simulate roles in single org
-                </span>
+                <div className="h-px bg-ce-border flex-1" />
               </div>
 
               <div className="grid grid-cols-2 gap-2">
                 <button
                   type="button"
                   onClick={() => handleDemoLogin('ADMINISTRATOR')}
-                  className="p-2.5 rounded-lg border border-rose-500/30 bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 font-mono text-xs font-bold text-center transition-all cursor-pointer flex items-center justify-center gap-1.5 shadow-sm"
-                  title="Authenticate as Organization Administrator in Cyber Defense Lab"
+                  className="py-2 px-3 rounded-lg border border-ce-border hover:border-rose-500/50 bg-ce-surface hover:bg-rose-500/5 text-ce-text-secondary hover:text-rose-400 font-mono text-xs font-semibold transition-all cursor-pointer flex items-center justify-center gap-2"
                 >
-                  <span>👑</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-rose-400" />
                   <span>Admin</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => handleDemoLogin('FORENSIC_ANALYST')}
-                  className="p-2.5 rounded-lg border border-purple-500/30 bg-purple-500/10 hover:bg-purple-500/20 text-purple-300 font-mono text-xs font-bold text-center transition-all cursor-pointer flex items-center justify-center gap-1.5 shadow-sm"
-                  title="Authenticate as Forensic Analyst in Cyber Defense Lab"
+                  className="py-2 px-3 rounded-lg border border-ce-border hover:border-purple-500/50 bg-ce-surface hover:bg-purple-500/5 text-ce-text-secondary hover:text-purple-400 font-mono text-xs font-semibold transition-all cursor-pointer flex items-center justify-center gap-2"
                 >
-                  <span>🔬</span>
-                  <span>Forensic Analyst</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-purple-400" />
+                  <span>Analyst</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => handleDemoLogin('AUDITOR')}
-                  className="p-2.5 rounded-lg border border-cyan-500/30 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 font-mono text-xs font-bold text-center transition-all cursor-pointer flex items-center justify-center gap-1.5 shadow-sm"
-                  title="Authenticate as Auditor in Cyber Defense Lab"
+                  className="py-2 px-3 rounded-lg border border-ce-border hover:border-cyan-500/50 bg-ce-surface hover:bg-cyan-500/5 text-ce-text-secondary hover:text-cyan-400 font-mono text-xs font-semibold transition-all cursor-pointer flex items-center justify-center gap-2"
                 >
-                  <span>🔍</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
                   <span>Auditor</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => handleDemoLogin('EVIDENCE_CUSTODIAN')}
-                  className="p-2.5 rounded-lg border border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 font-mono text-xs font-bold text-center transition-all cursor-pointer flex items-center justify-center gap-1.5 shadow-sm"
-                  title="Authenticate as Evidence Custodian in Cyber Defense Lab"
+                  className="py-2 px-3 rounded-lg border border-ce-border hover:border-emerald-500/50 bg-ce-surface hover:bg-emerald-500/5 text-ce-text-secondary hover:text-emerald-400 font-mono text-xs font-semibold transition-all cursor-pointer flex items-center justify-center gap-2"
                 >
-                  <span>📦</span>
-                  <span>Evidence Custodian</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                  <span>Custodian</span>
                 </button>
               </div>
             </div>
 
-            {/* Security Indicators */}
-            <div className="pt-3 border-t border-ce-border/60 grid grid-cols-2 gap-2 text-[10px] font-mono text-ce-text-muted">
-              <div className="flex items-center gap-1.5">
-                <Lock className="w-3 h-3 text-cyan-400" />
-                <span>DID AUTHENTICATION</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <Link2 className="w-3 h-3 text-purple-400" />
-                <span>CHAIN OF CUSTODY</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <ShieldCheck className="w-3 h-3 text-emerald-400" />
-                <span>RBAC ENFORCEMENT</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-3 h-3 text-blue-400" />
-                <span>AUDITABLE ACTIONS</span>
-              </div>
+            {/* Subdued Trust Badges */}
+            <div className="pt-2 border-t border-ce-border/50 flex items-center justify-center gap-4 text-[10px] font-mono text-ce-text-muted">
+              <span className="flex items-center gap-1"><Lock className="w-2.5 h-2.5 text-cyan-400" /> DID Auth</span>
+              <span className="text-ce-border">•</span>
+              <span className="flex items-center gap-1"><ShieldCheck className="w-2.5 h-2.5 text-emerald-400" /> RBAC Enforced</span>
+              <span className="text-ce-border">•</span>
+              <span className="flex items-center gap-1"><Link2 className="w-2.5 h-2.5 text-purple-400" /> Chain-of-Custody</span>
             </div>
           </div>
         ) : (
