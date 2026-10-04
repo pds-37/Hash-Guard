@@ -5,70 +5,70 @@
 @layer base {
   :root {
     /* Legacy variables for backwards compatibility */
-    --background: 44 26% 91%;          /* #efeadf warm paper */
-    --foreground: 220 54% 12%;         /* #0e1a2f ink */
-    --card: 43 50% 97%;                /* #fbf8f1 paper card */
-    --card-foreground: 220 54% 12%;    /* #0e1a2f */
-    --popover: 43 50% 97%;
-    --popover-foreground: 220 54% 12%;
-    --primary: 213 71% 24%;            /* #123a6b deep navy */
-    --primary-foreground: 43 50% 97%;
-    --secondary: 42 22% 87%;           /* #e5dfd3 muted paper */
-    --secondary-foreground: 220 54% 12%;
-    --muted: 42 20% 86%;               /* #e4ded1 */
-    --muted-foreground: 220 12% 47%;   /* #6b7488 */
-    --accent: 42 22% 87%;
-    --accent-foreground: 220 54% 12%;
-    --destructive: 353 63% 48%;        /* #c62d3f editorial red */
-    --destructive-foreground: 43 50% 97%;
-    --border: 41 20% 78%;              /* #d3ccbb line */
-    --input: 41 20% 78%;
-    --ring: 213 71% 24%;
+    --background: 40 22% 95%;          /* #f6f4ee clean luxury warm alabaster */
+    --foreground: 222 47% 11%;         /* #0f172a obsidian ink */
+    --card: 0 0% 100%;                 /* #ffffff pure white card */
+    --card-foreground: 222 47% 11%;    /* #0f172a */
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+    --primary: 218 80% 25%;            /* #0d3674 deep navy */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 40 20% 92%;           /* #eeeae0 subtle tray */
+    --secondary-foreground: 222 47% 11%;
+    --muted: 40 20% 92%;               /* #eeeae0 */
+    --muted-foreground: 215 18% 42%;   /* #576479 sharp slate */
+    --accent: 40 20% 92%;
+    --accent-foreground: 222 47% 11%;
+    --destructive: 354 75% 42%;        /* #bf162c seal crimson */
+    --destructive-foreground: 0 0% 100%;
+    --border: 40 15% 82%;              /* #dcd7cb crisp line */
+    --input: 40 15% 82%;
+    --ring: 218 80% 25%;
     --radius: 0.5rem;
 
     /* =========================================
        CYBER EVIDENCE DESIGN SYSTEM TOKENS 
        ========================================= */
 
-    /* Surfaces & Backgrounds (Warm Paper & Ivory Tone) */
-    --color-background: 44 26% 91%;     /* #efeadf canvas */
-    --color-surface: 43 50% 97%;        /* #fbf8f1 ticket/card */
-    --color-surface-elevated: 44 60% 99%; /* #fffdf9 */
-    --color-surface-subtle: 42 22% 89%; /* #e9e3d6 subtle tray */
+    /* Surfaces & Backgrounds (Pristine Luxury Warm Paper) */
+    --color-background: 40 22% 95%;     /* #f6f4ee alabaster canvas */
+    --color-surface: 0 0% 100%;         /* #ffffff crisp pure white card */
+    --color-surface-elevated: 0 0% 100%; /* #ffffff */
+    --color-surface-subtle: 40 20% 92%; /* #eeeae0 subtle tray */
     
     /* Borders */
-    --color-border: 41 20% 78%;         /* #d3ccbb dashed line */
-    --color-border-strong: 41 22% 68%;  /* #bfb6a0 */
+    --color-border: 40 15% 82%;         /* #dcd7cb crisp border */
+    --color-border-strong: 40 18% 70%;  /* #bcb5a3 */
 
     /* Typography */
-    --color-text-primary: 220 54% 12%;  /* #0e1a2f deep ink */
-    --color-text-secondary: 220 16% 34%;/* #475468 readable secondary */
-    --color-text-muted: 220 12% 47%;    /* #6b7488 */
+    --color-text-primary: 222 47% 11%;  /* #0f172a obsidian ink */
+    --color-text-secondary: 217 22% 28%;/* #364152 readable secondary */
+    --color-text-muted: 215 18% 42%;    /* #576479 */
 
     /* Brand */
-    --color-brand: 213 71% 24%;         /* #123a6b deep navy */
-    --color-brand-hover: 213 71% 32%;
-    --color-brand-subtle: 213 40% 92%;
+    --color-brand: 218 80% 25%;         /* #0d3674 deep navy */
+    --color-brand-hover: 218 80% 32%;
+    --color-brand-subtle: 218 50% 94%;
 
     /* Semantic Status */
-    --color-success: 154 62% 29%;       /* #1d7a52 forest seal */
+    --color-success: 154 68% 28%;       /* #157347 forest seal */
     --color-success-subtle: 154 50% 92%;
     
     --color-warning: 38 92% 38%;
-    --color-warning-subtle: 38 92% 93%;
+    --color-warning-subtle: 38 90% 93%;
     
-    --color-danger: 353 63% 48%;        /* #c62d3f editorial red */
-    --color-danger-subtle: 353 63% 94%;
+    --color-danger: 354 75% 42%;        /* #bf162c seal crimson */
+    --color-danger-subtle: 354 65% 94%;
     
-    --color-info: 213 71% 24%;
-    --color-info-subtle: 213 50% 92%;
+    --color-info: 218 80% 25%;
+    --color-info-subtle: 218 50% 92%;
 
     /* Domain-Specific: Cyber Forensics */
-    --color-verification: 154 62% 29%;
-    --color-integrity: 213 71% 24%;
+    --color-verification: 154 68% 28%;
+    --color-integrity: 218 80% 25%;
     --color-blockchain: 260 50% 45%;
-    --color-off-chain: 220 12% 47%;
-    --color-tampered: 353 63% 48%;
+    --color-off-chain: 217 22% 28%;
+    --color-tampered: 354 75% 42%;
     --color-pending: 38 92% 38%;
   }
 

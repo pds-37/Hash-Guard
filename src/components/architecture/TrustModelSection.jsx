@@ -196,56 +196,56 @@ export const TrustModelSection = ({ onSelectNode }) => {
       {/* ─── 1. HERO HEADER ─── */}
       <div className="space-y-6 text-center max-w-4xl mx-auto mb-16">
         {/* SIH Problem Statement Tag */}
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-cyan-800 dark:bg-cyan-950/40 dark:text-cyan-300 font-mono text-[11px] font-bold tracking-wider uppercase">
-          <span className="w-2 h-2 rounded-full bg-cyan-500 dark:bg-cyan-400 animate-pulse" />
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-slate-300/80 bg-white text-slate-800 shadow-xs dark:border-cyan-500/30 dark:bg-cyan-950/40 dark:text-cyan-300 font-mono text-[11px] font-bold tracking-wider uppercase">
+          <span className="w-2 h-2 rounded-full bg-blue-600 dark:bg-cyan-400 animate-pulse" />
           <span>SIH PROBLEM STATEMENT 26125</span>
-          <span className="text-ce-text-muted dark:text-slate-600">|</span>
-          <span className="text-ce-text-secondary dark:text-slate-300">BLOCKCHAIN-BASED IDENTITY, ACCESS &amp; DIGITAL ASSET MANAGEMENT</span>
+          <span className="text-slate-300 dark:text-slate-600">|</span>
+          <span className="text-slate-600 dark:text-slate-300">BLOCKCHAIN-BASED IDENTITY, ACCESS &amp; DIGITAL ASSET MANAGEMENT</span>
         </div>
 
         {/* Product Identity */}
         <div>
-          <h1 className="text-4xl sm:text-6xl font-black font-mono tracking-tight text-ce-text-primary dark:text-white uppercase">
-            HASH<span className="text-cyan-600 dark:text-cyan-400">GUARD</span>
+          <h1 className="text-4xl sm:text-6xl font-black font-mono tracking-tight text-slate-950 dark:text-white uppercase">
+            HASH<span className="text-blue-700 dark:text-cyan-400">GUARD</span>
           </h1>
-          <p className="text-xl sm:text-2xl font-mono text-ce-text-primary dark:text-slate-200 font-bold tracking-wide mt-2">
+          <p className="text-xl sm:text-2xl font-mono text-slate-900 dark:text-slate-200 font-bold tracking-wide mt-2">
             Verifiable Trust Infrastructure for Digital Assets
           </p>
-          <p className="text-sm sm:text-base text-cyan-800 dark:text-cyan-300/80 font-sans mt-1">
+          <p className="text-sm sm:text-base text-slate-600 dark:text-cyan-300/80 font-sans mt-1">
             Demonstrated through digital evidence and cross-organizational chain of custody.
           </p>
         </div>
 
         {/* Core Product Theses */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left max-w-3xl mx-auto pt-2">
-          <div className="p-4 rounded-xl bg-ce-surface border border-cyan-500/30 dark:bg-slate-900/80 shadow-sm">
-            <span className="text-[10px] font-mono text-cyan-700 dark:text-cyan-400 font-bold uppercase tracking-wider block">
+          <div className="p-4 rounded-xl bg-white border border-slate-200/90 shadow-sm dark:bg-slate-900/80 dark:border-cyan-500/30">
+            <span className="text-[10px] font-mono text-blue-700 dark:text-cyan-400 font-bold uppercase tracking-wider block">
               CORE PRODUCT THESIS
             </span>
-            <p className="text-sm font-mono font-bold text-ce-text-primary dark:text-white mt-1">
+            <p className="text-sm font-mono font-bold text-slate-950 dark:text-white mt-1">
               "Don't just trust the digital asset. Verify it."
             </p>
           </div>
-          <div className="p-4 rounded-xl bg-ce-surface border border-blue-500/30 dark:bg-slate-900/80 shadow-sm">
-            <span className="text-[10px] font-mono text-blue-700 dark:text-blue-400 font-bold uppercase tracking-wider block">
+          <div className="p-4 rounded-xl bg-white border border-slate-200/90 shadow-sm dark:bg-slate-900/80 dark:border-blue-500/30">
+            <span className="text-[10px] font-mono text-indigo-700 dark:text-blue-400 font-bold uppercase tracking-wider block">
               ARCHITECTURAL THESIS
             </span>
-            <p className="text-sm font-mono font-bold text-ce-text-primary dark:text-white mt-1">
+            <p className="text-sm font-mono font-bold text-slate-950 dark:text-white mt-1">
               "Trust Continuity across the asset lifecycle."
             </p>
           </div>
         </div>
 
         {/* One-Sentence Judge Anchor */}
-        <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-cyan-500/10 via-ce-surface to-blue-500/10 dark:from-cyan-950/40 dark:via-slate-900/90 dark:to-blue-950/40 border border-cyan-500/40 shadow-sm dark:shadow-[0_0_30px_rgba(6,182,212,0.12)] text-left">
+        <div className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-sm dark:bg-gradient-to-r dark:from-cyan-950/40 dark:via-slate-900/90 dark:to-blue-950/40 dark:border-cyan-500/40 text-left">
           <div className="flex items-start gap-3">
-            <Sparkles className="w-5 h-5 text-cyan-600 dark:text-cyan-400 shrink-0 mt-0.5" />
+            <Sparkles className="w-5 h-5 text-blue-700 dark:text-cyan-400 shrink-0 mt-0.5" />
             <div className="space-y-1">
-              <span className="text-[10px] font-mono uppercase font-bold text-cyan-700 dark:text-cyan-400 tracking-wider block">
+              <span className="text-[10px] font-mono uppercase font-bold text-blue-700 dark:text-cyan-400 tracking-wider block">
                 ONE-SENTENCE ARCHITECTURE SUMMARY FOR EVALUATORS
               </span>
-              <p className="text-xs sm:text-sm text-ce-text-primary dark:text-slate-200 font-sans leading-relaxed">
-                "HashGuard establishes <strong>who is authorized to act</strong>, cryptographically <strong>anchors the identity of the asset</strong>, tracks <strong>ownership and custody</strong>, and lets another party <strong>independently verify</strong> its integrity and history."
+              <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-200 font-sans leading-relaxed">
+                "HashGuard establishes <strong className="text-slate-950 dark:text-white">who is authorized to act</strong>, cryptographically <strong className="text-slate-950 dark:text-white">anchors the identity of the asset</strong>, tracks <strong className="text-slate-950 dark:text-white">ownership and custody</strong>, and lets another party <strong className="text-slate-950 dark:text-white">independently verify</strong> its integrity and history."
               </p>
             </div>
           </div>
@@ -257,19 +257,19 @@ export const TrustModelSection = ({ onSelectNode }) => {
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <span className="w-2 h-2 rounded-full bg-cyan-500 dark:bg-cyan-400 animate-pulse" />
-              <span className="text-[10px] font-mono font-bold text-cyan-700 dark:text-cyan-400 uppercase tracking-widest">
+              <span className="w-2 h-2 rounded-full bg-blue-600 dark:bg-cyan-400 animate-pulse" />
+              <span className="text-[10px] font-mono font-bold text-blue-700 dark:text-cyan-400 uppercase tracking-widest">
                 THE VERIFIABLE TRUST SEQUENCE
               </span>
             </div>
-            <h2 className="text-2xl sm:text-3xl font-mono font-black text-ce-text-primary dark:text-white">
+            <h2 className="text-2xl sm:text-3xl font-mono font-black text-slate-950 dark:text-white">
               TRUST MODEL CONTINUUM
             </h2>
-            <p className="text-xs sm:text-sm text-ce-text-secondary dark:text-slate-400 font-sans mt-0.5">
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 font-sans mt-0.5">
               Click any stage to inspect the exact question it answers and its technical enforcement mechanism.
             </p>
           </div>
-          <span className="text-[11px] font-mono text-cyan-700 dark:text-cyan-400 bg-cyan-500/10 px-3 py-1 rounded-full border border-cyan-500/30">
+          <span className="text-[11px] font-mono text-slate-800 bg-white px-3 py-1 rounded-full border border-slate-300 shadow-xs dark:bg-cyan-500/10 dark:text-cyan-400 dark:border-cyan-500/30">
             PROGRESSIVE DISCLOSURE
           </span>
         </div>
@@ -285,27 +285,27 @@ export const TrustModelSection = ({ onSelectNode }) => {
                 onClick={() => setActiveStep(idx)}
                 className={`p-3 rounded-xl border text-left transition-all cursor-pointer relative group flex flex-col justify-between h-36 ${
                   isActive
-                    ? 'bg-cyan-500/15 border-cyan-500 text-ce-text-primary shadow-sm dark:bg-cyan-950/50 dark:border-cyan-400 dark:shadow-[0_0_25px_rgba(6,182,212,0.25)] ring-1 ring-cyan-500 dark:ring-cyan-400'
-                    : 'bg-ce-surface border-ce-border hover:border-cyan-500/50 hover:bg-ce-surface-subtle dark:bg-slate-950/70 dark:border-slate-800 dark:hover:border-slate-700 dark:hover:bg-slate-900/60'
+                    ? 'bg-blue-50/80 border-blue-600 text-slate-950 shadow-sm ring-1 ring-blue-600 dark:bg-cyan-950/50 dark:border-cyan-400 dark:shadow-[0_0_25px_rgba(6,182,212,0.25)] dark:ring-cyan-400'
+                    : 'bg-white border-slate-200/90 hover:border-slate-400 hover:shadow-xs dark:bg-slate-950/70 dark:border-slate-800 dark:hover:border-slate-700 dark:hover:bg-slate-900/60'
                 }`}
               >
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <span className={`font-mono text-[10px] font-bold ${isActive ? 'text-cyan-700 dark:text-cyan-400' : 'text-ce-text-muted dark:text-slate-500 group-hover:text-cyan-600 dark:group-hover:text-cyan-400'}`}>
+                    <span className={`font-mono text-[10px] font-bold ${isActive ? 'text-blue-700 dark:text-cyan-400' : 'text-slate-400 group-hover:text-slate-700 dark:text-slate-500 dark:group-hover:text-cyan-400'}`}>
                       {stage.num}
                     </span>
-                    <Icon className={`w-4 h-4 ${isActive ? 'text-cyan-600 dark:text-cyan-400' : 'text-ce-text-muted dark:text-slate-400'}`} />
+                    <Icon className={`w-4 h-4 ${isActive ? 'text-blue-700 dark:text-cyan-400' : 'text-slate-400 group-hover:text-slate-700 dark:text-slate-400'}`} />
                   </div>
-                  <div className="font-mono text-[11px] font-bold text-ce-text-primary dark:text-white uppercase tracking-wider truncate">
+                  <div className="font-mono text-[11px] font-bold text-slate-950 dark:text-white uppercase tracking-wider truncate">
                     {stage.title}
                   </div>
-                  <div className="text-[9px] font-mono text-cyan-700 dark:text-cyan-400 font-semibold mt-0.5 truncate">
+                  <div className="text-[9px] font-mono text-slate-600 dark:text-cyan-400 font-semibold mt-0.5 truncate">
                     {stage.question}
                   </div>
                 </div>
 
-                <div className="pt-2 border-t border-ce-border dark:border-slate-800/80">
-                  <span className="text-[8px] font-mono px-1.5 py-0.5 rounded bg-ce-surface-subtle border border-ce-border text-ce-text-secondary dark:bg-slate-900 dark:border-slate-800 dark:text-slate-400 block truncate">
+                <div className="pt-2 border-t border-slate-100 dark:border-slate-800/80">
+                  <span className="text-[8px] font-mono px-1.5 py-0.5 rounded bg-slate-50 border border-slate-200 text-slate-600 dark:bg-slate-900 dark:border-slate-800 dark:text-slate-400 block truncate">
                     {stage.badge}
                   </span>
                 </div>
@@ -315,27 +315,27 @@ export const TrustModelSection = ({ onSelectNode }) => {
         </div>
 
         {/* Selected Stage Detail Drawer / Card */}
-        <div className="mt-4 p-5 rounded-2xl bg-ce-surface border border-cyan-500/30 dark:bg-[#040812] flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-md dark:shadow-xl">
+        <div className="mt-4 p-5 rounded-2xl bg-white border border-slate-200 shadow-sm dark:bg-[#040812] dark:border-cyan-500/30 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-2">
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-700 dark:bg-cyan-500/15 dark:text-cyan-300 border border-cyan-500/30">
+              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200 dark:bg-cyan-500/15 dark:text-cyan-300 dark:border-cyan-500/30">
                 STAGE {trustStages[activeStep].num} • {trustStages[activeStep].title}
               </span>
               <span className="text-xs font-mono text-emerald-700 dark:text-emerald-400 font-bold">
                 Answers: "{trustStages[activeStep].question}"
               </span>
             </div>
-            <p className="text-sm font-sans text-ce-text-primary dark:text-slate-200">
+            <p className="text-sm font-sans text-slate-900 dark:text-slate-200 font-medium">
               {trustStages[activeStep].summary}
             </p>
-            <p className="text-xs font-sans text-ce-text-secondary dark:text-slate-400 leading-relaxed">
+            <p className="text-xs font-sans text-slate-600 dark:text-slate-400 leading-relaxed">
               {trustStages[activeStep].detail}
             </p>
           </div>
 
           <div className="shrink-0 font-mono text-xs text-right">
-            <span className="text-[10px] text-ce-text-muted dark:text-slate-500 uppercase block mb-1">Status</span>
-            <span className="px-3 py-1 rounded bg-emerald-500/10 border border-emerald-500/30 text-emerald-700 dark:text-emerald-400 font-bold inline-flex items-center gap-1.5">
+            <span className="text-[10px] text-slate-400 dark:text-slate-500 uppercase block mb-1">Status</span>
+            <span className="px-3 py-1 rounded-md bg-emerald-50 border border-emerald-200 text-emerald-800 dark:bg-emerald-500/10 dark:border-emerald-500/30 dark:text-emerald-400 font-bold inline-flex items-center gap-1.5 shadow-2xs">
               <CheckCircle2 className="w-3.5 h-3.5" />
               <span>IMPLEMENTED</span>
             </span>
@@ -344,36 +344,36 @@ export const TrustModelSection = ({ onSelectNode }) => {
       </div>
 
       {/* ─── 3. THE MAIN ARCHITECTURE MAP (CENTERPIECE DIAGRAM) ─── */}
-      <div className="p-6 sm:p-10 rounded-3xl bg-ce-surface border border-ce-border shadow-md dark:bg-[#02050f]/90 dark:border-cyan-500/30 dark:shadow-[0_0_50px_rgba(6,182,212,0.08)]">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-ce-border dark:border-slate-800 gap-4 mb-8">
+      <div className="p-6 sm:p-10 rounded-3xl bg-white border border-slate-200 shadow-sm dark:bg-[#02050f]/90 dark:border-cyan-500/30 dark:shadow-[0_0_50px_rgba(6,182,212,0.08)]">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-slate-200 dark:border-slate-800 gap-4 mb-8">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <span className="w-2 h-2 rounded-full bg-cyan-500 dark:bg-cyan-400 animate-pulse" />
-              <span className="text-[10px] font-mono font-bold text-cyan-700 dark:text-cyan-400 uppercase tracking-widest">
+              <span className="w-2 h-2 rounded-full bg-blue-600 dark:bg-cyan-400 animate-pulse" />
+              <span className="text-[10px] font-mono font-bold text-blue-700 dark:text-cyan-400 uppercase tracking-widest">
                 SYSTEM TOPOLOGY
               </span>
             </div>
-            <h3 className="text-xl sm:text-2xl font-mono font-black text-ce-text-primary dark:text-white">
+            <h3 className="text-xl sm:text-2xl font-mono font-black text-slate-950 dark:text-white">
               MAIN ARCHITECTURE MAP
             </h3>
-            <p className="text-xs text-ce-text-secondary dark:text-slate-400 font-sans mt-0.5">
+            <p className="text-xs text-slate-600 dark:text-slate-400 font-sans mt-0.5">
               Interactive topology map. Click any node to inspect its architectural purpose and isolation properties.
             </p>
           </div>
-          <span className="text-xs font-mono text-ce-text-secondary dark:text-slate-400">
-            ROOT: <strong className="text-cyan-700 dark:text-cyan-300">HASHGUARD</strong>
+          <span className="text-xs font-mono text-slate-600 dark:text-slate-400">
+            ROOT: <strong className="text-blue-700 dark:text-cyan-300 font-bold">HASHGUARD</strong>
           </span>
         </div>
 
         {/* Visual Diagram Tree */}
         <div className="flex flex-col items-center max-w-4xl mx-auto space-y-6 font-mono">
           {/* Level 0: HashGuard Core Header */}
-          <div className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500/15 via-ce-surface to-blue-500/15 border border-cyan-500/80 text-cyan-800 dark:from-cyan-950 dark:via-slate-900 dark:to-blue-950 dark:border-cyan-400/80 dark:text-cyan-300 font-bold text-sm tracking-widest shadow-sm dark:shadow-[0_0_20px_rgba(6,182,212,0.3)]">
+          <div className="px-6 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white font-bold text-sm tracking-widest shadow-sm dark:from-cyan-950 dark:via-slate-900 dark:to-blue-950 dark:border-cyan-400/80 dark:text-cyan-300 dark:shadow-[0_0_20px_rgba(6,182,212,0.3)]">
             🛡️ HASHGUARD VERIFIABLE TRUST CORE
           </div>
 
           {/* Vertical Trunk Line */}
-          <div className="w-px h-6 bg-cyan-500/50" />
+          <div className="w-px h-6 bg-slate-300 dark:bg-cyan-500/50" />
 
           {/* Level 1: Triad (Identity, Authorization, Asset) */}
           <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -381,61 +381,61 @@ export const TrustModelSection = ({ onSelectNode }) => {
               onClick={() => setSelectedMapNode('IDENTITY')}
               className={`p-4 rounded-xl border text-center transition-all cursor-pointer ${
                 selectedMapNode === 'IDENTITY'
-                  ? 'bg-blue-500/15 border-blue-500 shadow-sm ring-1 ring-blue-500 dark:bg-blue-950/50 dark:border-blue-400 dark:shadow-[0_0_20px_rgba(59,130,246,0.3)] dark:ring-blue-400'
-                  : 'bg-ce-surface-subtle border-ce-border hover:border-blue-500/50 dark:bg-slate-950/80 dark:border-slate-800'
+                  ? 'bg-blue-50/90 border-blue-600 shadow-sm ring-1 ring-blue-600 dark:bg-blue-950/50 dark:border-blue-400 dark:shadow-[0_0_20px_rgba(59,130,246,0.3)] dark:ring-blue-400'
+                  : 'bg-slate-50 border-slate-200/90 hover:bg-white hover:border-slate-300 shadow-2xs dark:bg-slate-950/80 dark:border-slate-800'
               }`}
             >
               <span className="text-[10px] text-blue-700 dark:text-blue-400 font-bold block uppercase tracking-wider">WHO?</span>
-              <span className="text-sm font-bold text-ce-text-primary dark:text-white block mt-0.5">IDENTITY</span>
-              <span className="text-[11px] text-ce-text-secondary dark:text-slate-400 block mt-1">W3C DID (did:ethr)</span>
+              <span className="text-sm font-bold text-slate-950 dark:text-white block mt-0.5">IDENTITY</span>
+              <span className="text-[11px] text-slate-600 dark:text-slate-400 block mt-1">W3C DID (did:ethr)</span>
             </button>
 
             <button
               onClick={() => setSelectedMapNode('AUTHORIZATION')}
               className={`p-4 rounded-xl border text-center transition-all cursor-pointer ${
                 selectedMapNode === 'AUTHORIZATION'
-                  ? 'bg-purple-500/15 border-purple-500 shadow-sm ring-1 ring-purple-500 dark:bg-purple-950/50 dark:border-purple-400 dark:shadow-[0_0_20px_rgba(168,85,247,0.3)] dark:ring-purple-400'
-                  : 'bg-ce-surface-subtle border-ce-border hover:border-purple-500/50 dark:bg-slate-950/80 dark:border-slate-800'
+                  ? 'bg-purple-50/90 border-purple-600 shadow-sm ring-1 ring-purple-600 dark:bg-purple-950/50 dark:border-purple-400 dark:shadow-[0_0_20px_rgba(168,85,247,0.3)] dark:ring-purple-400'
+                  : 'bg-slate-50 border-slate-200/90 hover:bg-white hover:border-slate-300 shadow-2xs dark:bg-slate-950/80 dark:border-slate-800'
               }`}
             >
               <span className="text-[10px] text-purple-700 dark:text-purple-400 font-bold block uppercase tracking-wider">PERMITTED?</span>
-              <span className="text-sm font-bold text-ce-text-primary dark:text-white block mt-0.5">AUTHORIZATION</span>
-              <span className="text-[11px] text-ce-text-secondary dark:text-slate-400 block mt-1">Role & Quorum Policy</span>
+              <span className="text-sm font-bold text-slate-950 dark:text-white block mt-0.5">AUTHORIZATION</span>
+              <span className="text-[11px] text-slate-600 dark:text-slate-400 block mt-1">Role &amp; Quorum Policy</span>
             </button>
 
             <button
               onClick={() => setSelectedMapNode('ASSET')}
               className={`p-4 rounded-xl border text-center transition-all cursor-pointer ${
                 selectedMapNode === 'ASSET'
-                  ? 'bg-indigo-500/15 border-indigo-500 shadow-sm ring-1 ring-indigo-500 dark:bg-indigo-950/50 dark:border-indigo-400 dark:shadow-[0_0_20px_rgba(99,102,241,0.3)] dark:ring-indigo-400'
-                  : 'bg-ce-surface-subtle border-ce-border hover:border-indigo-500/50 dark:bg-slate-950/80 dark:border-slate-800'
+                  ? 'bg-indigo-50/90 border-indigo-600 shadow-sm ring-1 ring-indigo-600 dark:bg-indigo-950/50 dark:border-indigo-400 dark:shadow-[0_0_20px_rgba(99,102,241,0.3)] dark:ring-indigo-400'
+                  : 'bg-slate-50 border-slate-200/90 hover:bg-white hover:border-slate-300 shadow-2xs dark:bg-slate-950/80 dark:border-slate-800'
               }`}
             >
               <span className="text-[10px] text-indigo-700 dark:text-indigo-400 font-bold block uppercase tracking-wider">WHAT ASSET?</span>
-              <span className="text-sm font-bold text-ce-text-primary dark:text-white block mt-0.5">ASSET</span>
-              <span className="text-[11px] text-ce-text-secondary dark:text-slate-400 block mt-1">Exhibit ID & Sensitivity</span>
+              <span className="text-sm font-bold text-slate-950 dark:text-white block mt-0.5">ASSET</span>
+              <span className="text-[11px] text-slate-600 dark:text-slate-400 block mt-1">Exhibit ID &amp; Sensitivity</span>
             </button>
           </div>
 
           {/* Triad Convergence Connector */}
-          <div className="w-px h-6 bg-cyan-500/50" />
+          <div className="w-px h-6 bg-slate-300 dark:bg-cyan-500/50" />
 
           {/* Level 2: Cryptographic Proof (SHA-256) */}
           <button
             onClick={() => setSelectedMapNode('PROOF')}
             className={`w-full max-w-md p-4 rounded-xl border text-center transition-all cursor-pointer ${
               selectedMapNode === 'PROOF'
-                ? 'bg-cyan-500/15 border-cyan-500 shadow-sm ring-1 ring-cyan-500 dark:bg-cyan-950/60 dark:border-cyan-400 dark:shadow-[0_0_25px_rgba(6,182,212,0.3)] dark:ring-cyan-400'
-                : 'bg-ce-surface-subtle border-ce-border hover:border-cyan-500/50 dark:bg-slate-950/80 dark:border-slate-800'
+                ? 'bg-cyan-50/90 border-cyan-600 shadow-sm ring-1 ring-cyan-600 dark:bg-cyan-950/60 dark:border-cyan-400 dark:shadow-[0_0_25px_rgba(6,182,212,0.3)] dark:ring-cyan-400'
+                : 'bg-slate-50 border-slate-200/90 hover:bg-white hover:border-slate-300 shadow-2xs dark:bg-slate-950/80 dark:border-slate-800'
             }`}
           >
-            <span className="text-[10px] text-cyan-700 dark:text-cyan-400 font-bold block uppercase tracking-wider">ORIGINAL STATE?</span>
-            <span className="text-sm font-bold text-ce-text-primary dark:text-white block mt-0.5">CRYPTOGRAPHIC PROOF</span>
-            <span className="text-[11px] text-cyan-800 dark:text-cyan-300 block mt-1 font-semibold">SHA-256 Deterministic Bitstream Fingerprint</span>
+            <span className="text-[10px] text-cyan-800 dark:text-cyan-400 font-bold block uppercase tracking-wider">ORIGINAL STATE?</span>
+            <span className="text-sm font-bold text-slate-950 dark:text-white block mt-0.5">CRYPTOGRAPHIC PROOF</span>
+            <span className="text-[11px] text-cyan-900 dark:text-cyan-300 block mt-1 font-semibold">SHA-256 Deterministic Bitstream Fingerprint</span>
           </button>
 
           {/* Branching to Off-Chain vs On-Chain */}
-          <div className="w-px h-6 bg-cyan-500/50" />
+          <div className="w-px h-6 bg-slate-300 dark:bg-cyan-500/50" />
 
           {/* Level 3: Off-Chain Data vs On-Chain Trust Split */}
           <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -443,31 +443,31 @@ export const TrustModelSection = ({ onSelectNode }) => {
               onClick={() => setSelectedMapNode('OFFCHAIN')}
               className={`p-4 rounded-xl border text-left transition-all cursor-pointer ${
                 selectedMapNode === 'OFFCHAIN'
-                  ? 'bg-indigo-500/15 border-indigo-500 shadow-sm ring-1 ring-indigo-500 dark:bg-indigo-950/50 dark:border-indigo-400 dark:shadow-[0_0_20px_rgba(99,102,241,0.3)] dark:ring-indigo-400'
-                  : 'bg-ce-surface-subtle border-ce-border hover:border-indigo-500/50 dark:bg-slate-950/80 dark:border-slate-800'
+                  ? 'bg-indigo-50/90 border-indigo-600 shadow-sm ring-1 ring-indigo-600 dark:bg-indigo-950/50 dark:border-indigo-400 dark:shadow-[0_0_20px_rgba(99,102,241,0.3)] dark:ring-indigo-400'
+                  : 'bg-slate-50 border-slate-200/90 hover:bg-white hover:border-slate-300 shadow-2xs dark:bg-slate-950/80 dark:border-slate-800'
               }`}
             >
               <span className="text-[10px] text-indigo-700 dark:text-indigo-400 font-bold block uppercase tracking-wider">CONFIDENTIAL DATA</span>
-              <span className="text-sm font-bold text-ce-text-primary dark:text-white block mt-0.5">OFF-CHAIN STORAGE</span>
-              <span className="text-[11px] text-ce-text-secondary dark:text-slate-400 block mt-1">Raw Evidence • MinIO S3 • AES-256-GCM</span>
+              <span className="text-sm font-bold text-slate-950 dark:text-white block mt-0.5">OFF-CHAIN STORAGE</span>
+              <span className="text-[11px] text-slate-600 dark:text-slate-400 block mt-1">Raw Evidence • MinIO S3 • AES-256-GCM</span>
             </button>
 
             <button
               onClick={() => setSelectedMapNode('ONCHAIN')}
               className={`p-4 rounded-xl border text-left transition-all cursor-pointer ${
                 selectedMapNode === 'ONCHAIN'
-                  ? 'bg-amber-500/15 border-amber-500 shadow-sm ring-1 ring-amber-500 dark:bg-amber-950/50 dark:border-amber-400 dark:shadow-[0_0_20px_rgba(245,158,11,0.3)] dark:ring-amber-400'
-                  : 'bg-ce-surface-subtle border-ce-border hover:border-amber-500/50 dark:bg-slate-950/80 dark:border-slate-800'
+                  ? 'bg-amber-50/90 border-amber-600 shadow-sm ring-1 ring-amber-600 dark:bg-amber-950/50 dark:border-amber-400 dark:shadow-[0_0_20px_rgba(245,158,11,0.3)] dark:ring-amber-400'
+                  : 'bg-slate-50 border-slate-200/90 hover:bg-white hover:border-slate-300 shadow-2xs dark:bg-slate-950/80 dark:border-slate-800'
               }`}
             >
-              <span className="text-[10px] text-amber-700 dark:text-amber-400 font-bold block uppercase tracking-wider">TRUST ANCHOR</span>
-              <span className="text-sm font-bold text-ce-text-primary dark:text-white block mt-0.5">ON-CHAIN STATE</span>
-              <span className="text-[11px] text-ce-text-secondary dark:text-slate-400 block mt-1">Proofs • Tokens • Events • Sepolia/Besu</span>
+              <span className="text-[10px] text-amber-800 dark:text-amber-400 font-bold block uppercase tracking-wider">TRUST ANCHOR</span>
+              <span className="text-sm font-bold text-slate-950 dark:text-white block mt-0.5">ON-CHAIN STATE</span>
+              <span className="text-[11px] text-slate-600 dark:text-slate-400 block mt-1">Proofs • Tokens • Events • Sepolia/Besu</span>
             </button>
           </div>
 
           {/* Downward Connector to Lifecycle Phases */}
-          <div className="w-px h-6 bg-cyan-500/50" />
+          <div className="w-px h-6 bg-slate-300 dark:bg-cyan-500/50" />
 
           {/* Level 4: Downstream Trust Verification Chain */}
           <div className="w-full grid grid-cols-1 sm:grid-cols-4 gap-3">
@@ -475,63 +475,63 @@ export const TrustModelSection = ({ onSelectNode }) => {
               onClick={() => setSelectedMapNode('CUSTODY')}
               className={`p-3.5 rounded-xl border text-center transition-all cursor-pointer ${
                 selectedMapNode === 'CUSTODY'
-                  ? 'bg-amber-500/15 border-amber-500 ring-1 ring-amber-500 dark:bg-amber-950/50 dark:border-amber-400 dark:ring-amber-400 shadow-sm'
-                  : 'bg-ce-surface-subtle border-ce-border hover:border-amber-500/50 dark:bg-slate-950/80 dark:border-slate-800'
+                  ? 'bg-amber-50/90 border-amber-600 ring-1 ring-amber-600 shadow-sm dark:bg-amber-950/50 dark:border-amber-400 dark:ring-amber-400'
+                  : 'bg-slate-50 border-slate-200/90 hover:bg-white hover:border-slate-300 shadow-2xs dark:bg-slate-950/80 dark:border-slate-800'
               }`}
             >
-              <span className="text-[10px] text-amber-700 dark:text-amber-400 font-bold block uppercase">WHO HANDLED?</span>
-              <span className="text-xs font-bold text-ce-text-primary dark:text-white block mt-0.5">CUSTODY</span>
-              <span className="text-[10px] text-ce-text-secondary dark:text-slate-400 block mt-0.5">Dual-Auth Transfers</span>
+              <span className="text-[10px] text-amber-800 dark:text-amber-400 font-bold block uppercase">WHO HANDLED?</span>
+              <span className="text-xs font-bold text-slate-950 dark:text-white block mt-0.5">CUSTODY</span>
+              <span className="text-[10px] text-slate-600 dark:text-slate-400 block mt-0.5">Dual-Auth Transfers</span>
             </button>
 
             <button
               onClick={() => setSelectedMapNode('VERIFICATION')}
               className={`p-3.5 rounded-xl border text-center transition-all cursor-pointer ${
                 selectedMapNode === 'VERIFICATION'
-                  ? 'bg-emerald-500/15 border-emerald-500 ring-1 ring-emerald-500 dark:bg-emerald-950/50 dark:border-emerald-400 dark:ring-emerald-400 shadow-sm'
-                  : 'bg-ce-surface-subtle border-ce-border hover:border-emerald-500/50 dark:bg-slate-950/80 dark:border-slate-800'
+                  ? 'bg-emerald-50/90 border-emerald-600 ring-1 ring-emerald-600 shadow-sm dark:bg-emerald-950/50 dark:border-emerald-400 dark:ring-emerald-400'
+                  : 'bg-slate-50 border-slate-200/90 hover:bg-white hover:border-slate-300 shadow-2xs dark:bg-slate-950/80 dark:border-slate-800'
               }`}
             >
-              <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-bold block uppercase">DID IT CHANGE?</span>
-              <span className="text-xs font-bold text-ce-text-primary dark:text-white block mt-0.5">VERIFICATION</span>
-              <span className="text-[10px] text-ce-text-secondary dark:text-slate-400 block mt-0.5">Zero-Trust Match</span>
+              <span className="text-[10px] text-emerald-800 dark:text-emerald-400 font-bold block uppercase">DID IT CHANGE?</span>
+              <span className="text-xs font-bold text-slate-950 dark:text-white block mt-0.5">VERIFICATION</span>
+              <span className="text-[10px] text-slate-600 dark:text-slate-400 block mt-0.5">Zero-Trust Match</span>
             </button>
 
             <button
               onClick={() => setSelectedMapNode('PROVENANCE')}
               className={`p-3.5 rounded-xl border text-center transition-all cursor-pointer ${
                 selectedMapNode === 'PROVENANCE'
-                  ? 'bg-sky-500/15 border-sky-500 ring-1 ring-sky-500 dark:bg-sky-950/50 dark:border-sky-400 dark:ring-sky-400 shadow-sm'
-                  : 'bg-ce-surface-subtle border-ce-border hover:border-sky-500/50 dark:bg-slate-950/80 dark:border-slate-800'
+                  ? 'bg-sky-50/90 border-sky-600 ring-1 ring-sky-600 shadow-sm dark:bg-sky-950/50 dark:border-sky-400 dark:ring-sky-400'
+                  : 'bg-slate-50 border-slate-200/90 hover:bg-white hover:border-slate-300 shadow-2xs dark:bg-slate-950/80 dark:border-slate-800'
               }`}
             >
-              <span className="text-[10px] text-sky-700 dark:text-sky-400 font-bold block uppercase">WHERE FROM?</span>
-              <span className="text-xs font-bold text-ce-text-primary dark:text-white block mt-0.5">PROVENANCE</span>
-              <span className="text-[10px] text-ce-text-secondary dark:text-slate-400 block mt-0.5">Lineage DAG</span>
+              <span className="text-[10px] text-sky-800 dark:text-sky-400 font-bold block uppercase">WHERE FROM?</span>
+              <span className="text-xs font-bold text-slate-950 dark:text-white block mt-0.5">PROVENANCE</span>
+              <span className="text-[10px] text-slate-600 dark:text-slate-400 block mt-0.5">Lineage DAG</span>
             </button>
 
             <button
               onClick={() => setSelectedMapNode('AUDIT')}
               className={`p-3.5 rounded-xl border text-center transition-all cursor-pointer ${
                 selectedMapNode === 'AUDIT'
-                  ? 'bg-teal-500/15 border-teal-500 ring-1 ring-teal-500 dark:bg-teal-950/50 dark:border-teal-400 dark:ring-teal-400 shadow-sm'
-                  : 'bg-ce-surface-subtle border-ce-border hover:border-teal-500/50 dark:bg-slate-950/80 dark:border-slate-800'
+                  ? 'bg-teal-50/90 border-teal-600 ring-1 ring-teal-600 shadow-sm dark:bg-teal-950/50 dark:border-teal-400 dark:ring-teal-400'
+                  : 'bg-slate-50 border-slate-200/90 hover:bg-white hover:border-slate-300 shadow-2xs dark:bg-slate-950/80 dark:border-slate-800'
               }`}
             >
-              <span className="text-[10px] text-teal-700 dark:text-teal-400 font-bold block uppercase">WHAT HAPPENED?</span>
-              <span className="text-xs font-bold text-ce-text-primary dark:text-white block mt-0.5">AUDIT</span>
-              <span className="text-[10px] text-ce-text-secondary dark:text-slate-400 block mt-0.5">Tamper-Evident Trail</span>
+              <span className="text-[10px] text-teal-800 dark:text-teal-400 font-bold block uppercase">WHAT HAPPENED?</span>
+              <span className="text-xs font-bold text-slate-950 dark:text-white block mt-0.5">AUDIT</span>
+              <span className="text-[10px] text-slate-600 dark:text-slate-400 block mt-0.5">Tamper-Evident Trail</span>
             </button>
           </div>
 
           {/* Map Node Inspector Drawer */}
-          <div className="w-full mt-6 p-4 rounded-xl bg-ce-surface-subtle border border-ce-border dark:bg-slate-950 dark:border-slate-800 flex items-start gap-3 text-left">
-            <Info className="w-4 h-4 text-cyan-600 dark:text-cyan-400 shrink-0 mt-0.5" />
+          <div className="w-full mt-6 p-4 rounded-xl bg-slate-50 border border-slate-200 dark:bg-slate-950 dark:border-slate-800 flex items-start gap-3 text-left">
+            <Info className="w-4 h-4 text-blue-700 dark:text-cyan-400 shrink-0 mt-0.5" />
             <div>
-              <span className="text-xs font-mono font-bold text-ce-text-primary dark:text-white uppercase">
-                {currentMap.title} &mdash; <span className="text-cyan-700 dark:text-cyan-400">{currentMap.sub}</span>
+              <span className="text-xs font-mono font-bold text-slate-950 dark:text-white uppercase">
+                {currentMap.title} &mdash; <span className="text-blue-700 dark:text-cyan-400">{currentMap.sub}</span>
               </span>
-              <p className="text-xs font-sans text-ce-text-secondary dark:text-slate-300 mt-0.5">
+              <p className="text-xs font-sans text-slate-600 dark:text-slate-300 mt-0.5">
                 {currentMap.desc}
               </p>
             </div>
