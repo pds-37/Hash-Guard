@@ -224,11 +224,11 @@ export const ArchitecturePage = () => {
               <span>Launch Live Prototype (Forensic Analyst)</span>
             </button>
             <button
-              onClick={() => navigate('/verification')}
+              onClick={() => navigate('/passport')}
               className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-ce-surface hover:bg-ce-surface-subtle border border-ce-border text-ce-text-primary dark:bg-slate-900 dark:hover:bg-slate-800 dark:border-slate-700 dark:text-slate-200 font-mono font-bold text-sm transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm"
             >
               <ShieldCheck className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
-              <span>Inspect Verification Engine</span>
+              <span>Inspect Trust Passport</span>
             </button>
           </div>
         </section>

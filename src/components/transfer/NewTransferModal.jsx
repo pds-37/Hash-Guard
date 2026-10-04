@@ -90,27 +90,31 @@ export const NewTransferModal = ({ isOpen, onClose, onCreated, evidenceList = []
               console.warn("Transfer manifest signature skipped:", sigErr);
             }
 
-            // Only call the smart contract on a local Hardhat/Anvil node
-            if (network.chainId === 31337n || network.chainId === 1337n) {
+            // Call the smart contract on Sepolia Testnet (11155111) or local Hardhat/Anvil node (31337 or 1337)
+            if (network.chainId === 11155111n || network.chainId === 31337n || network.chainId === 1337n) {
               try {
                 const HashGuardABI = (await import('../../contracts/HashGuard.json')).default;
-                const contractAddress = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
+                const contractAddress = network.chainId === 11155111n
+                  ? '0x3592925Cf64E7C3c68d4911b2ebC722c2Ea67052'
+                  : '0x5FbDB2315678afecb367f032d93F642f64180aa3';
                 const contract = new ethers.Contract(contractAddress, HashGuardABI.abi, signer);
                 const tokenId = await contract.assetIdToTokenId(formData.evidenceId);
                 if (tokenId > 0n) {
-                  const recipientAddress = '0x70997970C51812dc3A010C7d01b50e0d17dc79C8';
+                  const recipientAddress = (formData.toOrg && formData.toOrg.startsWith('0x'))
+                    ? formData.toOrg
+                    : '0x70997970C51812dc3A010C7d01b50e0d17dc79C8';
                   const tx = await contract.transferCustody(tokenId, recipientAddress);
                   const receipt = await tx.wait();
                   txHash = receipt.hash;
                 }
               } catch (contractErr) {
-                console.warn("Local contract transfer call skipped:", contractErr);
+                console.warn("Contract transfer call skipped or rejected:", contractErr);
               }
             }
           })();
 
           const timeout = new Promise((_, reject) =>
-            setTimeout(() => reject(new Error('MetaMask timeout — proceeding without signature')), 5000)
+            setTimeout(() => reject(new Error('MetaMask timeout — proceeding')), 45000)
           );
 
           await Promise.race([web3Promise, timeout]);

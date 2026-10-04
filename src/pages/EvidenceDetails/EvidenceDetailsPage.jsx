@@ -376,7 +376,7 @@ export const EvidenceDetailsPage = () => {
       {/* Cryptographic Core: SHA-256 Hash Card + Digital Signature Card */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <EvidenceHashCard evidence={evidence} />
-        <SignatureCard signature={evidence.signature} evidenceStatus={evidence.status} />
+        <SignatureCard signature={evidence.signature} evidenceStatus={evidence.status} evidenceId={evidence.id} evidenceHash={evidence.hash} />
       </div>
 
       {/* Forensic Metadata Properties */}

@@ -31,11 +31,12 @@ export const Sidebar = ({ isMobileOpen, setMobileOpen }) => {
   const [isContextOpen, setIsContextOpen] = useState(true);
   const [showSecondaryOps, setShowSecondaryOps] = useState(false);
 
-  // PRIMARY NAVIGATION (6 Core Platform Items)
+  // PRIMARY NAVIGATION (7 Core Platform Items)
   const primaryNavigation = [
     { name: 'Overview', path: '/dashboard', icon: LayoutDashboard },
     { name: 'Assets', path: '/evidence', icon: ShieldAlert },
     { name: 'Access & Governance', path: '/access-governance', icon: KeyRound },
+    { name: 'Trust Passport', path: '/passport', icon: BadgeCheck },
     { name: 'Verification', path: '/verification', icon: ShieldCheck, alert: isTamperSimulated },
     { name: 'Security Lab', path: '/security-lab', icon: FlaskConical },
     { name: 'Audit', path: '/audit', icon: FileSpreadsheet },

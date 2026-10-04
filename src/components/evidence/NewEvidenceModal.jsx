@@ -215,11 +215,12 @@ export const NewEvidenceModal = ({ isOpen, onClose, onCreated }) => {
             console.warn("Cryptographic signature skipped or dismissed by user:", sigErr);
           }
 
-          // 2. Only invoke on-chain contract transaction if on Localhost Hardhat / Anvil node (31337 or 1337)
-          // On Ethereum Mainnet (Chain 1) or public chains, never send transactions to local addresses to avoid real gas fees!
-          if (network.chainId === 31337n || network.chainId === 1337n) {
+          // 2. Invoke on-chain contract transaction if on Sepolia Testnet (11155111) or Localhost Hardhat / Anvil node (31337 or 1337)
+          if (network.chainId === 11155111n || network.chainId === 31337n || network.chainId === 1337n) {
             try {
-              const contractAddress = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
+              const contractAddress = network.chainId === 11155111n
+                ? '0x3592925Cf64E7C3c68d4911b2ebC722c2Ea67052'
+                : '0x5FbDB2315678afecb367f032d93F642f64180aa3';
               const contract = new ethers.Contract(contractAddress, HashGuardABI.abi, signer);
               const contentHash = '0x' + computedHash;
               const metadataHash = ethers.id(formData.title || 'metadata');
@@ -236,7 +237,7 @@ export const NewEvidenceModal = ({ isOpen, onClose, onCreated }) => {
               const receipt = await tx.wait();
               txHash = receipt.hash;
             } catch (contractErr) {
-              console.warn("Local contract minting skipped:", contractErr);
+              console.warn("Contract minting skipped or rejected:", contractErr);
             }
           }
         } catch (web3Err) {
