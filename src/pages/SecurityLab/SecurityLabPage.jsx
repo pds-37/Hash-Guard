@@ -231,27 +231,27 @@ export const SecurityLabPage = () => {
                   </span>
                   <div className="grid grid-cols-3 gap-1.5 text-center font-mono text-[10px]">
                     <div
-                      className={`p-2 rounded border ${
+                      className={`p-2 rounded border font-semibold ${
                         result
-                          ? 'bg-amber-500/20 text-amber-300 border-amber-500/40 font-bold'
+                          ? 'bg-amber-100 text-amber-950 border-amber-300 dark:bg-amber-500/20 dark:text-amber-300 dark:border-amber-500/40 font-bold'
                           : 'bg-ce-surface-subtle text-ce-text-muted border-ce-border'
                       }`}
                     >
                       1. DETECTED
                     </div>
                     <div
-                      className={`p-2 rounded border ${
+                      className={`p-2 rounded border font-semibold ${
                         result
-                          ? 'bg-rose-500/20 text-rose-300 border-rose-500/40 font-bold'
+                          ? 'bg-rose-100 text-rose-950 border-rose-300 dark:bg-rose-500/20 dark:text-rose-300 dark:border-rose-500/40 font-bold'
                           : 'bg-ce-surface-subtle text-ce-text-muted border-ce-border'
                       }`}
                     >
                       2. BLOCKED
                     </div>
                     <div
-                      className={`p-2 rounded border ${
+                      className={`p-2 rounded border font-semibold ${
                         result
-                          ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40 font-bold'
+                          ? 'bg-emerald-100 text-emerald-950 border-emerald-300 dark:bg-emerald-500/20 dark:text-emerald-300 dark:border-emerald-500/40 font-bold'
                           : 'bg-ce-surface-subtle text-ce-text-muted border-ce-border'
                       }`}
                     >
@@ -262,27 +262,29 @@ export const SecurityLabPage = () => {
 
                 {/* Result Logs (if run) */}
                 {result && (
-                  <div className="p-3 rounded-lg bg-black/60 border border-emerald-500/30 text-xs font-mono space-y-2 mb-4">
-                    <div className="flex items-center justify-between text-[11px] text-emerald-400 font-bold">
+                  <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 text-xs font-mono space-y-2.5 mb-4 shadow-inner">
+                    <div className="flex items-center justify-between text-[11px] text-emerald-400 font-bold border-b border-slate-800/80 pb-2">
                       <span className="flex items-center gap-1.5">
-                        <Terminal className="w-3.5 h-3.5" />
+                        <Terminal className="w-3.5 h-3.5 text-emerald-400" />
                         <span>Tri-State Guard Invariant Enforced</span>
                       </span>
-                      <span>{result.badge}</span>
+                      <span className="px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-500/40 text-[9px]">
+                        {result.badge}
+                      </span>
                     </div>
 
-                    <ul className="space-y-1 text-[11px] text-ce-text-muted">
+                    <ul className="space-y-1.5 text-[11px]">
                       {result.steps?.map((st, idx) => (
-                        <li key={idx} className="flex items-start gap-1.5">
-                          <span className="text-emerald-400 font-bold">›</span>
+                        <li key={idx} className="flex items-start gap-1.5 text-slate-200 leading-snug">
+                          <span className="text-emerald-400 font-bold shrink-0">›</span>
                           <span>{st}</span>
                         </li>
                       ))}
                     </ul>
 
-                    <div className="pt-2 border-t border-white/10 flex items-center justify-between text-[10px] text-ce-text-muted">
-                      <span>Audit Reference:</span>
-                      <span className="text-ce-text-primary font-bold">{result.auditRef}</span>
+                    <div className="pt-2 border-t border-slate-800 flex items-center justify-between text-[10px]">
+                      <span className="text-slate-400">Audit Reference:</span>
+                      <span className="text-cyan-300 font-mono font-bold">{result.auditRef}</span>
                     </div>
                   </div>
                 )}

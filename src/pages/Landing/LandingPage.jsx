@@ -416,7 +416,7 @@ export const LandingPage = () => {
             </div>
           </div>
 
-          {/* YouTube Video Embed with Custom SIH 2026 Thumbnail */}
+          {/* YouTube Video Embed with Custom Product Demo Thumbnail */}
           <div className="relative aspect-video w-full rounded-xl overflow-hidden bg-slate-950 border border-slate-800/80 shadow-inner group">
             {videoPlaying ? (
               <iframe
@@ -434,7 +434,7 @@ export const LandingPage = () => {
               >
                 <img
                   src="/assets/video-thumbnail.jpg"
-                  alt="HashGuard Demonstration Video Thumbnail (SIH 2026)"
+                  alt="HashGuard Demonstration Video Thumbnail"
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.015]"
                 />
                 {/* Subtle vignette on hover */}

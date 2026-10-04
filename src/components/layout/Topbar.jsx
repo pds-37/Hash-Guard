@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import {
   Search,
   Bell,
-  Menu
+  Menu,
+  ShieldAlert,
+  ShieldCheck
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { ThemeToggle } from '../common/ThemeToggle';
@@ -14,7 +16,9 @@ export const Topbar = ({ setMobileOpen }) => {
     searchQuery,
     setSearchQuery,
     notifications,
-    isSandboxMode
+    isSandboxMode,
+    isTamperSimulated,
+    toggleTamperSimulation
   } = useApp();
 
   const [showNotifications, setShowNotifications] = useState(false);
@@ -45,9 +49,34 @@ export const Topbar = ({ setMobileOpen }) => {
         {isSandboxMode && (
           <div className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-amber-500/10 border border-amber-500/30 text-amber-500 dark:text-amber-400 font-mono text-[11px] font-bold shadow-sm">
             <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
-            <span>SANDBOX — EVALUATION MODE</span>
+            <span className="hidden sm:inline">SANDBOX — EVALUATION MODE</span>
+            <span className="sm:hidden">SANDBOX</span>
           </div>
         )}
+
+        {/* Unified Global Tamper Drill Toggle */}
+        <button
+          onClick={() => toggleTamperSimulation(!isTamperSimulated, 'EV-001')}
+          className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg border font-mono text-[11px] font-bold transition-all cursor-pointer shadow-xs ${
+            isTamperSimulated
+              ? 'bg-rose-500/20 border-rose-500/60 text-rose-800 dark:text-rose-300 shadow-[0_0_15px_rgba(244,63,94,0.3)] animate-pulse'
+              : 'bg-ce-surface-subtle hover:bg-ce-border text-slate-800 dark:text-slate-200 border-ce-border hover:border-slate-400'
+          }`}
+          title="Global Zero-Trust Tamper Drill: Inverts 1 bit in exhibit EV-001 off-chain payload to test cryptographic verification across the entire platform."
+        >
+          <span className={`w-2 h-2 rounded-full shrink-0 ${isTamperSimulated ? 'bg-rose-500 animate-ping' : 'bg-emerald-500'}`} />
+          {isTamperSimulated ? (
+            <ShieldAlert className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400 shrink-0" />
+          ) : (
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+          )}
+          <span className="hidden md:inline">
+            {isTamperSimulated ? 'TAMPER DRILL: ACTIVE' : 'TAMPER DRILL: CLEAN'}
+          </span>
+          <span className="md:hidden">
+            {isTamperSimulated ? 'TAMPER' : 'CLEAN'}
+          </span>
+        </button>
 
         <ThemeToggle size="md" />
 

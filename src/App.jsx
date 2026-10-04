@@ -87,8 +87,8 @@ export function App() {
             <Route path="/custody" element={<ProtectedRoute element={<CustodyPage />} pathId="custody" />} />
             <Route path="/lineage" element={<ProtectedRoute element={<LineagePage />} pathId="lineage" />} />
             <Route path="/verification" element={<ProtectedRoute element={<VerificationPage />} pathId="verification" />} />
-            <Route path="/passport" element={<ProtectedRoute element={<PassportPage />} pathId="passport" />} />
-            <Route path="/passport/:id" element={<ProtectedRoute element={<PassportPage />} pathId="passport" />} />
+            <Route path="/passport" element={<Navigate to="/verification" replace />} />
+            <Route path="/passport/:id" element={<Navigate to="/verification" replace />} />
             <Route path="/security-lab" element={<ProtectedRoute element={<SecurityLabPage />} pathId="security-lab" />} />
             <Route path="/access-governance" element={<ProtectedRoute element={<AccessGovernancePage />} pathId="access-governance" />} />
             <Route path="/audit" element={<ProtectedRoute element={<AuditPage />} pathId="audit" />} />

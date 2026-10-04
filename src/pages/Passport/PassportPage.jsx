@@ -50,6 +50,7 @@ export const PassportPage = () => {
   const [auditLogs, setAuditLogs] = useState([]);
   const [downloadSimulationResult, setDownloadSimulationResult] = useState(null);
   const [isLeaseModalOpen, setIsLeaseModalOpen] = useState(false);
+  const [isBoundaryModalOpen, setIsBoundaryModalOpen] = useState(false);
   const [tempLeaseDid, setTempLeaseDid] = useState('did:ethr:0x70997970C51812dc3A010C7d01b50e0d17dc79B1');
   const [tempLeaseHours, setTempLeaseHours] = useState('2');
   const [tempLeaseReason, setTempLeaseReason] = useState('Emergency reverse-engineering analysis');
@@ -140,6 +141,7 @@ export const PassportPage = () => {
       timestamp: new Date().toLocaleTimeString(),
       ...checkResult
     });
+    setIsBoundaryModalOpen(true);
   };
 
   const handleDownloadVerificationReport = () => {
@@ -414,27 +416,35 @@ export const PassportPage = () => {
       {/* Simulated Download Check Feedback Card */}
       {downloadSimulationResult && (
         <div
-          className={`p-4 rounded-xl border font-mono text-xs ${
+          className={`p-4 rounded-xl border-2 font-mono text-xs shadow-sm transition-all ${
             downloadSimulationResult.allowed
-              ? 'bg-emerald-950/20 border-emerald-500/40 text-emerald-300'
-              : 'bg-rose-950/20 border-rose-500/40 text-rose-300'
+              ? 'bg-emerald-50 text-emerald-950 border-emerald-400 dark:bg-emerald-950/40 dark:border-emerald-500/50 dark:text-emerald-300'
+              : 'bg-rose-50 text-rose-950 border-rose-400 dark:bg-rose-950/40 dark:border-rose-500/50 dark:text-rose-300'
           }`}
         >
-          <div className="flex items-center justify-between">
-            <span className="font-bold flex items-center gap-1.5">
+          <div className="flex items-center justify-between gap-2 flex-wrap">
+            <span className="font-bold flex items-center gap-2 text-xs sm:text-sm">
               {downloadSimulationResult.allowed ? (
-                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
               ) : (
-                <XCircle className="w-4 h-4 text-rose-400" />
+                <XCircle className="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0" />
               )}
-              ACCESS EVALUATION RESULT: {downloadSimulationResult.allowed ? 'HTTP 200 ALLOWED' : 'HTTP 403 FORBIDDEN'}
+              <span>ACCESS EVALUATION: {downloadSimulationResult.allowed ? 'HTTP 200 ALLOWED' : 'HTTP 403 FORBIDDEN'}</span>
             </span>
-            <span className="text-[10px] text-ce-text-muted">
-              Evaluated at {downloadSimulationResult.timestamp}
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] text-slate-600 dark:text-slate-400 font-semibold">
+                Evaluated at {downloadSimulationResult.timestamp}
+              </span>
+              <button
+                onClick={() => setIsBoundaryModalOpen(true)}
+                className="px-2.5 py-1 rounded-md text-[10px] font-bold border border-current hover:underline cursor-pointer"
+              >
+                Inspect Details
+              </button>
+            </div>
           </div>
-          <p className="mt-1 text-[11px] text-ce-text-muted">
-            DID: <span className="text-ce-text-primary">{downloadSimulationResult.did}</span> — Reason: {downloadSimulationResult.message}
+          <p className="mt-1.5 text-[11px] text-slate-800 dark:text-slate-200 leading-relaxed font-sans font-medium">
+            DID: <span className="font-mono font-bold text-slate-950 dark:text-white">{downloadSimulationResult.did}</span> — Reason: {downloadSimulationResult.message}
           </p>
         </div>
       )}
@@ -780,6 +790,105 @@ export const PassportPage = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Access Boundary Verification Modal */}
+      {isBoundaryModalOpen && downloadSimulationResult && (
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-200">
+          <div className="bg-white dark:bg-[#070e1c] border-2 border-slate-300 dark:border-slate-800 rounded-2xl max-w-lg w-full p-6 space-y-5 shadow-2xl">
+            <div className="flex items-center justify-between pb-3 border-b-2 border-slate-200 dark:border-slate-800">
+              <div className="flex items-center gap-2.5">
+                <div className={`p-2 rounded-xl border ${
+                  downloadSimulationResult.allowed
+                    ? 'bg-emerald-100 text-emerald-800 border-emerald-300 dark:bg-emerald-950 dark:text-emerald-300'
+                    : 'bg-rose-100 text-rose-800 border-rose-300 dark:bg-rose-950 dark:text-rose-300'
+                }`}>
+                  <Download className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-mono text-base font-black text-slate-950 dark:text-white uppercase">
+                    Access Boundary Evaluation
+                  </h3>
+                  <span className="text-[10px] font-mono text-slate-500 dark:text-slate-400">
+                    EXHIBIT: {evidence?.id} &bull; TIMESTAMP: {downloadSimulationResult.timestamp}
+                  </span>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsBoundaryModalOpen(false)}
+                className="p-1.5 rounded-lg border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Verdict Badge */}
+            <div className={`p-4 rounded-xl border-2 text-center ${
+              downloadSimulationResult.allowed
+                ? 'bg-emerald-50 text-emerald-950 border-emerald-400 dark:bg-emerald-950/60 dark:border-emerald-500/60 dark:text-emerald-200'
+                : 'bg-rose-50 text-rose-950 border-rose-400 dark:bg-rose-950/60 dark:border-rose-500/60 dark:text-rose-200'
+            }`}>
+              <div className="flex items-center justify-center gap-2 mb-1">
+                {downloadSimulationResult.allowed ? (
+                  <CheckCircle2 className="w-6 h-6 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                ) : (
+                  <XCircle className="w-6 h-6 text-rose-600 dark:text-rose-400 shrink-0" />
+                )}
+                <span className="font-mono font-black text-lg tracking-wider">
+                  {downloadSimulationResult.allowed ? 'HTTP 200 ALLOWED' : 'HTTP 403 FORBIDDEN'}
+                </span>
+              </div>
+              <p className="text-xs font-sans font-medium opacity-90">
+                {downloadSimulationResult.message}
+              </p>
+            </div>
+
+            {/* Evaluation Vectors Matrix */}
+            <div className="space-y-2 text-xs font-mono">
+              <span className="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400 tracking-wider block">
+                Evaluated Security Boundary Vectors
+              </span>
+              <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-600 dark:text-slate-400">Target DID:</span>
+                  <span className="font-bold text-slate-950 dark:text-white break-all text-[11px]">
+                    {downloadSimulationResult.did.slice(0, 16)}...{downloadSimulationResult.did.slice(-8)}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-600 dark:text-slate-400">Role Privilege:</span>
+                  <span className="font-bold text-blue-700 dark:text-cyan-400">FORENSIC_ANALYST</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-600 dark:text-slate-400">Identity Revocation Check:</span>
+                  <span className={`font-bold ${isOwnerRevoked ? 'text-rose-600 dark:text-rose-400' : 'text-emerald-600 dark:text-emerald-400'}`}>
+                    {isOwnerRevoked ? 'REVOKED (TERMINATED)' : 'ACTIVE & VERIFIED ✓'}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-600 dark:text-slate-400">Cryptographic Seal State:</span>
+                  <span className={`font-bold ${isTampered ? 'text-rose-600 dark:text-rose-400' : 'text-emerald-600 dark:text-emerald-400'}`}>
+                    {isTampered ? 'HASH MISMATCH (BLOCKED)' : 'BITSTREAM INTACT ✓'}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-600 dark:text-slate-400">Sensitivity Governance:</span>
+                  <span className="font-bold text-amber-700 dark:text-amber-400">{sensitivity} TIER</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex justify-end pt-2">
+              <button
+                type="button"
+                onClick={() => setIsBoundaryModalOpen(false)}
+                className="w-full sm:w-auto px-5 py-2 text-xs font-mono font-bold rounded-xl bg-slate-950 text-white hover:bg-slate-800 dark:bg-cyan-500 dark:text-slate-950 dark:hover:bg-cyan-400 transition-colors cursor-pointer"
+              >
+                Acknowledge &amp; Dismiss
+              </button>
+            </div>
           </div>
         </div>
       )}

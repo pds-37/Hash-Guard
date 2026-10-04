@@ -196,10 +196,10 @@ export const TrustModelSection = ({ onSelectNode }) => {
     <section id="trust-model" className="relative pt-12 pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
       {/* ─── 1. HERO HEADER ─── */}
       <div className="space-y-6 text-center max-w-4xl mx-auto mb-16">
-        {/* SIH Problem Statement Tag */}
+        {/* Architecture Framework Tag */}
         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-slate-300/80 bg-white text-slate-800 shadow-xs dark:border-cyan-500/30 dark:bg-cyan-950/40 dark:text-cyan-300 font-mono text-[11px] font-bold tracking-wider uppercase">
           <span className="w-2 h-2 rounded-full bg-blue-600 dark:bg-cyan-400 animate-pulse" />
-          <span>SIH PROBLEM STATEMENT 26125</span>
+          <span>ZERO-TRUST ARCHITECTURE SPECIFICATION</span>
           <span className="text-slate-300 dark:text-slate-600">|</span>
           <span className="text-slate-600 dark:text-slate-300">BLOCKCHAIN-BASED IDENTITY, ACCESS &amp; DIGITAL ASSET MANAGEMENT</span>
         </div>

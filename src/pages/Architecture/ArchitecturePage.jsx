@@ -78,9 +78,9 @@ export const ArchitecturePage = () => {
 
       {/* ─── STICKY TOPBAR / NAVBAR ─── */}
       <header className="sticky top-0 z-50 backdrop-blur-md bg-white/90 dark:bg-slate-950/90 border-b border-ce-border shadow-xs">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-3">
+        <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 h-16 relative flex items-center justify-between gap-3">
           {/* Left: Return + Branding */}
-          <div className="flex items-center gap-3 shrink-0">
+          <div className="flex items-center gap-3 shrink-0 z-10">
             <button
               onClick={() => navigate(isLoggedIn ? '/dashboard' : '/')}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-ce-border bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-950 text-xs font-mono transition-all cursor-pointer group shadow-xs dark:bg-slate-900 dark:text-slate-400 dark:hover:text-white"
@@ -110,8 +110,8 @@ export const ArchitecturePage = () => {
             </Link>
           </div>
 
-          {/* Center: Clean 5-Section Navigation */}
-          <nav className="hidden lg:flex items-center gap-1.5">
+          {/* Center: Absolute 5-Section Navigation (Mathematically Centered) */}
+          <nav className="hidden lg:flex items-center gap-1.5 absolute left-1/2 -translate-x-1/2 z-0 pointer-events-auto">
             {navLinks.map((link) => {
               const active = activeSection === link.id;
               return (
@@ -131,7 +131,7 @@ export const ArchitecturePage = () => {
           </nav>
 
           {/* Right: Actions */}
-          <div className="flex items-center gap-2.5 shrink-0">
+          <div className="flex items-center gap-2.5 shrink-0 ml-auto z-10">
             <ThemeToggle size="sm" />
             {isLoggedIn ? (
               <button
@@ -224,11 +224,11 @@ export const ArchitecturePage = () => {
               <span>Launch Live Prototype (Forensic Analyst)</span>
             </button>
             <button
-              onClick={() => navigate('/passport')}
+              onClick={() => navigate('/verification')}
               className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-ce-surface hover:bg-ce-surface-subtle border border-ce-border text-ce-text-primary dark:bg-slate-900 dark:hover:bg-slate-800 dark:border-slate-700 dark:text-slate-200 font-mono font-bold text-sm transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm"
             >
               <ShieldCheck className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
-              <span>Inspect Trust Passport</span>
+              <span>Inspect Verification Engine</span>
             </button>
           </div>
         </section>

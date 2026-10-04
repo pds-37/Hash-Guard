@@ -81,7 +81,7 @@ export const RBAC_ROLES = {
     roleName: 'First Responder',
     description: 'Initial evidence intake, bitstream acquisition, SHA-256 hash sealing, and transfer dispatch.',
     badgeColor: 'text-blue-400 bg-blue-500/10 border-blue-500/30',
-    allowedPages: ['dashboard', 'evidence', 'evidence-details', 'transfers', 'custody', 'lineage', 'verification', 'passport', 'security-lab', 'access-governance', 'audit', 'settings', 'architecture'],
+    allowedPages: ['dashboard', 'evidence', 'evidence-details', 'transfers', 'custody', 'lineage', 'verification', 'security-lab', 'access-governance', 'audit', 'settings', 'architecture'],
     actions: ['Collect Evidence', 'Generate SHA-256 Hash', 'Seal Evidence Manifest', 'Initiate Secure Transfer'],
     permissions: {
       canCollectEvidence: true,
@@ -103,7 +103,7 @@ export const RBAC_ROLES = {
     roleName: 'Forensic Analyst',
     description: 'Air-gapped sandboxing, reverse engineering, derived forensic artifact generation, and integrity verification.',
     badgeColor: 'text-purple-400 bg-purple-500/10 border-purple-500/30',
-    allowedPages: ['dashboard', 'evidence', 'evidence-details', 'transfers', 'custody', 'lineage', 'verification', 'passport', 'security-lab', 'access-governance', 'audit', 'settings', 'architecture'],
+    allowedPages: ['dashboard', 'evidence', 'evidence-details', 'transfers', 'custody', 'lineage', 'verification', 'security-lab', 'access-governance', 'audit', 'settings', 'architecture'],
     actions: ['View Evidence', 'Verify Hash Integrity', 'Analyze Evidence in Sandbox', 'Create Derived Artifact'],
     permissions: {
       canCollectEvidence: false,
@@ -125,7 +125,7 @@ export const RBAC_ROLES = {
     roleName: 'Evidence Custodian',
     description: 'Court exhibit vault custody, transfer consensus, legal hold preservation orders, and Cryptographic Verification Reports.',
     badgeColor: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30',
-    allowedPages: ['dashboard', 'evidence', 'evidence-details', 'transfers', 'custody', 'lineage', 'verification', 'passport', 'security-lab', 'access-governance', 'audit', 'retention', 'settings', 'architecture'],
+    allowedPages: ['dashboard', 'evidence', 'evidence-details', 'transfers', 'custody', 'lineage', 'verification', 'security-lab', 'access-governance', 'audit', 'retention', 'settings', 'architecture'],
     actions: ['Admit Court Exhibit', 'Accept Custody', 'Apply Legal Hold', 'Release Legal Hold', 'Inspect Lineage Tree'],
     permissions: {
       canCollectEvidence: false,
@@ -147,7 +147,7 @@ export const RBAC_ROLES = {
     roleName: 'Investigator',
     description: 'Crime scene device raid seizure, FIR evidence logging, legal hold preservation requests, case dispatch.',
     badgeColor: 'text-amber-400 bg-amber-500/10 border-amber-500/30',
-    allowedPages: ['dashboard', 'evidence', 'evidence-details', 'transfers', 'custody', 'lineage', 'verification', 'passport', 'security-lab', 'access-governance', 'audit', 'retention', 'settings', 'architecture'],
+    allowedPages: ['dashboard', 'evidence', 'evidence-details', 'transfers', 'custody', 'lineage', 'verification', 'security-lab', 'access-governance', 'audit', 'retention', 'settings', 'architecture'],
     actions: ['Seize Crime Scene Device', 'Register FIR Exhibit', 'Request Legal Hold', 'Track Custody Chain'],
     permissions: {
       canCollectEvidence: true,
@@ -169,7 +169,7 @@ export const RBAC_ROLES = {
     roleName: 'Auditor',
     description: 'Zero-trust cryptographic verification of hashes, custody proofs, retention status, and audit ledgers without admin privileges.',
     badgeColor: 'text-cyan-400 bg-cyan-500/10 border-cyan-500/30',
-    allowedPages: ['dashboard', 'evidence', 'evidence-details', 'verification', 'lineage', 'custody', 'passport', 'security-lab', 'access-governance', 'audit', 'retention', 'settings', 'architecture'],
+    allowedPages: ['dashboard', 'evidence', 'evidence-details', 'transfers', 'verification', 'lineage', 'custody', 'security-lab', 'access-governance', 'audit', 'retention', 'settings', 'architecture'],
     actions: ['Verify Hash Integrity', 'Inspect Chain of Custody', 'Verify Retention & Legal Hold', 'Export Attestation'],
     permissions: {
       canCollectEvidence: false,
@@ -191,7 +191,7 @@ export const RBAC_ROLES = {
     roleName: 'Organization Administrator',
     description: 'Full governance authority: defines retention policies, assigns RBAC roles, manages organization users, and configures platform settings.',
     badgeColor: 'text-rose-400 bg-rose-500/10 border-rose-500/30',
-    allowedPages: ['dashboard', 'evidence', 'evidence-details', 'transfers', 'custody', 'lineage', 'verification', 'passport', 'security-lab', 'access-governance', 'audit', 'retention', 'settings', 'architecture'],
+    allowedPages: ['dashboard', 'evidence', 'evidence-details', 'transfers', 'custody', 'lineage', 'verification', 'security-lab', 'access-governance', 'audit', 'retention', 'settings', 'architecture'],
     actions: ['Manage Users & Roles', 'Define Retention Policies', 'Assign RBAC Roles', 'Delete Evidence (Unprotected)', 'Organization Configuration'],
     permissions: {
       canCollectEvidence: true,
