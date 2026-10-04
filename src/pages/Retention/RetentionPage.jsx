@@ -206,8 +206,8 @@ export const RetentionPage = () => {
 
       {/* RBAC Role Notice Banner */}
       {!canManageRetention && (
-        <div className="p-3.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-mono flex items-start gap-2.5">
-          <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+        <div className="p-3.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-900 dark:text-amber-200 text-xs font-mono flex items-start gap-2.5">
+          <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
           <div>
             <span className="font-bold">READ-ONLY ACCESS:</span> Current role <strong>{currentRole.name}</strong> has inspection rights over retention policies and legal hold orders, but policy modification and creation are restricted to <strong>Administrator</strong> and <strong>Evidence Custodian</strong>.
           </div>

@@ -84,25 +84,25 @@ export const OnboardingGuideCard = ({ evidenceCount = 0, onRegister }) => {
   ];
 
   return (
-    <div className="rounded-xl bg-gradient-to-r from-slate-900 via-[#0b1120] to-slate-900 border border-cyan-500/30 p-5 shadow-xl relative overflow-hidden mb-6">
+    <div className="rounded-xl bg-[#fbf8f1] dark:bg-gradient-to-r dark:from-slate-900 dark:via-[#0b1120] dark:to-slate-900 border border-[#d3ccbb] dark:border-cyan-500/30 p-5 shadow-sm relative overflow-hidden mb-6 transition-colors">
       {/* Background ambient light */}
       <div className="absolute -top-10 -right-10 w-40 h-40 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
       
-      <div className="flex items-start justify-between gap-4 pb-4 border-b border-slate-800">
+      <div className="flex items-start justify-between gap-4 pb-4 border-b border-[#d3ccbb] dark:border-slate-800">
         <div className="flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-lg bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center">
-            <Sparkles className="w-4 h-4 text-cyan-400" />
+            <Sparkles className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
           </div>
           <div>
-            <h3 className="text-sm font-bold font-mono text-white tracking-wide flex items-center gap-2">
+            <h3 className="text-sm font-bold font-mono text-[#0e1a2f] dark:text-white tracking-wide flex items-center gap-2">
               <span>AGENCY NODE ACTIVATION RUNBOOK</span>
               {!isSandboxMode && (
-                <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 font-semibold">
+                <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-cyan-500/10 border border-cyan-500/30 text-cyan-700 dark:text-cyan-400 font-semibold">
                   LIVE PROTOTYPE EVALUATION
                 </span>
               )}
             </h3>
-            <p className="text-xs text-slate-400 mt-0.5">
+            <p className="text-xs text-[#6b7488] dark:text-slate-400 mt-0.5">
               Follow the 4-step cryptographic pipeline to initialize custody sealing and independent verification.
             </p>
           </div>
@@ -110,7 +110,7 @@ export const OnboardingGuideCard = ({ evidenceCount = 0, onRegister }) => {
 
         <button
           onClick={() => setIsDismissed(true)}
-          className="text-slate-400 hover:text-slate-200 text-xs font-mono transition-colors cursor-pointer"
+          className="text-[#6b7488] hover:text-[#0e1a2f] dark:text-slate-400 dark:hover:text-slate-200 text-xs font-mono transition-colors cursor-pointer"
           title="Dismiss guide"
         >
           ✕
@@ -127,9 +127,9 @@ export const OnboardingGuideCard = ({ evidenceCount = 0, onRegister }) => {
               key={step.id}
               className={`p-3.5 rounded-lg border transition-all flex flex-col justify-between ${
                 isDone
-                  ? 'bg-emerald-500/5 border-emerald-500/30'
+                  ? 'bg-emerald-500/10 dark:bg-emerald-500/5 border-emerald-500/30'
                   : isReady
-                  ? 'bg-cyan-500/5 border-cyan-500/30'
+                  ? 'bg-cyan-500/10 dark:bg-cyan-500/5 border-cyan-500/30'
                   : 'bg-ce-surface-subtle border-ce-border'
               }`}
             >

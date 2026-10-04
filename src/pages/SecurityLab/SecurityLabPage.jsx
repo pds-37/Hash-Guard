@@ -211,14 +211,14 @@ export const SecurityLabPage = () => {
                 </p>
 
                 {/* Target & Invariant */}
-                <div className="p-3 rounded-lg bg-black/40 border border-ce-border space-y-1.5 text-xs font-mono mb-4">
+                <div className="p-3 rounded-lg bg-ce-surface-subtle border border-ce-border space-y-1.5 text-xs font-mono mb-4">
                   <div>
-                    <span className="text-ce-text-muted text-[10px] block">Target Specimen:</span>
+                    <span className="text-ce-text-muted text-[10px] uppercase block tracking-wider">Target Specimen:</span>
                     <span className="text-ce-text-primary font-bold">{test.targetAsset}</span>
                   </div>
                   <div>
-                    <span className="text-ce-text-muted text-[10px] block">Security Invariant:</span>
-                    <span className="text-ce-text-muted text-[11px] leading-tight block">
+                    <span className="text-ce-text-muted text-[10px] uppercase block tracking-wider">Security Invariant:</span>
+                    <span className="text-ce-text-secondary text-[11px] leading-relaxed block font-sans">
                       {test.invariants}
                     </span>
                   </div>

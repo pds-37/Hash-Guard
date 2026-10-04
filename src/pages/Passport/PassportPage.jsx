@@ -290,8 +290,8 @@ export const PassportPage = () => {
       <div
         className={`p-6 rounded-2xl border transition-all ${
           isTrustCompromised
-            ? 'bg-gradient-to-r from-rose-950/40 via-red-900/20 to-black border-rose-500/40 shadow-lg shadow-rose-950/20'
-            : 'bg-gradient-to-r from-emerald-950/40 via-teal-900/20 to-black border-emerald-500/40 shadow-lg shadow-emerald-950/20'
+            ? 'bg-rose-500/10 dark:bg-gradient-to-r dark:from-rose-950/40 dark:via-red-900/20 dark:to-black border-rose-500/40 shadow-sm'
+            : 'bg-emerald-500/10 dark:bg-gradient-to-r dark:from-emerald-950/40 dark:via-teal-900/20 dark:to-black border-emerald-500/40 shadow-sm'
         }`}
       >
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
@@ -299,8 +299,8 @@ export const PassportPage = () => {
             <div
               className={`p-3.5 rounded-xl border shrink-0 ${
                 isTrustCompromised
-                  ? 'bg-rose-500/20 border-rose-500/40 text-rose-400 animate-pulse'
-                  : 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400'
+                  ? 'bg-rose-500/20 border-rose-500/40 text-rose-600 dark:text-rose-400 animate-pulse'
+                  : 'bg-emerald-500/20 border-emerald-500/40 text-emerald-600 dark:text-emerald-400'
               }`}
             >
               {isTrustCompromised ? (
@@ -314,8 +314,8 @@ export const PassportPage = () => {
                 <span
                   className={`text-sm font-mono font-extrabold px-3 py-1 rounded-full border tracking-widest ${
                     isTrustCompromised
-                      ? 'bg-rose-500/20 text-rose-300 border-rose-500/50'
-                      : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/50'
+                      ? 'bg-rose-500/20 text-rose-700 dark:text-rose-300 border-rose-500/50'
+                      : 'bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border-emerald-500/50'
                   }`}
                 >
                   {isTrustCompromised ? 'VERDICT: TRUST COMPROMISED' : 'VERDICT: TRUST VERIFIED'}
@@ -330,7 +330,7 @@ export const PassportPage = () => {
               <h2 className="text-xl font-bold text-ce-text-primary mt-2">
                 {evidence?.title || 'Loading Exhibit...'}
               </h2>
-              <p className="text-xs text-ce-text-muted mt-1 max-w-3xl leading-relaxed">
+              <p className="text-xs text-ce-text-secondary mt-1 max-w-3xl leading-relaxed">
                 {isTrustCompromised
                   ? isTampered
                     ? 'CRITICAL ALERT: Off-chain payload byte sequence does NOT match the immutable on-chain sealed hash root. Cryptographic integrity failed.'
@@ -341,7 +341,7 @@ export const PassportPage = () => {
           </div>
 
           <div className="flex flex-col sm:flex-row lg:flex-col gap-2 shrink-0">
-            <div className="p-3 rounded-lg bg-black/40 border border-ce-border text-right sm:text-left lg:text-right">
+            <div className="p-3 rounded-lg bg-ce-surface border border-ce-border text-right sm:text-left lg:text-right shadow-xs">
               <span className="text-[10px] font-mono text-ce-text-muted uppercase tracking-wider block">
                 Verification Ledger
               </span>
@@ -349,7 +349,7 @@ export const PassportPage = () => {
                 Block #{evidence?.blockNumber || 482910}
               </span>
             </div>
-            <div className="p-3 rounded-lg bg-black/40 border border-ce-border text-right sm:text-left lg:text-right">
+            <div className="p-3 rounded-lg bg-ce-surface border border-ce-border text-right sm:text-left lg:text-right shadow-xs">
               <span className="text-[10px] font-mono text-ce-text-muted uppercase tracking-wider block">
                 Custody Chain Depth
               </span>
