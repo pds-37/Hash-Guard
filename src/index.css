@@ -5,71 +5,71 @@
 @layer base {
   :root {
     /* Legacy variables for backwards compatibility */
-    --background: 210 20% 98%;
-    --foreground: 222.2 47.4% 11.2%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 47.4% 11.2%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 47.4% 11.2%;
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 47.4% 11.2%;
+    --background: 44 26% 91%;          /* #efeadf warm paper */
+    --foreground: 220 54% 12%;         /* #0e1a2f ink */
+    --card: 43 50% 97%;                /* #fbf8f1 paper card */
+    --card-foreground: 220 54% 12%;    /* #0e1a2f */
+    --popover: 43 50% 97%;
+    --popover-foreground: 220 54% 12%;
+    --primary: 213 71% 24%;            /* #123a6b deep navy */
+    --primary-foreground: 43 50% 97%;
+    --secondary: 42 22% 87%;           /* #e5dfd3 muted paper */
+    --secondary-foreground: 220 54% 12%;
+    --muted: 42 20% 86%;               /* #e4ded1 */
+    --muted-foreground: 220 12% 47%;   /* #6b7488 */
+    --accent: 42 22% 87%;
+    --accent-foreground: 220 54% 12%;
+    --destructive: 353 63% 48%;        /* #c62d3f editorial red */
+    --destructive-foreground: 43 50% 97%;
+    --border: 41 20% 78%;              /* #d3ccbb line */
+    --input: 41 20% 78%;
+    --ring: 213 71% 24%;
     --radius: 0.5rem;
 
     /* =========================================
        CYBER EVIDENCE DESIGN SYSTEM TOKENS 
        ========================================= */
 
-    /* Surfaces & Backgrounds */
-    --color-background: 210 25% 98%;
-    --color-surface: 0 0% 100%;
-    --color-surface-elevated: 0 0% 100%;
-    --color-surface-subtle: 210 25% 95%;
+    /* Surfaces & Backgrounds (Warm Paper & Ivory Tone) */
+    --color-background: 44 26% 91%;     /* #efeadf canvas */
+    --color-surface: 43 50% 97%;        /* #fbf8f1 ticket/card */
+    --color-surface-elevated: 44 60% 99%; /* #fffdf9 */
+    --color-surface-subtle: 42 22% 89%; /* #e9e3d6 subtle tray */
     
     /* Borders */
-    --color-border: 214.3 31.8% 90%;
-    --color-border-strong: 214.3 31.8% 78%;
+    --color-border: 41 20% 78%;         /* #d3ccbb dashed line */
+    --color-border-strong: 41 22% 68%;  /* #bfb6a0 */
 
     /* Typography */
-    --color-text-primary: 222.2 47.4% 11.2%;
-    --color-text-secondary: 215.4 16.3% 36%;
-    --color-text-muted: 215.4 16.3% 50%;
+    --color-text-primary: 220 54% 12%;  /* #0e1a2f deep ink */
+    --color-text-secondary: 220 16% 34%;/* #475468 readable secondary */
+    --color-text-muted: 220 12% 47%;    /* #6b7488 */
 
     /* Brand */
-    --color-brand: 221.2 83.2% 53.3%;
-    --color-brand-hover: 221.2 83.2% 43.3%;
-    --color-brand-subtle: 221.2 83.2% 95%;
+    --color-brand: 213 71% 24%;         /* #123a6b deep navy */
+    --color-brand-hover: 213 71% 32%;
+    --color-brand-subtle: 213 40% 92%;
 
     /* Semantic Status */
-    --color-success: 142.1 76.2% 34%;
-    --color-success-subtle: 142.1 76.2% 94%;
+    --color-success: 154 62% 29%;       /* #1d7a52 forest seal */
+    --color-success-subtle: 154 50% 92%;
     
-    --color-warning: 38 92% 40%;
-    --color-warning-subtle: 38 92% 94%;
+    --color-warning: 38 92% 38%;
+    --color-warning-subtle: 38 92% 93%;
     
-    --color-danger: 346.8 77.2% 48%;
-    --color-danger-subtle: 346.8 77.2% 94%;
+    --color-danger: 353 63% 48%;        /* #c62d3f editorial red */
+    --color-danger-subtle: 353 63% 94%;
     
-    --color-info: 217.2 91.2% 54%;
-    --color-info-subtle: 217.2 91.2% 94%;
+    --color-info: 213 71% 24%;
+    --color-info-subtle: 213 50% 92%;
 
     /* Domain-Specific: Cyber Forensics */
-    --color-verification: 142.1 76.2% 34%;
-    --color-integrity: 221.2 83.2% 53.3%;
-    --color-blockchain: 271.5 81.3% 46%;
-    --color-off-chain: 215.4 16.3% 46.9%;
-    --color-tampered: 346.8 77.2% 48%;
-    --color-pending: 38 92% 40%;
+    --color-verification: 154 62% 29%;
+    --color-integrity: 213 71% 24%;
+    --color-blockchain: 260 50% 45%;
+    --color-off-chain: 220 12% 47%;
+    --color-tampered: 353 63% 48%;
+    --color-pending: 38 92% 38%;
   }
 
   .dark {

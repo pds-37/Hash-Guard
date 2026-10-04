@@ -67,43 +67,43 @@ export const ArchitecturePage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-[#030611] text-slate-100 font-sans relative overflow-x-hidden selection:bg-cyan-500/20 selection:text-cyan-200">
+    <div className="min-h-screen bg-ce-bg text-ce-text-primary font-sans relative overflow-x-hidden selection:bg-cyan-500/20 selection:text-cyan-200 transition-colors duration-200">
       {/* Background Ambience & Fine Technical Grid */}
       <div className="fixed inset-0 pointer-events-none z-0">
         <div className="absolute top-0 left-1/4 w-[700px] h-[450px] bg-cyan-500/5 rounded-full blur-[140px]" />
         <div className="absolute top-1/3 right-0 w-[600px] h-[550px] bg-blue-600/5 rounded-full blur-[160px]" />
         <div className="absolute bottom-20 left-1/3 w-[500px] h-[350px] bg-purple-500/4 rounded-full blur-[140px]" />
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b08_1px,transparent_1px),linear-gradient(to_bottom,#1e293b08_1px,transparent_1px)] bg-[size:28px_28px]" />
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(100,116,139,0.06)_1px,transparent_1px),linear-gradient(to_bottom,rgba(100,116,139,0.06)_1px,transparent_1px)] bg-[size:28px_28px]" />
       </div>
 
       {/* ─── STICKY TOPBAR / NAVBAR ─── */}
-      <header className="sticky top-0 z-50 backdrop-blur-md bg-[#030611]/92 border-b border-slate-800/90 shadow-lg shadow-black/40">
+      <header className="sticky top-0 z-50 backdrop-blur-md bg-ce-surface/90 border-b border-ce-border shadow-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-3">
           {/* Left: Return + Branding */}
           <div className="flex items-center gap-3 shrink-0">
             <button
               onClick={() => navigate(isLoggedIn ? '/dashboard' : '/')}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-900/90 hover:bg-slate-800 text-slate-300 hover:text-white text-xs font-mono transition-all cursor-pointer group"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-ce-border bg-ce-surface-subtle hover:bg-ce-surface text-ce-text-secondary hover:text-ce-text-primary text-xs font-mono transition-all cursor-pointer group shadow-sm"
               title="Return to HashGuard Application"
             >
-              <ArrowLeft className="w-3.5 h-3.5 text-cyan-400 group-hover:-translate-x-0.5 transition-transform" />
+              <ArrowLeft className="w-3.5 h-3.5 text-cyan-500 group-hover:-translate-x-0.5 transition-transform" />
               <span className="hidden sm:inline">
                 {isLoggedIn ? '← Return to Console' : '← HashGuard Home'}
               </span>
               <span className="sm:hidden">Back</span>
             </button>
 
-            <div className="hidden sm:block h-5 w-px bg-slate-800" />
+            <div className="hidden sm:block h-5 w-px bg-ce-border" />
 
             <Link to="/" className="flex items-center gap-2.5 group">
               <div className="rounded-lg bg-gradient-to-br from-cyan-500/20 to-blue-600/20 border border-cyan-500/40 p-1.5 shadow-[0_0_15px_rgba(6,182,212,0.25)] group-hover:border-cyan-400/80 transition-all">
                 <LogoIcon className="w-5 h-5" />
               </div>
               <div className="leading-none">
-                <span className="font-mono font-bold text-sm text-white tracking-wider">
-                  HASH<span className="text-cyan-400">GUARD</span>
+                <span className="font-mono font-bold text-sm text-ce-text-primary tracking-wider">
+                  HASH<span className="text-cyan-600 dark:text-cyan-400">GUARD</span>
                 </span>
-                <span className="block font-mono text-[9px] text-slate-400 uppercase tracking-widest mt-0.5">
+                <span className="block font-mono text-[9px] text-ce-text-muted uppercase tracking-widest mt-0.5">
                   System Architecture Explorer
                 </span>
               </div>
@@ -120,8 +120,8 @@ export const ArchitecturePage = () => {
                   onClick={() => scrollTo(link.id)}
                   className={`px-3 py-1.5 rounded-md text-xs font-mono transition-all cursor-pointer whitespace-nowrap ${
                     active
-                      ? 'bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 font-bold'
-                      : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent'
+                      ? 'bg-cyan-500/15 text-cyan-700 dark:text-cyan-300 border border-cyan-500/30 font-bold'
+                      : 'text-ce-text-muted hover:text-ce-text-primary hover:bg-ce-surface-subtle border border-transparent'
                   }`}
                 >
                   <span>{link.label}</span>
