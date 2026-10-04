@@ -94,7 +94,7 @@ export const mockTransfers = [
   {
     id: "TR-005",
     evidenceId: "EV-001",
-    evidenceTitle: "LockBit 3.0 Trial Dossier & Section 65B Certificate",
+    evidenceTitle: "LockBit 3.0 Trial Dossier & Cryptographic Verification Report",
     evidenceType: "Malware Analysis Report",
     fromOrg: "Organization B (Cyber Lab)",
     fromActor: "analyst-lead@cyberlab.local",
@@ -112,7 +112,7 @@ export const mockTransfers = [
       { step: "PAYLOAD_RECEIVE", org: "Organization C", timestamp: "14:12:10", status: "COMPLETED" },
       { step: "INTEGRITY_VERIFY", org: "Organization C", timestamp: "14:15:30", status: "COMPLETED" }
     ],
-    notes: "Official submission of reverse-engineered findings and Section 65B forensic certificate for case trial proceedings."
+    notes: "Official submission of reverse-engineered findings and Cryptographic Verification Report for case trial proceedings."
   },
   {
     id: "TR-009",

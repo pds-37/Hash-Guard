@@ -112,7 +112,7 @@ export const mockLineageGraph = {
       position: { x: 350, y: 1050 },
       data: {
         id: "CRT-001",
-        label: "Section 65B Judicial Admissibility Certificate",
+        label: "Cryptographic Verification Report Dossier",
         artifactType: "Court Trial Exhibit",
         hash: "a1b2c3d4e5f67890123456789abcdef0123456789abcdef0123456789abcdef0",
         creator: "Organization C (Judicial Court Registry)",

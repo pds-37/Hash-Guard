@@ -9,7 +9,7 @@ export const mockAuditLogs = [
     eventId: "EVT-9150",
     verification: "VERIFIED",
     reference: "Docket #JD-2026-881 (0x991823...)",
-    details: "Legal Hold preservation order applied to evidence EV-009. Reason: Court-ordered evidence hold pending Section 65B forensic verification. Retention countdown SUSPENDED, deletion BLOCKED."
+    details: "Legal Hold preservation order applied to evidence EV-009. Reason: Court-ordered evidence hold pending Cryptographic Evidence Verification. Retention countdown SUSPENDED, deletion BLOCKED."
   },
   {
     id: "LOG-10950",

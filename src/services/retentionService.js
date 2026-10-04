@@ -192,7 +192,7 @@ export const retentionService = {
       deletion: 'BLOCKED',
       appliedBy: e.legalHoldAppliedBy || 'lead-investigator@org-b.lab',
       appliedAt: e.legalHoldAppliedAt || e.createdAt || '2026-08-16 09:45:00 UTC',
-      reason: e.legalHoldReason || 'Court-ordered preservation order pending Section 65B forensic verification.'
+      reason: e.legalHoldReason || 'Court-ordered preservation order pending Cryptographic Evidence Verification.'
     }));
   },
 

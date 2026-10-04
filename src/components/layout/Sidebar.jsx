@@ -28,46 +28,27 @@ import { Logo } from '../common/Logo';
 export const Sidebar = ({ isMobileOpen, setMobileOpen }) => {
   const { currentOrg, switchOrg, organizations, currentRole, switchRole, isTamperSimulated, walletAddress, did, connectWallet } = useApp();
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [showSecondaryOps, setShowSecondaryOps] = useState(false);
 
-  const navigationGroups = [
-    {
-      label: 'Core Trust Hub',
-      items: [
-        { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
-        { name: 'Trust Passport', path: '/passport', icon: BadgeCheck },
-        { name: 'Security Lab', path: '/security-lab', icon: FlaskConical },
-      ]
-    },
-    {
-      label: 'Assets & Access Governance',
-      items: [
-        { name: 'Digital Assets', path: '/evidence', icon: ShieldAlert },
-        { name: 'Access & Governance', path: '/access-governance', icon: KeyRound },
-      ]
-    },
-    {
-      label: 'Chain of Custody',
-      items: [
-        { name: 'Transfers', path: '/transfers', icon: ArrowLeftRight },
-        { name: 'Custody', path: '/custody', icon: History },
-        { name: 'Lineage DAG', path: '/lineage', icon: GitFork },
-      ]
-    },
-    {
-      label: 'Verification & Ledger',
-      items: [
-        { name: 'Verification', path: '/verification', icon: ShieldCheck, alert: isTamperSimulated },
-        { name: 'Audit Logs', path: '/audit', icon: FileSpreadsheet },
-      ]
-    },
-    {
-      label: 'Identity & Platform',
-      items: [
-        { name: 'Identity & Settings', path: '/settings', icon: Settings },
-        { name: 'System Architecture', path: '/architecture', icon: Layers },
-        { name: 'Retention', path: '/retention', icon: Clock },
-      ]
-    }
+  // PRIMARY NAVIGATION (8 Items - Core Product Journey)
+  const primaryNavigation = [
+    { name: 'Overview', path: '/dashboard', icon: LayoutDashboard },
+    { name: 'Assets', path: '/evidence', icon: ShieldAlert },
+    { name: 'Access & Governance', path: '/access-governance', icon: KeyRound },
+    { name: 'Trust Passport', path: '/passport', icon: BadgeCheck },
+    { name: 'Verification', path: '/verification', icon: ShieldCheck, alert: isTamperSimulated },
+    { name: 'Security Lab', path: '/security-lab', icon: FlaskConical },
+    { name: 'Audit', path: '/audit', icon: FileSpreadsheet },
+    { name: 'Architecture', path: '/architecture', icon: Layers },
+  ];
+
+  // SECONDARY / DETAIL ROUTES (Preserved & Accessible)
+  const secondaryNavigation = [
+    { name: 'Transfers', path: '/transfers', icon: ArrowLeftRight },
+    { name: 'Custody', path: '/custody', icon: History },
+    { name: 'Lineage DAG', path: '/lineage', icon: GitFork },
+    { name: 'Retention', path: '/retention', icon: Clock },
+    { name: 'Identity & Settings', path: '/settings', icon: Settings },
   ];
 
   const sidebarClass = `
@@ -202,66 +183,99 @@ export const Sidebar = ({ isMobileOpen, setMobileOpen }) => {
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-6">
-          {navigationGroups.map((group, idx) => {
-            const allowedItems = group.items.filter(item => 
-              currentRole.allowedPages.includes(item.path.replace('/', ''))
-            );
-            
-            if (allowedItems.length === 0) return null;
-
-            return (
-              <div key={idx} className="space-y-1">
-                {!isCollapsed && (
-                  <div className="text-[10px] font-mono uppercase tracking-widest text-ce-text-muted px-3 pb-2 font-semibold">
-                    {group.label}
-                  </div>
-                )}
-                {allowedItems.map((item) => {
-                  const Icon = item.icon;
-                  return (
-                    <NavLink
-                      key={item.path}
-                      to={item.path}
-                      onClick={() => setMobileOpen(false)}
-                      title={isCollapsed ? item.name : undefined}
-                      className={({ isActive }) => `
-                        flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-all relative group
-                        ${isActive 
-                          ? 'bg-ce-surface-subtle text-ce-text-primary' 
-                          : 'text-ce-text-secondary hover:bg-ce-surface-subtle/50 hover:text-ce-text-primary'}
-                        ${isCollapsed ? 'justify-center px-0' : ''}
-                      `}
-                    >
-                      {({ isActive }) => (
-                        <>
-                          {isActive && (
-                            <div className="absolute left-0 top-1 bottom-1 w-1 bg-ce-brand rounded-r-full" />
-                          )}
-                          <Icon className={`w-[18px] h-[18px] shrink-0 ${isActive ? 'text-ce-brand' : 'text-ce-text-muted group-hover:text-ce-text-primary'}`} />
-                          
-                          {!isCollapsed && (
-                            <span className="truncate flex-1">{item.name}</span>
-                          )}
-
-                          {!isCollapsed && item.alert && (
-                            <span className="shrink-0 text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-ce-danger/10 text-ce-danger border border-ce-danger/20 animate-pulse">
-                              ALERT
-                            </span>
-                          )}
-                          
-                          {/* Alert dot for collapsed state */}
-                          {isCollapsed && item.alert && (
-                            <span className="absolute top-1 right-2 w-2 h-2 rounded-full bg-ce-danger animate-pulse" />
-                          )}
-                        </>
-                      )}
-                    </NavLink>
-                  );
-                })}
+        <nav className="flex-1 overflow-y-auto py-3 px-3 space-y-4">
+          {/* Primary Navigation - 8 Core Items */}
+          <div className="space-y-1">
+            {!isCollapsed && (
+              <div className="text-[10px] font-mono uppercase tracking-widest text-ce-text-muted px-3 pb-1 font-semibold flex items-center justify-between">
+                <span>Platform Navigation</span>
+                <span className="text-[9px] text-ce-brand font-bold">8 CORE</span>
               </div>
-            );
-          })}
+            )}
+            {primaryNavigation.map((item) => {
+              const Icon = item.icon;
+              return (
+                <NavLink
+                  key={item.path}
+                  to={item.path}
+                  onClick={() => setMobileOpen(false)}
+                  title={isCollapsed ? item.name : undefined}
+                  className={({ isActive }) => `
+                    flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-all relative group
+                    ${isActive 
+                      ? 'bg-ce-surface-subtle text-ce-text-primary' 
+                      : 'text-ce-text-secondary hover:bg-ce-surface-subtle/50 hover:text-ce-text-primary'}
+                    ${isCollapsed ? 'justify-center px-0' : ''}
+                  `}
+                >
+                  {({ isActive }) => (
+                    <>
+                      {isActive && (
+                        <div className="absolute left-0 top-1 bottom-1 w-1 bg-ce-brand rounded-r-full" />
+                      )}
+                      <Icon className={`w-[18px] h-[18px] shrink-0 ${isActive ? 'text-ce-brand' : 'text-ce-text-muted group-hover:text-ce-text-primary'}`} />
+                      
+                      {!isCollapsed && (
+                        <span className="truncate flex-1">{item.name}</span>
+                      )}
+
+                      {!isCollapsed && item.alert && (
+                        <span className="shrink-0 text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-ce-danger/10 text-ce-danger border border-ce-danger/20 animate-pulse">
+                          ALERT
+                        </span>
+                      )}
+                      
+                      {/* Alert dot for collapsed state */}
+                      {isCollapsed && item.alert && (
+                        <span className="absolute top-1 right-2 w-2 h-2 rounded-full bg-ce-danger animate-pulse" />
+                      )}
+                    </>
+                  )}
+                </NavLink>
+              );
+            })}
+          </div>
+
+          {/* Secondary Operations & Tools */}
+          <div className="pt-2 border-t border-ce-border/60 space-y-1">
+            {!isCollapsed && (
+              <button
+                onClick={() => setShowSecondaryOps(!showSecondaryOps)}
+                className="w-full flex items-center justify-between text-[10px] font-mono uppercase tracking-widest text-ce-text-muted px-3 py-1 font-semibold hover:text-ce-text-primary transition-colors cursor-pointer"
+              >
+                <span>Forensic Operations</span>
+                <span className="text-[10px] text-ce-text-muted">{showSecondaryOps ? '▲' : '▼'}</span>
+              </button>
+            )}
+
+            {(showSecondaryOps || isCollapsed) && secondaryNavigation.map((item) => {
+              const Icon = item.icon;
+              return (
+                <NavLink
+                  key={item.path}
+                  to={item.path}
+                  onClick={() => setMobileOpen(false)}
+                  title={isCollapsed ? item.name : undefined}
+                  className={({ isActive }) => `
+                    flex items-center gap-3 px-3 py-1.5 rounded-md text-xs font-medium transition-all relative group
+                    ${isActive 
+                      ? 'bg-ce-surface-subtle text-ce-text-primary font-bold' 
+                      : 'text-ce-text-muted hover:bg-ce-surface-subtle/40 hover:text-ce-text-secondary'}
+                    ${isCollapsed ? 'justify-center px-0' : ''}
+                  `}
+                >
+                  {({ isActive }) => (
+                    <>
+                      <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-ce-brand' : 'text-ce-text-muted group-hover:text-ce-text-secondary'}`} />
+                      {!isCollapsed && (
+                        <span className="truncate flex-1">{item.name}</span>
+                      )}
+                    </>
+                  )}
+                </NavLink>
+              );
+            })}
+          </div>
         </nav>
 
         {/* Footer */}

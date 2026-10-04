@@ -642,8 +642,8 @@ export const LoginPage = () => {
         {/* Footer */}
         <div className="bg-ce-surface-subtle p-3.5 border-t border-ce-border text-center">
           <p className="text-[10px] font-mono text-ce-text-muted">
-            SECTION 65B INDIAN EVIDENCE ACT & ISO/IEC 27037 COMPLIANT<br/>
-            IMMUTABLE CRYPTOGRAPHIC AUDIT TRAIL
+            VERIFIABLE TRUST INFRASTRUCTURE &bull; DIGITAL FORENSICS &amp; ASSET TRUST<br/>
+            TAMPER-EVIDENT CRYPTOGRAPHIC AUDIT TRAIL
           </p>
         </div>
       </div>

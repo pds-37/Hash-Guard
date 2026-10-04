@@ -283,7 +283,7 @@ export const mockEvidenceList = [
     retentionStatus: "LEGAL HOLD",
     retentionExpiresAt: "SUSPENDED",
     legalHold: true,
-    legalHoldReason: "Court-ordered evidence preservation order pending Section 65B forensic verification.",
+    legalHoldReason: "Court-ordered evidence preservation order pending Cryptographic Evidence Verification.",
     legalHoldAppliedBy: "magistrate-court@org-c.gov",
     legalHoldAppliedAt: "2026-08-16 09:45:00 UTC"
   },
