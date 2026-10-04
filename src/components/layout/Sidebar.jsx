@@ -28,9 +28,10 @@ import { Logo } from '../common/Logo';
 export const Sidebar = ({ isMobileOpen, setMobileOpen }) => {
   const { currentOrg, switchOrg, organizations, currentRole, switchRole, isTamperSimulated, walletAddress, did, connectWallet } = useApp();
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isContextOpen, setIsContextOpen] = useState(true);
   const [showSecondaryOps, setShowSecondaryOps] = useState(false);
 
-  // PRIMARY NAVIGATION (8 Items - Core Product Journey)
+  // PRIMARY NAVIGATION (7 Core Platform Items)
   const primaryNavigation = [
     { name: 'Overview', path: '/dashboard', icon: LayoutDashboard },
     { name: 'Assets', path: '/evidence', icon: ShieldAlert },
@@ -39,7 +40,6 @@ export const Sidebar = ({ isMobileOpen, setMobileOpen }) => {
     { name: 'Verification', path: '/verification', icon: ShieldCheck, alert: isTamperSimulated },
     { name: 'Security Lab', path: '/security-lab', icon: FlaskConical },
     { name: 'Audit', path: '/audit', icon: FileSpreadsheet },
-    { name: 'Architecture', path: '/architecture', icon: Layers },
   ];
 
   // SECONDARY / DETAIL ROUTES (Preserved & Accessible)
@@ -89,88 +89,116 @@ export const Sidebar = ({ isMobileOpen, setMobileOpen }) => {
           </button>
         </div>
 
-        {/* Organization / Role Info */}
+        {/* Organization / Role Info (Active Context collapsible) */}
         <div className={`p-3 border-b border-ce-border ${isCollapsed ? 'px-2' : ''}`}>
           {!isCollapsed ? (
-            <div className="bg-ce-surface-subtle rounded-md p-3 border border-ce-border-strong space-y-3">
-              <div className="flex items-center justify-between text-[10px] font-mono text-ce-text-muted uppercase tracking-wider">
+            <div className="bg-ce-surface-subtle rounded-md border border-ce-border-strong overflow-hidden transition-all duration-200">
+              {/* Header with Accordion Toggle */}
+              <button
+                type="button"
+                onClick={() => setIsContextOpen(!isContextOpen)}
+                className="w-full flex items-center justify-between p-3 text-[10px] font-mono text-ce-text-muted uppercase tracking-wider hover:bg-ce-surface/50 transition-colors cursor-pointer text-left"
+                aria-expanded={isContextOpen}
+              >
                 <span className="flex items-center gap-1.5 font-bold text-ce-brand">
                   <Building2 className="w-3.5 h-3.5" />
                   Active Context
                 </span>
-                <span className="flex items-center gap-1">
-                  <span className="w-2 h-2 rounded-full bg-ce-success animate-pulse" title="Network Connected" />
-                  <span className="text-[9px] text-ce-success font-semibold">SYNCED</span>
-                </span>
-              </div>
-
-              {/* Organization Selector (WHERE the user belongs) */}
-              <div>
-                <label className="block text-[10px] font-mono font-bold text-ce-text-muted uppercase tracking-wider mb-1">
-                  Organization
-                </label>
-                <select
-                  value={currentOrg?.id || 'ORG_B'}
-                  onChange={(e) => switchOrg(e.target.value)}
-                  className="w-full bg-ce-surface border border-ce-border text-[11px] text-ce-text-primary rounded px-2 py-1.5 font-mono focus:outline-none focus:border-ce-brand focus:ring-1 focus:ring-ce-brand cursor-pointer"
-                  title="Switch Participating Organization Context"
-                >
-                  {Object.values(organizations || {}).map((org) => (
-                    <option key={org.id} value={org.id}>
-                      {org.name}
-                    </option>
-                  ))}
-                </select>
-                <div className="text-[10px] text-ce-text-muted font-sans mt-0.5 truncate">
-                  Scope: {currentOrg?.function || 'Forensic Lab'}
-                </div>
-              </div>
-
-              {/* RBAC Role Selector (WHAT the user is allowed to do) */}
-              <div className="pt-2 border-t border-ce-border/60">
-                <div className="flex items-center justify-between mb-1">
-                  <label className="block text-[10px] font-mono font-bold text-ce-text-muted uppercase tracking-wider">
-                    Role
-                  </label>
-                  <span className={`text-[9px] font-mono font-bold px-1.5 py-0.2 rounded border ${currentRole.badgeColor}`}>
-                    RBAC
+                <div className="flex items-center gap-2">
+                  <span className="flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-ce-success animate-pulse" title="Network Connected" />
+                    <span className="text-[9px] text-ce-success font-semibold">SYNCED</span>
+                  </span>
+                  <span className="text-xs text-ce-text-muted font-bold">
+                    {isContextOpen ? '▲' : '▼'}
                   </span>
                 </div>
-                <select
-                  value={currentRole.id}
-                  onChange={(e) => switchRole(e.target.value)}
-                  className="w-full bg-ce-surface border border-ce-border text-[11px] text-ce-text-primary rounded px-2 py-1.5 font-mono focus:outline-none focus:border-ce-brand focus:ring-1 focus:ring-ce-brand cursor-pointer"
-                  title="Switch Role-Based Access Control Role"
-                >
-                  <option value="FIRST_RESPONDER">First Responder</option>
-                  <option value="FORENSIC_ANALYST">Forensic Analyst</option>
-                  <option value="EVIDENCE_CUSTODIAN">Evidence Custodian</option>
-                  <option value="INVESTIGATOR">Investigator</option>
-                  <option value="AUDITOR">Auditor</option>
-                  <option value="ADMINISTRATOR">Organization Administrator</option>
-                </select>
-              </div>
+              </button>
 
-              {/* Decentralized Identifier (DID) */}
-              <div className="pt-2 border-t border-ce-border/60">
-                <span className="block text-[10px] font-mono font-bold text-ce-text-muted uppercase tracking-wider mb-1">
-                  DID
-                </span>
-                {walletAddress ? (
-                  <div className="text-[10px] font-mono text-ce-blockchain bg-ce-blockchain/10 border border-ce-blockchain/20 rounded p-1.5 truncate flex items-center gap-1.5" title={did}>
-                    <Wallet className="w-3 h-3 shrink-0" />
-                    <span className="truncate">{did}</span>
+              {/* Collapsed Preview Line when closed */}
+              {!isContextOpen && (
+                <div className="px-3 pb-2.5 pt-0 flex items-center justify-between text-[11px] font-mono text-ce-text-secondary border-t border-ce-border/40">
+                  <span className="truncate max-w-[120px] font-medium text-ce-text-primary">
+                    {currentOrg?.shortName || 'Cyber Defense Lab'}
+                  </span>
+                  <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded border ${currentRole.badgeColor}`}>
+                    {currentRole.name?.split(' ')[0] || 'Analyst'}
+                  </span>
+                </div>
+              )}
+
+              {/* Expanded Full Context Controls */}
+              {isContextOpen && (
+                <div className="p-3 pt-0 space-y-3 border-t border-ce-border/60">
+                  {/* Organization Selector (WHERE the user belongs) */}
+                  <div className="pt-2">
+                    <label className="block text-[10px] font-mono font-bold text-ce-text-muted uppercase tracking-wider mb-1">
+                      Organization
+                    </label>
+                    <select
+                      value={currentOrg?.id || 'ORG_B'}
+                      onChange={(e) => switchOrg(e.target.value)}
+                      className="w-full bg-ce-surface border border-ce-border text-[11px] text-ce-text-primary rounded px-2 py-1.5 font-mono focus:outline-none focus:border-ce-brand focus:ring-1 focus:ring-ce-brand cursor-pointer"
+                      title="Switch Participating Organization Context"
+                    >
+                      {Object.values(organizations || {}).map((org) => (
+                        <option key={org.id} value={org.id}>
+                          {org.name}
+                        </option>
+                      ))}
+                    </select>
+                    <div className="text-[10px] text-ce-text-muted font-sans mt-0.5 truncate">
+                      Scope: {currentOrg?.function || 'Forensic Lab'}
+                    </div>
                   </div>
-                ) : (
-                  <button 
-                    onClick={connectWallet}
-                    className="w-full flex items-center justify-center gap-1.5 bg-ce-brand/10 hover:bg-ce-brand/20 text-ce-brand border border-ce-brand/30 text-xs font-medium py-1.5 rounded transition-colors"
-                  >
-                    <Wallet className="w-3 h-3" />
-                    Connect Wallet
-                  </button>
-                )}
-              </div>
+
+                  {/* RBAC Role Selector (WHAT the user is allowed to do) */}
+                  <div className="pt-2 border-t border-ce-border/60">
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="block text-[10px] font-mono font-bold text-ce-text-muted uppercase tracking-wider">
+                        Role
+                      </label>
+                      <span className={`text-[9px] font-mono font-bold px-1.5 py-0.2 rounded border ${currentRole.badgeColor}`}>
+                        RBAC
+                      </span>
+                    </div>
+                    <select
+                      value={currentRole.id}
+                      onChange={(e) => switchRole(e.target.value)}
+                      className="w-full bg-ce-surface border border-ce-border text-[11px] text-ce-text-primary rounded px-2 py-1.5 font-mono focus:outline-none focus:border-ce-brand focus:ring-1 focus:ring-ce-brand cursor-pointer"
+                      title="Switch Role-Based Access Control Role"
+                    >
+                      <option value="FIRST_RESPONDER">First Responder</option>
+                      <option value="FORENSIC_ANALYST">Forensic Analyst</option>
+                      <option value="EVIDENCE_CUSTODIAN">Evidence Custodian</option>
+                      <option value="INVESTIGATOR">Investigator</option>
+                      <option value="AUDITOR">Auditor</option>
+                      <option value="ADMINISTRATOR">Organization Administrator</option>
+                    </select>
+                  </div>
+
+                  {/* Decentralized Identifier (DID) */}
+                  <div className="pt-2 border-t border-ce-border/60">
+                    <span className="block text-[10px] font-mono font-bold text-ce-text-muted uppercase tracking-wider mb-1">
+                      DID
+                    </span>
+                    {walletAddress ? (
+                      <div className="text-[10px] font-mono text-ce-blockchain bg-ce-blockchain/10 border border-ce-blockchain/20 rounded p-1.5 truncate flex items-center gap-1.5" title={did}>
+                        <Wallet className="w-3 h-3 shrink-0" />
+                        <span className="truncate">{did}</span>
+                      </div>
+                    ) : (
+                      <button 
+                        onClick={connectWallet}
+                        className="w-full flex items-center justify-center gap-1.5 bg-ce-brand/10 hover:bg-ce-brand/20 text-ce-brand border border-ce-brand/30 text-xs font-medium py-1.5 rounded transition-colors"
+                      >
+                        <Wallet className="w-3 h-3" />
+                        Connect Wallet
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
           ) : (
             <div className="flex flex-col items-center gap-2 py-2">
